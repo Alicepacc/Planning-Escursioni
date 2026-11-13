@@ -1,7 +1,7 @@
 {
  "source_id": "waymarked_trails",
  "name": "Waymarked Trails (hiking)",
- "status": "parziale",
+ "status": "ok",
  "reachable": true,
  "format": "JSON (elenchi, dettagli), GPX/KML/GeoJSON (geometria della relazione)",
  "license": "ODbL 1.0 (dati OpenStreetMap); rendering CC BY-SA 3.0",
@@ -34,9 +34,15 @@
    "url": null
   },
   {
-   "name": "sentiero 326 presente nell'area",
-   "ok": false,
-   "detail": "non presente nell'elenco",
+   "name": "ricerca testuale",
+   "ok": true,
+   "detail": "HTTP 200, 4121 byte, application/json",
+   "url": "https://hiking.waymarkedtrails.org/api/v1/list/search?query=326"
+  },
+  {
+   "name": "la ricerca per numero trova relazioni «326»",
+   "ok": true,
+   "detail": "21 risultati",
    "url": null
   },
   {
@@ -46,21 +52,24 @@
    "url": "https://hiking.waymarkedtrails.org/api/v1/details/relation/7034586"
   },
   {
-   "name": "export GPX",
-   "ok": false,
-   "detail": "HTTP 404, 26 byte, application/json",
-   "url": "https://hiking.waymarkedtrails.org/api/v1/details/relation/7034586/geometry/gpx"
+   "name": "il dettaglio contiene la geometria ordinata (route.main[].ways[])",
+   "ok": true,
+   "detail": "30 way ordinate, lunghezza 11925 m, lineare=yes",
+   "url": null
   }
  ],
  "examples": [
-  "https://hiking.waymarkedtrails.org/api/v1/list/by_area?bbox=1269042%2C5788365%2C1293532%2C5806027&limit=100"
+  "https://hiking.waymarkedtrails.org/api/v1/list/by_area?bbox=1269042%2C5788365%2C1293532%2C5806027&limit=100",
+  "https://hiking.waymarkedtrails.org/api/v1/details/relation/7034586"
  ],
  "samples": [
   "samples/waymarked_trails/list_by_area.json",
   "samples/waymarked_trails/details_7034586.json"
  ],
  "notes": [
-  "Relazione 7034586: ref='332', name='Sentiero di Rava e di Caldenave', lunghezza mappata None m, cai_scale='E', osmc:symbol='red:red:white_stripe:332:black'"
+  "I numeri dei sentieri non sono univoci (più relazioni «326» in regioni diverse): la ricerca va sempre filtrata per distanza dalla partenza (SPEC §7.4).",
+  "Relazione 7034586: ref='332', name='Sentiero di Rava e di Caldenave', cai_scale='E', osmc:symbol='red:red:white_stripe:332:black'; geometrie in EPSG:3857 (anche la bbox di by_area va passata in EPSG:3857)",
+  "L'export GPX indicato nella SPEC (/details/relation/{id}/geometry/gpx) risponde HTTP 404: l'API attuale restituisce la geometria ordinata dentro il dettaglio JSON, che è ciò che serve per la verifica incrociata dell'ordinamento."
  ],
- "checked_at": "2026-11-13T01:58:25+0000"
+ "checked_at": "2026-11-13T02:09:06+0000"
 }

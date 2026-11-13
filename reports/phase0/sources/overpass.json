@@ -1,0 +1,60 @@
+{
+ "source_id": "overpass",
+ "name": "Overpass API",
+ "status": "parziale",
+ "reachable": true,
+ "format": "JSON / XML (Overpass QL)",
+ "license": "ODbL 1.0 (dati OpenStreetMap)",
+ "license_url": "https://dev.overpass-api.de/overpass-doc/en/preface/commons.html",
+ "limits": "Istanza principale: «users are expected to send a maximum of about 10000 requests per day and keep their download volume below about 1 GB per day»; oltre il limite risponde 429. Le istanze alternative hanno regole proprie.",
+ "update_frequency": "Replica OSM con ritardo di minuti",
+ "checks": [
+  {
+   "name": "istanza principale overpass-api.de",
+   "ok": false,
+   "detail": "RobotsDisallowed: irraggiungibile",
+   "url": null
+  },
+  {
+   "name": "query di prova su un'istanza alternativa",
+   "ok": true,
+   "detail": "HTTP 200, 34904 byte, application/json",
+   "url": "https://maps.mail.ru/osm/tools/overpass/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3Brelation%5Broute%3Dhiking%5D%2846.05%2C11.4%2C46.16%2C11.62%29%3Bout+tags%3B"
+  },
+  {
+   "name": "relazioni escursionistiche nella bbox Lagorai",
+   "ok": true,
+   "detail": "59",
+   "url": null
+  },
+  {
+   "name": "i sentieri 332 e 360 sono presenti",
+   "ok": true,
+   "detail": "311, 312, 315, 323, 323B, 327, 328, 329, 330, 331, 331A, 331B, 332, 332B, 333, 340A, 360, 361, 362, 365, 365A, 366, 366B, 367, 369, 371, 373, 373A, 37",
+   "url": null
+  },
+  {
+   "name": "pagina con le regole d'uso",
+   "ok": true,
+   "detail": "HTTP 200, 12237 byte, text/html",
+   "url": "https://dev.overpass-api.de/overpass-doc/en/preface/commons.html"
+  },
+  {
+   "name": "la documentazione indica la soglia d'uso",
+   "ok": true,
+   "detail": "",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://maps.mail.ru/osm/tools/overpass/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3Brelation%5Broute%3Dhiking%5D%2846.05%2C11.4%2C46.16%2C11.62%29%3Bout+tags%3B"
+ ],
+ "samples": [
+  "samples/overpass/lagorai_hiking_relations.json"
+ ],
+ "notes": [
+  "overpass-api.de chiude la connessione da questo ambiente cloud (reset durante il TLS, anche per robots.txt): da verificare da una rete normale.",
+  "In produzione Overpass non serve: i dati arrivano dall'estratto .osm.pbf locale. Resta uno strumento da sviluppatore, da usare a mano e con parsimonia."
+ ],
+ "checked_at": "2026-11-13T02:05:21+0000"
+}

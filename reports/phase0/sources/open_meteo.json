@@ -1,0 +1,61 @@
+{
+ "source_id": "open_meteo",
+ "name": "Open-Meteo (Forecast + Elevation API)",
+ "status": "ok",
+ "reachable": true,
+ "format": "JSON",
+ "license": "CC BY 4.0 (dati API); uso gratuito solo non commerciale",
+ "license_url": "https://open-meteo.com/en/terms",
+ "limits": "Free API: meno di 10.000 chiamate/giorno, 5.000/ora e 600/minuto, contate per indirizzo IP (header X-RateLimit-*). Nessuna chiave.",
+ "update_frequency": "Modelli aggiornati più volte al giorno; previsione fino a 16 giorni",
+ "checks": [
+  {
+   "name": "previsione oraria con parametro elevation",
+   "ok": true,
+   "detail": "HTTP 200, 4523 byte, application/json; charset=utf-8",
+   "url": "https://api.open-meteo.com/v1/forecast?elevation=2253&forecast_days=3&hourly=temperature_2m%2Cprecipitation%2Cfreezing_level_height%2Cwind_speed_10m%2Cwind_gusts_10m%2Ccloud_cover%2Ccape%2Cweather_code&latitude=46.150821&longitude=11.550534&timezone=Europe%2FRome"
+  },
+  {
+   "name": "tutte le variabili richieste sono presenti",
+   "ok": true,
+   "detail": "mancanti: []",
+   "url": null
+  },
+  {
+   "name": "la quota usata è quella passata",
+   "ok": true,
+   "detail": "2253.0",
+   "url": null
+  },
+  {
+   "name": "nessun valore nullo nelle 72 ore",
+   "ok": true,
+   "detail": "{'temperature_2m': 0, 'precipitation': 0, 'freezing_level_height': 0, 'wind_speed_10m': 0, 'wind_gusts_10m': 0, 'cloud_cover': 0, 'cape': 0, 'weather_code': 0}",
+   "url": null
+  },
+  {
+   "name": "Elevation API su due punti",
+   "ok": true,
+   "detail": "HTTP 200, 30 byte, application/json",
+   "url": "https://api.open-meteo.com/v1/elevation?latitude=46.150821%2C46.148609&longitude=11.550534%2C11.521522"
+  },
+  {
+   "name": "quote plausibili (cima ±50 m, parcheggio ±30 m)",
+   "ok": true,
+   "detail": "Cima Nassere 2227.0 m (OSM 2253), Tedon 1371.0 m (OSM 1350)",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://api.open-meteo.com/v1/forecast?elevation=2253&forecast_days=3&hourly=temperature_2m%2Cprecipitation%2Cfreezing_level_height%2Cwind_speed_10m%2Cwind_gusts_10m%2Ccloud_cover%2Ccape%2Cweather_code&latitude=46.150821&longitude=11.550534&timezone=Europe%2FRome"
+ ],
+ "samples": [
+  "samples/open_meteo/forecast_cima_nassere.json"
+ ],
+ "notes": [
+  "Cima Nassere (2253 m) alle 2026-11-13T12:00: -0.0 °C, zero termico 2210.0 m, vento 17.0 km/h (raffiche 36.7), CAPE 0.0 J/kg, codice meteo 71",
+  "Limiti letti dagli header: X-RateLimit-Limit=600.0 su finestra di 60 s",
+  "Il 12/11/2026 la stessa API ha risposto 429 «Daily API request limit exceeded» (X-RateLimit-Limit 10000 / 86400 s) perché il limite è per IP e l'ambiente cloud condivide l'IP di uscita con altri: in produzione servono IP proprio e cache lato server, oppure l'immagine Docker self-hosted di open-meteo."
+ ],
+ "checked_at": "2026-11-13T02:01:56+0000"
+}

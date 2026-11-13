@@ -1,0 +1,74 @@
+{
+ "source_id": "opendatahub",
+ "name": "Open Data Hub Alto Adige – Tourism API (ODHActivityPoi, WebcamInfo)",
+ "status": "parziale",
+ "reachable": true,
+ "format": "JSON paginato (TotalResults, NextPage); tracce GPX collegate (GpsTrack)",
+ "license": "Per record: LicenseInfo.License (CC0 oppure «Closed») e LicenseInfo.ClosedData; si usano solo i record con ClosedData=false",
+ "license_url": "https://docs.opendatahub.com/en/latest/licenses.html",
+ "limits": "Accesso anonimo senza chiave; header di quota: nessuno. Per volumi maggiori Open Data Hub chiede di registrarsi (vedi documentazione).",
+ "update_frequency": "Continua (sincronizzazione dalle fonti LTS, IDM, SIAT…)",
+ "checks": [
+  {
+   "name": "itinerari entro 15 km da Merano",
+   "ok": true,
+   "detail": "HTTP 200, 49357 byte, application/json; charset=utf-8",
+   "url": "https://tourism.api.opendatahub.com/v1/ODHActivityPoi?fields=Id%2CShortname%2CLicenseInfo%2CDistanceLength%2CDistanceDuration%2CAltitudeSumUp%2CAltitudeSumDown%2CAltitudeHighestPoint%2CDifficulty%2CRatings%2CGpsTrack%2CGpsInfo%2CHasLanguage%2CSource&latitude=46.67&longitude=11.16&pagesize=50&radius=15000&tagfilter=hiking"
+  },
+  {
+   "name": "paginazione presente",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "campo LicenseInfo su tutti i record",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "esistono record con licenza aperta",
+   "ok": true,
+   "detail": "{'CC0': 30, 'Closed': 20}",
+   "url": null
+  },
+  {
+   "name": "record aperti con traccia GPX nel campione",
+   "ok": false,
+   "detail": "nel campione i record CC0 (LTS) non hanno traccia né distanza; quelli con traccia sono «Closed»",
+   "url": null
+  },
+  {
+   "name": "itinerari entro 10 km dalla Val d'Inferno (Trentino)",
+   "ok": true,
+   "detail": "HTTP 200, 26560 byte, application/json; charset=utf-8",
+   "url": "https://tourism.api.opendatahub.com/v1/ODHActivityPoi?fields=Id%2CShortname%2CLicenseInfo%2CDistanceLength%2CDistanceDuration%2CAltitudeSumUp%2CAltitudeSumDown%2CAltitudeHighestPoint%2CDifficulty%2CRatings%2CGpsTrack%2CGpsInfo%2CHasLanguage%2CSource&latitude=46.15&longitude=11.55&pagesize=25&radius=10000&tagfilter=hiking"
+  },
+  {
+   "name": "copertura anche in Trentino (Lagorai)",
+   "ok": true,
+   "detail": "48",
+   "url": null
+  },
+  {
+   "name": "webcam entro 10 km da Merano",
+   "ok": true,
+   "detail": "HTTP 200, 6547 byte, application/json; charset=utf-8",
+   "url": "https://tourism.api.opendatahub.com/v1/WebcamInfo?fields=Id%2CShortname%2CLicenseInfo%2CGpsInfo&latitude=46.67&longitude=11.16&pagesize=20&radius=10000"
+  }
+ ],
+ "examples": [
+  "https://tourism.api.opendatahub.com/v1/ODHActivityPoi?fields=Id%2CShortname%2CLicenseInfo%2CDistanceLength%2CDistanceDuration%2CAltitudeSumUp%2CAltitudeSumDown%2CAltitudeHighestPoint%2CDifficulty%2CRatings%2CGpsTrack%2CGpsInfo%2CHasLanguage%2CSource&latitude=46.67&longitude=11.16&pagesize=50&radius=15000&tagfilter=hiking"
+ ],
+ "samples": [
+  "samples/opendatahub/hiking_merano.json",
+  "samples/opendatahub/hiking_val_inferno.json"
+ ],
+ "notes": [
+  "Merano, raggio 15 km: 1053 itinerari; campione di 50: licenze {'CC0': 30, 'Closed': 20}, fonti {'lts': 30, 'civis.geoserver': 18, 'idm': 2}; tra i 30 aperti, 0 hanno una traccia GPX e 0 hanno la distanza; i record con traccia e licenza «Closed» sono 18 (rete sentieri provinciale, fonte civis.geoserver)",
+  "Val d'Inferno, raggio 10 km: 48 record; fonti {'siat.provincia.tn.it': 25}, licenze {'Closed': 25}; esempi: [\"SENTIERO DI VAL D'INFERNO e DI VAL VENDRAME\", 'SENTIERO ATTREZZATO DI VAL ORSERA', 'E326', 'SENTIERO DI VAL MONTALON']",
+  "Webcam entro 10 km da Merano: 16; licenze {'CC0': 5, '': 10, 'Closed': 1}"
+ ],
+ "checked_at": "2026-11-13T02:05:20+0000"
+}

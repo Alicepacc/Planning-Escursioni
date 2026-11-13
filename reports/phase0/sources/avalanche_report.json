@@ -1,0 +1,82 @@
+{
+ "source_id": "avalanche_report",
+ "name": "avalanche.report – bollettino valanghe Euregio (ALBINA)",
+ "status": "ok",
+ "reachable": true,
+ "format": "JSON CAAMLv6 (un file per giorno e lingua)",
+ "license": "CC BY 4.0 («Tutti i dati forniti, come il bollettino valanghe… sono concessi in licenza CC BY 4.0»)",
+ "license_url": "https://avalanche.report/more/open-data",
+ "limits": "File statici senza limiti pubblicati; un download per giorno e lingua basta.",
+ "update_frequency": "Giornaliera in stagione (pubblicazione alle 17, aggiornamento alle 8); nessun bollettino fuori stagione",
+ "checks": [
+  {
+   "name": "bollettino per data (2026-02-10, it)",
+   "ok": true,
+   "detail": "HTTP 200, 18450 byte, application/json",
+   "url": "https://avalanche.report/bulletins/2026-02-10/2026-02-10_EUREGIO_it_CAAMLv6.json"
+  },
+  {
+   "name": "lingua italiana",
+   "ok": true,
+   "detail": "6 zone",
+   "url": null
+  },
+  {
+   "name": "micro-regioni trentine presenti",
+   "ok": true,
+   "detail": "102 regionID, es. ['IT-32-TN-09', 'IT-32-TN-02', 'IT-32-TN-13', 'IT-32-TN-01']",
+   "url": null
+  },
+  {
+   "name": "gradi di pericolo per fascia di quota",
+   "ok": true,
+   "detail": "low {'upperBound': 'treeline'}; considerable {'lowerBound': 'treeline'}",
+   "url": null
+  },
+  {
+   "name": "problemi valanghivi con esposizioni",
+   "ok": true,
+   "detail": "persistent_weak_layers ['NE', 'NW', 'N', 'W', 'E'] {'lowerBound': 'treeline'}",
+   "url": null
+  },
+  {
+   "name": "tendenza presente",
+   "ok": true,
+   "detail": "steady",
+   "url": null
+  },
+  {
+   "name": "bollettino «latest»",
+   "ok": true,
+   "detail": "HTTP 200, 14653 byte, application/json",
+   "url": "https://avalanche.report/bulletins/latest/EUREGIO_it_CAAMLv6.json"
+  },
+  {
+   "name": "disponibile anche in de",
+   "ok": true,
+   "detail": "HTTP 200",
+   "url": null
+  },
+  {
+   "name": "disponibile anche in en",
+   "ok": true,
+   "detail": "HTTP 200",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://static.avalanche.report/bulletins/2026-02-10/2026-02-10_EUREGIO_it_CAAMLv6.json"
+ ],
+ "samples": [
+  "samples/avalanche_report/2026-02-10_EUREGIO_it.json"
+ ],
+ "notes": [
+  "Campi di un bollettino: avalancheActivity, avalancheProblems, bulletinID, customData, dangerRatings, highlights, lang, publicationTime, regions, snowpackStructure, tendency, unscheduled, validTime",
+  "Le quote possono essere numeri in stringa («2600») oppure «treeline» (limite del bosco); i gradi hanno validTimePeriod all_day / earlier / later.",
+  "Gradi nel bollettino del 2026-02-10: {'low': 6, 'considerable': 3, 'moderate': 2}",
+  "«latest» oggi restituisce l'ultimo bollettino della stagione scorsa (pubblicato il 2026-05-02T15:00:00Z): l'app deve controllare validTime e non mostrarlo come attuale.",
+  "Bollettino del 12/11/2026 (fuori stagione): HTTP 404 → gestire l'assenza come «bollettino non ancora disponibile per la stagione».",
+  "static.avalanche.report risponde 301 verso avalanche.report (stesso percorso): il pattern della SPEC è confermato."
+ ],
+ "checked_at": "2026-11-13T02:00:44+0000"
+}

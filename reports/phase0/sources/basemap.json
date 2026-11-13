@@ -1,0 +1,72 @@
+{
+ "source_id": "basemap",
+ "name": "Basemap vettoriale – Protomaps e OpenFreeMap",
+ "status": "ok",
+ "reachable": true,
+ "format": "Protomaps: PMTiles planetario giornaliero; OpenFreeMap: TileJSON, tile MVT, stili",
+ "license": "Dati ODbL 1.0 (© OpenStreetMap contributors); Protomaps: codice BSD, schema e stili aperti; OpenFreeMap: servizio gratuito «as-is»",
+ "license_url": "https://openfreemap.org/tos/",
+ "limits": "OpenFreeMap: niente raccolta automatica di tile, salvo download offline fino a 3.000 tile o 50 MB, max 4 richieste parallele, User-Agent identificativo. Protomaps: `pmtiles extract` scarica solo l'area richiesta con richieste HTTP range.",
+ "update_frequency": "Protomaps: build giornaliero; OpenFreeMap: settimanale",
+ "checks": [
+  {
+   "name": "Protomaps: elenco dei build",
+   "ok": true,
+   "detail": "HTTP 200, 11593 byte, application/json; charset=UTF-8",
+   "url": "https://build-metadata.protomaps.dev/builds.json"
+  },
+  {
+   "name": "build recente disponibile",
+   "ok": true,
+   "detail": "20261112.pmtiles",
+   "url": null
+  },
+  {
+   "name": "OpenFreeMap: TileJSON",
+   "ok": true,
+   "detail": "HTTP 200, 19254 byte, application/json",
+   "url": "https://tiles.openfreemap.org/planet"
+  },
+  {
+   "name": "schema OpenMapTiles",
+   "ok": true,
+   "detail": "aerodrome_label, aeroway, boundary, building, housenumber, landcover, landuse, mountain_peak, park, place, poi, transportation, transportation_name, water, water_name, waterway",
+   "url": null
+  },
+  {
+   "name": "OpenFreeMap: stile «liberty»",
+   "ok": true,
+   "detail": "HTTP 200, 43311 byte, application/json",
+   "url": "https://tiles.openfreemap.org/styles/liberty"
+  },
+  {
+   "name": "stile MapLibre valido",
+   "ok": true,
+   "detail": "111 layer",
+   "url": null
+  },
+  {
+   "name": "OpenFreeMap: termini di servizio",
+   "ok": true,
+   "detail": "HTTP 200, 5799 byte, text/html",
+   "url": "https://openfreemap.org/tos/"
+  },
+  {
+   "name": "i termini indicano i limiti per l'offline",
+   "ok": true,
+   "detail": "",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://build.protomaps.com/20261112.pmtiles"
+ ],
+ "samples": [],
+ "notes": [
+  "Ultimo build Protomaps: 20261112.pmtiles (139 GB, versione schema 4.15.2), URL https://build.protomaps.com/20261112.pmtiles",
+  "OpenFreeMap: zoom 0-14, attribuzione «<a href=\"https://openfreemap.org\" target=\"_blank\">OpenFreeMap</a> <a href=\"https://www.openmaptiles.org/\" target=\"_blank»",
+  "CLI `pmtiles` (go-pmtiles): distribuita come binario su GitHub Releases e come immagine Docker; da questo ambiente GitHub Releases non è raggiungibile, quindi l'estrazione dell'area pilota va provata in CI o in locale (Fase 1).",
+  "Lo screenshot dello spike di routing (reports/phase0/routing-spike) usa lo stile OpenFreeMap «liberty» con MapLibre GL JS: rendering verificato."
+ ],
+ "checked_at": "2026-11-13T02:08:03+0000"
+}

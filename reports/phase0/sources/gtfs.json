@@ -1,0 +1,73 @@
+{
+ "source_id": "gtfs",
+ "name": "GTFS – STA Alto Adige e Trentino Trasporti",
+ "status": "ok",
+ "reachable": true,
+ "format": "GTFS (ZIP di CSV); per STA anche GTFS-Realtime",
+ "license": "STA: CC0 (dichiarata dall'API Open Data Hub); Trentino Trasporti: CC BY 4.0 (catalogo dati.trentino.it)",
+ "license_url": "https://dati.trentino.it/dataset/trasporti-pubblici-del-trentino-formato-gtfs",
+ "limits": "File statici; nessun limite pubblicato.",
+ "update_frequency": "Per cambio orario (STA più volte l'anno; Trentino: vedi catalogo)",
+ "checks": [
+  {
+   "name": "Open Data Hub: elenco dataset GTFS",
+   "ok": true,
+   "detail": "HTTP 200, 1002 byte, application/json; charset=utf-8",
+   "url": "https://gtfs.api.opendatahub.com/v1/dataset"
+  },
+  {
+   "name": "STA: licenza dichiarata CC0",
+   "ok": true,
+   "detail": "CC0",
+   "url": null
+  },
+  {
+   "name": "STA Alto Adige: download GTFS",
+   "ok": true,
+   "detail": "HTTP 200, 153531995 byte, application/zip",
+   "url": "https://gtfs.api.opendatahub.com/v1/dataset/sta-time-tables/raw"
+  },
+  {
+   "name": "STA Alto Adige: file GTFS obbligatori",
+   "ok": true,
+   "detail": "agency.txt, calendar.txt, calendar_dates.txt, routes.txt, shapes.txt, stop_times.txt, stops.txt, translations.txt, trips.txt",
+   "url": null
+  },
+  {
+   "name": "pagina del dataset su dati.trentino.it",
+   "ok": true,
+   "detail": "HTTP 200, 37141 byte, text/html; charset=utf-8",
+   "url": "https://dati.trentino.it/dataset/trasporti-pubblici-del-trentino-formato-gtfs"
+  },
+  {
+   "name": "Trentino Trasporti: licenza CC BY 4.0",
+   "ok": true,
+   "detail": "licenza indicata nella pagina del dataset",
+   "url": null
+  },
+  {
+   "name": "Trentino extraurbano: download GTFS",
+   "ok": true,
+   "detail": "HTTP 200, 11108124 byte, application/zip",
+   "url": "https://www.trentinotrasporti.it/opendata/google_transit_extraurbano_tte.zip"
+  },
+  {
+   "name": "Trentino extraurbano: file GTFS obbligatori",
+   "ok": true,
+   "detail": "agency.txt, calendar.txt, calendar_dates.txt, feed_info.txt, routes.txt, shapes.txt, stop_times.txt, stops.txt, stopslevel.txt, transfers.txt, trips.txt",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://gtfs.api.opendatahub.com/v1/dataset/sta-time-tables/raw",
+  "https://www.trentinotrasporti.it/opendata/google_transit_extraurbano_tte.zip"
+ ],
+ "samples": [
+  "samples/gtfs/trentino_extraurbano.zip"
+ ],
+ "notes": [
+  "STA Alto Adige: 153.5 MB, 6461 fermate (6245 nell'area pilota, 6 nella bbox Lagorai); validità fino al 20261212 (calendar.txt)",
+  "Trentino extraurbano: 11.1 MB, 2857 fermate (2857 nell'area pilota, 82 nella bbox Lagorai); validità fino al 20270625 (feed_info.txt)"
+ ],
+ "checked_at": "2026-11-13T02:02:00+0000"
+}

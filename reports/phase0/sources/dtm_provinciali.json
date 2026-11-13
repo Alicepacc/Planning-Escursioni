@@ -1,0 +1,73 @@
+{
+ "source_id": "dtm_provinciali",
+ "name": "DTM provinciali – Alto Adige (2,5 m / 0,5 m) e Trentino (LiDAR)",
+ "status": "parziale",
+ "reachable": true,
+ "format": "Bolzano: WCS 2.0.1 (GeoTIFF), EPSG:25832; Trento: vedi note",
+ "license": "Bolzano: CC0 (catalogo dati della Provincia); Trento: CC BY 2.5 secondo il catalogo delle sorgenti di Mapterhorn (da confermare alla fonte)",
+ "license_url": "https://data.civis.bz.it/it/dataset?q=DTM",
+ "limits": "Servizi OGC pubblici senza limiti pubblicati: scaricare a blocchi piccoli e una sola volta.",
+ "update_frequency": "Rilievi LiDAR pluriennali",
+ "checks": [
+  {
+   "name": "Bolzano: WCS GetCapabilities",
+   "ok": true,
+   "detail": "HTTP 200, 30606 byte, application/xml",
+   "url": "https://geoservices9.civis.bz.it/geoserver/ows?request=GetCapabilities&service=WCS&version=2.0.1"
+  },
+  {
+   "name": "coverage DTM presenti",
+   "ok": true,
+   "detail": "p_bz-Elevation__DigitalTerrainModel-0.5m, p_bz-Elevation__DigitalTerrainModel-2.5m, p_bz-Elevation__DigitalTerrainModel-EtschAdige-0.2m-2024, p_bz-Elevation__DigitalTerrainModel-2.5m-Exposition, p_bz-Elevation__DigitalTerrainModel-2.5m-Slope",
+   "url": null
+  },
+  {
+   "name": "Bolzano: DescribeCoverage DTM 2,5 m",
+   "ok": true,
+   "detail": "HTTP 200, 3688 byte, application/xml",
+   "url": "https://geoservices9.civis.bz.it/geoserver/ows?coverageId=p_bz-Elevation__DigitalTerrainModel-2.5m&request=DescribeCoverage&service=WCS&version=2.0.1"
+  },
+  {
+   "name": "Bolzano: GetCoverage di un riquadro 250×250 m",
+   "ok": true,
+   "detail": "HTTP 200, 147892 byte, image/tiff",
+   "url": "https://geoservices9.civis.bz.it/geoserver/ows?coverageId=p_bz-Elevation__DigitalTerrainModel-2.5m&format=image%2Ftiff&request=GetCoverage&service=WCS&subset=E%28665000%2C665250%29&subset=N%285170000%2C5170250%29&version=2.0.1"
+  },
+  {
+   "name": "la risposta è un GeoTIFF",
+   "ok": true,
+   "detail": "147892 byte",
+   "url": null
+  },
+  {
+   "name": "Bolzano: pagina del catalogo dati",
+   "ok": true,
+   "detail": "HTTP 200, 52481 byte, text/html; charset=utf-8",
+   "url": "https://data.civis.bz.it/it/dataset?q=DTM"
+  },
+  {
+   "name": "Bolzano: licenza CC0 indicata nel catalogo",
+   "ok": true,
+   "detail": "ricerca «DTM» sul catalogo data.civis.bz.it",
+   "url": null
+  },
+  {
+   "name": "Trento: download diretto del DTM LiDAR individuato",
+   "ok": false,
+   "detail": "il WCS di siat.provincia.tn.it non elenca coverage DTM; il portale geocartografico distribuisce il LiDAR per fogli (da individuare a mano)",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://geoservices9.civis.bz.it/geoserver/ows?coverageId=p_bz-Elevation__DigitalTerrainModel-2.5m&format=image%2Ftiff&request=GetCoverage&service=WCS&subset=E%28665000%2C665250%29&subset=N%285170000%2C5170250%29&version=2.0.1"
+ ],
+ "samples": [
+  "samples/dtm_provinciali/bz_dtm_2.5m_sample.tif"
+ ],
+ "notes": [
+  "DTM Bolzano 2,5 m: EPSG:25832, passo 2.5 m, assi ['E N']",
+  "Per il Trentino il LiDAR PAT 2014/2018 è già integrato nei tile Mapterhorn (sorgente «ittrentino»): per la Fase 1 basta Mapterhorn; il download diretto resta da verificare.",
+  "Per l'Alto Adige Mapterhorn usa TINITALY 10 m / GLO-30: il DTM provinciale a 2,5 m (CC0) è il candidato per migliorare il dislivello in Alto Adige."
+ ],
+ "checked_at": "2026-11-13T02:08:27+0000"
+}

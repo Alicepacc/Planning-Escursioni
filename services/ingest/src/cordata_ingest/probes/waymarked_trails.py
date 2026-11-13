@@ -6,9 +6,7 @@ mai dal client.
 
 from __future__ import annotations
 
-import re
-
-from .base import STATUS_BLOCKED, STATUS_OK, STATUS_PARTIAL, ProbeContext, ProbeResult
+from .base import ProbeContext, ProbeResult
 
 PROBE_ID = "waymarked_trails"
 API = "https://hiking.waymarkedtrails.org/api/v1"
@@ -38,16 +36,22 @@ def run(ctx: ProbeContext) -> ProbeResult:
         r.samples.append(ctx.save_sample(PROBE_ID, "list_by_area.json", listing.json()))
         r.examples.append(listing.url)
 
-    # 2) ricerca per ref: i sentieri citati dalla fixture
-    for ref in ("332", "360", "326"):
-        hit = next((x for x in routes if x.get("ref") in {ref, f"E{ref}", f"O{ref}"}), None)
+    # 2) i sentieri citati dalla fixture (il 326 è fuori dalla bbox campione: ricerca per nome)
+    for ref in ("332", "360"):
+        hit = next((x for x in routes if x.get("ref") == ref), None)
         detail = f"id {hit['id']} – {hit.get('name', '')}" if hit else "non presente nell'elenco"
         r.check(f"sentiero {ref} presente nell'area", hit is not None, detail)
+    search = ctx.try_get(r, "ricerca testuale", f"{API}/list/search", params={"query": "326"})
+    if search:
+        hits = [x for x in search.json().get("results", []) if x.get("ref") == "326"]
+        r.check("la ricerca per numero trova relazioni «326»", bool(hits), f"{len(hits)} risultati")
+        r.notes.append(
+            "I numeri dei sentieri non sono univoci (più relazioni «326» in regioni diverse): la "
+            "ricerca va sempre filtrata per distanza dalla partenza (SPEC §7.4)."
+        )
 
-    # 3) dettaglio + GPX di una relazione
-    target = next(
-        (x for x in routes if x.get("ref") in {"332", "E332"}), routes[0] if routes else None
-    )
+    # 3) dettaglio di una relazione: contiene già la geometria ordinata
+    target = next((x for x in routes if x.get("ref") == "332"), routes[0] if routes else None)
     if target:
         rel_id = target["id"]
         details = ctx.try_get(r, "dettaglio relazione", f"{API}/details/relation/{rel_id}")
@@ -55,27 +59,24 @@ def run(ctx: ProbeContext) -> ProbeResult:
             info = details.json()
             r.samples.append(ctx.save_sample(PROBE_ID, f"details_{rel_id}.json", info))
             tags = info.get("tags", {})
+            route = info.get("route", {})
+            ways = [w for part in route.get("main", []) for w in part.get("ways", [])]
+            r.check(
+                "il dettaglio contiene la geometria ordinata (route.main[].ways[])",
+                bool(ways) and "geometry" in ways[0],
+                f"{len(ways)} way ordinate, lunghezza {route.get('length')} m, "
+                f"lineare={route.get('linear')}",
+            )
             r.notes.append(
                 f"Relazione {rel_id}: ref={info.get('ref')!r}, name={info.get('name')!r}, "
-                f"lunghezza mappata {info.get('mapped_length')} m, "
-                f"cai_scale={tags.get('cai_scale')!r}, osmc:symbol={tags.get('osmc:symbol')!r}"
+                f"cai_scale={tags.get('cai_scale')!r}, osmc:symbol={tags.get('osmc:symbol')!r}; "
+                "geometrie in EPSG:3857 (anche la bbox di by_area va passata in EPSG:3857)"
             )
-        gpx = ctx.try_get(r, "export GPX", f"{API}/details/relation/{rel_id}/geometry/gpx")
-        if gpx:
-            points = len(re.findall(r"<trkpt ", gpx.text()))
-            segments = len(re.findall(r"<trkseg>", gpx.text()))
-            r.check(
-                "il GPX contiene punti traccia", points > 0, f"{points} punti, {segments} segmenti"
-            )
-            r.samples.append(ctx.save_sample(PROBE_ID, f"relation_{rel_id}.gpx", gpx.content))
-            r.examples.append(gpx.url)
-            r.notes.append(
-                "Il GPX non contiene quote (<ele>): l'altimetria va comunque calcolata dal DEM."
-                if "<ele>" not in gpx.text()
-                else "Il GPX contiene le quote (<ele>)."
-            )
-
-    r.reachable = any(c.ok for c in r.checks)
-    failed = [c for c in r.checks if not c.ok]
-    r.status = STATUS_BLOCKED if not r.reachable else (STATUS_PARTIAL if failed else STATUS_OK)
-    return r
+            r.examples.append(details.url)
+        old = ctx.client.get(f"{API}/details/relation/{rel_id}/geometry/gpx", ttl=86400)
+        r.notes.append(
+            f"L'export GPX indicato nella SPEC (/details/relation/{{id}}/geometry/gpx) risponde "
+            f"HTTP {old.status}: l'API attuale restituisce la geometria ordinata dentro il "
+            "dettaglio JSON, che è ciò che serve per la verifica incrociata dell'ordinamento."
+        )
+    return r.finish()

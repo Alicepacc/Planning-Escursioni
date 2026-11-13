@@ -1,0 +1,58 @@
+{
+ "source_id": "nominatim",
+ "name": "Nominatim (istanza pubblica OSMF)",
+ "status": "ok",
+ "reachable": true,
+ "format": "JSON / GeoJSON",
+ "license": "ODbL 1.0 (dati OSM), attribuzione obbligatoria",
+ "license_url": "https://operations.osmfoundation.org/policies/nominatim/",
+ "limits": "Massimo assoluto 1 richiesta/secondo, User-Agent o Referer identificativo, niente autocomplete, risultati da mettere in cache; vietato l'uso massivo.",
+ "update_frequency": "Continua (replica OSM)",
+ "checks": [
+  {
+   "name": "usage policy",
+   "ok": true,
+   "detail": "HTTP 200, 8409 byte, text/html; charset=utf-8",
+   "url": "https://operations.osmfoundation.org/policies/nominatim/"
+  },
+  {
+   "name": "la policy indica il limite di 1 richiesta al secondo",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "la policy vieta l'autocomplete",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "ricerca «Malga Conseria»",
+   "ok": true,
+   "detail": "HTTP 200, 545 byte, application/json; charset=utf-8",
+   "url": "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&q=Malga+Conseria%2C+Scurelle"
+  },
+  {
+   "name": "il primo risultato è nel punto atteso",
+   "ok": true,
+   "detail": "Malga Conseria, Strada Malga Conseria, Scurelle, Comunità Valsugana e Tesino, Provincia di (46.1698132, 11.5388607)",
+   "url": null
+  },
+  {
+   "name": "reverse su Cima Nassere",
+   "ok": true,
+   "detail": "HTTP 200, 731 byte, application/json; charset=utf-8",
+   "url": "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=46.150821&lon=11.550534&zoom=14"
+  }
+ ],
+ "examples": [
+  "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&q=Malga+Conseria%2C+Scurelle"
+ ],
+ "samples": [],
+ "notes": [
+  "Reverse: Scurelle, Comunità Valsugana e Tesino, Provincia di Trento, Trentino-Alto Adige/Südtirol, Italia",
+  "Uso previsto: mai dal client e mai per l'autocomplete. La ricerca dell'app usa un indice locale dei POI OSM; Nominatim pubblico resta un ripiego lato server con cache, oppure un'istanza self-hosted se serve geocoding di indirizzi."
+ ],
+ "checked_at": "2026-11-13T02:01:58+0000"
+}

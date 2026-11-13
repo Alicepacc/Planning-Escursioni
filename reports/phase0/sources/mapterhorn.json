@@ -1,0 +1,60 @@
+{
+ "source_id": "mapterhorn",
+ "name": "Mapterhorn – terrain tiles (Copernicus GLO-30 + DEM nazionali)",
+ "status": "ok",
+ "reachable": true,
+ "format": "Tile WebP 512 px in codifica Terrarium; PMTiles (planet z0-12 + riquadri z13-17)",
+ "license": "Dipende dalla sorgente (vedi attribution.json): Copernicus GLO-30 (licenza Copernicus), TINITALY (CC BY 4.0), LiDAR PAT Trentino (CC BY 2.5)",
+ "license_url": "https://mapterhorn.com/attribution",
+ "limits": "Endpoint pubblico su Cloudflare senza limiti pubblicati; per la produzione estrarre l'area con `pmtiles extract` e servirla dal proprio object storage.",
+ "update_frequency": "Versioni periodiche (download_urls.json riporta la versione)",
+ "checks": [
+  {
+   "name": "TileJSON",
+   "ok": true,
+   "detail": "HTTP 200, 270 byte, text/plain;charset=UTF-8",
+   "url": "https://tiles.mapterhorn.com/tilejson.json"
+  },
+  {
+   "name": "codifica Terrarium, tile 512 px",
+   "ok": true,
+   "detail": "encoding=terrarium, tileSize=512",
+   "url": null
+  },
+  {
+   "name": "quota di Cima Nassere entro ±30 m al massimo zoom disponibile",
+   "ok": true,
+   "detail": "z14: 2240 m",
+   "url": null
+  },
+  {
+   "name": "catalogo delle sorgenti (attribution.json)",
+   "ok": true,
+   "detail": "HTTP 200, 94917 byte, application/json",
+   "url": "https://download.mapterhorn.com/attribution.json"
+  },
+  {
+   "name": "elenco PMTiles (download_urls.json)",
+   "ok": true,
+   "detail": "HTTP 200, 161912 byte, application/json",
+   "url": "https://download.mapterhorn.com/download_urls.json"
+  }
+ ],
+ "examples": [
+  "https://tiles.mapterhorn.com/14/8717/5818.webp"
+ ],
+ "samples": [
+  "samples/mapterhorn/tile_14_8717_5818.webp"
+ ],
+ "notes": [
+  "z12/2179/1454: 144 kB, 512 px, quota decodificata su Cima Nassere 2238 m (OSM 2253 m)",
+  "z14/8717/5818: 140 kB, 512 px, quota decodificata su Cima Nassere 2240 m (OSM 2253 m)",
+  "z15: nessun tile su Cima Nassere (HTTP 404)",
+  "z16: nessun tile su Cima Nassere (HTTP 404)",
+  "Sorgente «glo30»: COPERNICUS GLO-30 – licenza COPERNICUS full, free and open license – DLR e.V. 2010-2014, Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by ",
+  "Sorgente «ittrentino»: LiDAR PAT 2014 integrato con voli 2018 ed il LiDAR 2011 di Campolongo – licenza CC BY 2.5 – Provincia Autonoma di Trento - Ufficio Sistemi Informativi - Servizio autorizzazioni e val",
+  "Sorgente «tinitaly»: TINITALY, a digital elevation model of Italy with a 10 meters cell size (Version 1.1) – licenza Creative Commons Namensnennung 4.0 International (CC BY 4.0) – Istituto Nazionale di Geofisica e Vulcanologia (INGV)",
+  "Versione 0.0.13: planet.pmtiles z0-12 = 356 GB; riquadri z13+ che intersecano l'area pilota: [('6-33-22.pmtiles', 614.9), ('6-34-22.pmtiles', 166.1)] (GB)"
+ ],
+ "checked_at": "2026-11-13T02:07:54+0000"
+}

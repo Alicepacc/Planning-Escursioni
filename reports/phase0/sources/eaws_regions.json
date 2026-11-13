@@ -1,0 +1,79 @@
+{
+ "source_id": "eaws_regions",
+ "name": "EAWS regions – micro-regioni del bollettino valanghe",
+ "status": "ok",
+ "reachable": true,
+ "format": "GeoJSON (MultiPolygon, WGS84), un file per regione",
+ "license": "CC0 1.0 Universal (file LICENSE del repository eaws/eaws-regions)",
+ "license_url": "https://gitlab.com/eaws/eaws-regions/-/raw/master/LICENSE",
+ "limits": "File statici (cache-control max-age=600); scaricare una volta e versionare.",
+ "update_frequency": "Rara (revisioni delle micro-regioni prima della stagione)",
+ "checks": [
+  {
+   "name": "poligoni IT-32-TN",
+   "ok": true,
+   "detail": "HTTP 200, 150280 byte, application/json",
+   "url": "https://regions.avalanches.org/micro-regions/IT-32-TN_micro-regions.geojson.json"
+  },
+  {
+   "name": "poligoni IT-32-BZ",
+   "ok": true,
+   "detail": "HTTP 200, 320888 byte, application/json",
+   "url": "https://regions.avalanches.org/micro-regions/IT-32-BZ_micro-regions.geojson.json"
+  },
+  {
+   "name": "poligoni AT-07",
+   "ok": true,
+   "detail": "HTTP 200, 514080 byte, application/json",
+   "url": "https://regions.avalanches.org/micro-regions/AT-07_micro-regions.geojson.json"
+  },
+  {
+   "name": "Cima Nassere cade in una sola micro-regione",
+   "ok": true,
+   "detail": "['IT-32-TN-08']",
+   "url": null
+  },
+  {
+   "name": "IT-32-TN-08 compare nel bollettino del 10/02/2026",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "centro bbox Lagorai cade in una sola micro-regione",
+   "ok": true,
+   "detail": "['IT-32-TN-08']",
+   "url": null
+  },
+  {
+   "name": "IT-32-TN-08 compare nel bollettino del 10/02/2026",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "avalanches.org raggiungibile (rimando fuori Euregio)",
+   "ok": true,
+   "detail": "HTTP 200, 56680 byte, text/html; charset=UTF-8",
+   "url": "https://www.avalanches.org/"
+  }
+ ],
+ "examples": [
+  "https://regions.avalanches.org/micro-regions/IT-32-TN_micro-regions.geojson.json",
+  "https://regions.avalanches.org/micro-regions/IT-32-BZ_micro-regions.geojson.json",
+  "https://regions.avalanches.org/micro-regions/AT-07_micro-regions.geojson.json"
+ ],
+ "samples": [
+  "samples/eaws_regions/IT-32-TN_micro-regions.geojson",
+  "samples/eaws_regions/IT-32-BZ_micro-regions.geojson",
+  "samples/eaws_regions/AT-07_micro-regions.geojson"
+ ],
+ "notes": [
+  "Licenza letta a mano il 13/11/2026 nel file LICENSE del repository (CC0 1.0 Universal). Lo script non la riscarica: il robots.txt di gitlab.com vieta quel percorso ai client automatici.",
+  "IT-32-TN: 21 poligoni, 21 validi oggi (gli altri hanno end_date: micro-regioni storiche)",
+  "IT-32-BZ: 38 poligoni, 29 validi oggi (gli altri hanno end_date: micro-regioni storiche)",
+  "AT-07: 49 poligoni, 40 validi oggi (gli altri hanno end_date: micro-regioni storiche)",
+  "Fuori Euregio l'app rimanda a https://www.avalanches.org/"
+ ],
+ "checked_at": "2026-11-13T02:01:57+0000"
+}
