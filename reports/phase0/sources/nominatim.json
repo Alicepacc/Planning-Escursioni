@@ -7,7 +7,7 @@
  "license": "ODbL 1.0 (dati OSM), attribuzione obbligatoria",
  "license_url": "https://operations.osmfoundation.org/policies/nominatim/",
  "limits": "Massimo assoluto 1 richiesta/secondo, User-Agent o Referer identificativo, niente autocomplete, risultati da mettere in cache; vietato l'uso massivo.",
- "update_frequency": "Continua (replica OSM)",
+ "update_frequency": "Replica OSM; frequenza non verificata",
  "checks": [
   {
    "name": "usage policy",
@@ -54,5 +54,5 @@
   "Reverse: Scurelle, Comunità Valsugana e Tesino, Provincia di Trento, Trentino-Alto Adige/Südtirol, Italia",
   "Uso previsto: mai dal client e mai per l'autocomplete. La ricerca dell'app usa un indice locale dei POI OSM; Nominatim pubblico resta un ripiego lato server con cache, oppure un'istanza self-hosted se serve geocoding di indirizzi."
  ],
- "checked_at": "2026-11-13T02:01:58+0000"
+ "checked_at": "2026-11-13T02:12:41+0000"
 }

@@ -7,7 +7,7 @@
  "license": "Dati ODbL 1.0 (© OpenStreetMap contributors); Protomaps: codice BSD, schema e stili aperti; OpenFreeMap: servizio gratuito «as-is»",
  "license_url": "https://openfreemap.org/tos/",
  "limits": "OpenFreeMap: niente raccolta automatica di tile, salvo download offline fino a 3.000 tile o 50 MB, max 4 richieste parallele, User-Agent identificativo. Protomaps: `pmtiles extract` scarica solo l'area richiesta con richieste HTTP range.",
- "update_frequency": "Protomaps: build giornaliero; OpenFreeMap: settimanale",
+ "update_frequency": "Protomaps: build giornaliero (verificato); OpenFreeMap: non verificata",
  "checks": [
   {
    "name": "Protomaps: elenco dei build",
@@ -68,5 +68,5 @@
   "CLI `pmtiles` (go-pmtiles): distribuita come binario su GitHub Releases e come immagine Docker; da questo ambiente GitHub Releases non è raggiungibile, quindi l'estrazione dell'area pilota va provata in CI o in locale (Fase 1).",
   "Lo screenshot dello spike di routing (reports/phase0/routing-spike) usa lo stile OpenFreeMap «liberty» con MapLibre GL JS: rendering verificato."
  ],
- "checked_at": "2026-11-13T02:08:03+0000"
+ "checked_at": "2026-11-13T02:12:41+0000"
 }

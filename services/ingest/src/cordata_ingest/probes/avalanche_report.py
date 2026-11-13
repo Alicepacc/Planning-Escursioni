@@ -25,7 +25,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         "licenza CC BY 4.0»)",
         license_url="https://avalanche.report/more/open-data",
         limits="File statici senza limiti pubblicati; un download per giorno e lingua basta.",
-        update_frequency="Giornaliera in stagione (pubblicazione alle 17, aggiornamento alle 8); "
+        update_frequency="Giornaliera in stagione (bollettino del 10/02 uscito alle 17 del 09/02); "
         "nessun bollettino fuori stagione",
     )
     winter = ctx.try_get(

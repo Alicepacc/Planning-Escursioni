@@ -26,7 +26,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         license_url="https://open-meteo.com/en/terms",
         limits="Free API: meno di 10.000 chiamate/giorno, 5.000/ora e 600/minuto, contate per "
         "indirizzo IP (header X-RateLimit-*). Nessuna chiave.",
-        update_frequency="Modelli aggiornati più volte al giorno; previsione fino a 16 giorni",
+        update_frequency="Previsione oraria (verificati 3 giorni); cadenza modelli non verificata",
     )
     lon, lat, ele = CIMA_NASSERE
     fc = ctx.try_get(

@@ -17,10 +17,10 @@ def run(ctx: ProbeContext) -> ProbeResult:
         source_id=PROBE_ID,
         name="Waymarked Trails (hiking)",
         format="JSON (elenchi, dettagli), GPX/KML/GeoJSON (geometria della relazione)",
-        license="ODbL 1.0 (dati OpenStreetMap); rendering CC BY-SA 3.0",
-        license_url="https://hiking.waymarkedtrails.org/help/legal",
+        license="ODbL 1.0 (dati OpenStreetMap)",
+        license_url="https://www.openstreetmap.org/copyright",
         limits="Nessun limite numerico pubblicato: servizio volontario, uso moderato e in cache.",
-        update_frequency="Aggiornamento continuo dai diff OSM (ritardo di minuti)",
+        update_frequency="Derivato da OSM; frequenza di aggiornamento non verificata",
     )
 
     # 1) elenco delle relazioni nella bbox del Lagorai

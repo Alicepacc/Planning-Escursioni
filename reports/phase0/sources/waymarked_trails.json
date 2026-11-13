@@ -4,10 +4,10 @@
  "status": "ok",
  "reachable": true,
  "format": "JSON (elenchi, dettagli), GPX/KML/GeoJSON (geometria della relazione)",
- "license": "ODbL 1.0 (dati OpenStreetMap); rendering CC BY-SA 3.0",
- "license_url": "https://hiking.waymarkedtrails.org/help/legal",
+ "license": "ODbL 1.0 (dati OpenStreetMap)",
+ "license_url": "https://www.openstreetmap.org/copyright",
  "limits": "Nessun limite numerico pubblicato: servizio volontario, uso moderato e in cache.",
- "update_frequency": "Aggiornamento continuo dai diff OSM (ritardo di minuti)",
+ "update_frequency": "Derivato da OSM; frequenza di aggiornamento non verificata",
  "checks": [
   {
    "name": "elenco relazioni per bbox",
@@ -71,5 +71,5 @@
   "Relazione 7034586: ref='332', name='Sentiero di Rava e di Caldenave', cai_scale='E', osmc:symbol='red:red:white_stripe:332:black'; geometrie in EPSG:3857 (anche la bbox di by_area va passata in EPSG:3857)",
   "L'export GPX indicato nella SPEC (/details/relation/{id}/geometry/gpx) risponde HTTP 404: l'API attuale restituisce la geometria ordinata dentro il dettaglio JSON, che è ciò che serve per la verifica incrociata dell'ordinamento."
  ],
- "checked_at": "2026-11-13T02:09:06+0000"
+ "checked_at": "2026-11-13T02:12:06+0000"
 }

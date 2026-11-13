@@ -20,7 +20,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         limits="OpenFreeMap: niente raccolta automatica di tile, salvo download offline fino a "
         "3.000 tile o 50 MB, max 4 richieste parallele, User-Agent identificativo. Protomaps: "
         "`pmtiles extract` scarica solo l'area richiesta con richieste HTTP range.",
-        update_frequency="Protomaps: build giornaliero; OpenFreeMap: settimanale",
+        update_frequency="Protomaps: build giornaliero (verificato); OpenFreeMap: non verificata",
     )
     builds = ctx.try_get(r, "Protomaps: elenco dei build", PM_BUILDS, ttl=86400)
     if builds:

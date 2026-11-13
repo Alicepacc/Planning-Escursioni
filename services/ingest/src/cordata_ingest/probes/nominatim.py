@@ -21,7 +21,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         license_url=POLICY,
         limits="Massimo assoluto 1 richiesta/secondo, User-Agent o Referer identificativo, "
         "niente autocomplete, risultati da mettere in cache; vietato l'uso massivo.",
-        update_frequency="Continua (replica OSM)",
+        update_frequency="Replica OSM; frequenza non verificata",
     )
     policy = ctx.try_get(r, "usage policy", POLICY, ttl=30 * 86400)
     if policy:

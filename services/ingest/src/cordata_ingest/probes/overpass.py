@@ -18,7 +18,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         format="JSON / XML (Overpass QL)",
         license="ODbL 1.0 (dati OpenStreetMap)",
         license_url=POLICY,
-        update_frequency="Replica OSM con ritardo di minuti",
+        update_frequency="Replica OSM; ritardo non verificato",
     )
     try:
         status = ctx.client.get(f"{MAIN}/status", ttl=None)

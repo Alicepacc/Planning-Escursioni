@@ -7,7 +7,7 @@
  "license": "ODbL 1.0 (dati OpenStreetMap)",
  "license_url": "https://dev.overpass-api.de/overpass-doc/en/preface/commons.html",
  "limits": "Istanza principale: «users are expected to send a maximum of about 10000 requests per day and keep their download volume below about 1 GB per day»; oltre il limite risponde 429. Le istanze alternative hanno regole proprie.",
- "update_frequency": "Replica OSM con ritardo di minuti",
+ "update_frequency": "Replica OSM; ritardo non verificato",
  "checks": [
   {
    "name": "istanza principale overpass-api.de",
@@ -56,5 +56,5 @@
   "overpass-api.de chiude la connessione da questo ambiente cloud (reset durante il TLS, anche per robots.txt): da verificare da una rete normale.",
   "In produzione Overpass non serve: i dati arrivano dall'estratto .osm.pbf locale. Resta uno strumento da sviluppatore, da usare a mano e con parsimonia."
  ],
- "checked_at": "2026-11-13T02:05:21+0000"
+ "checked_at": "2026-11-13T02:12:08+0000"
 }

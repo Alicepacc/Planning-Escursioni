@@ -7,7 +7,7 @@
  "license": "STA: CC0 (dichiarata dall'API Open Data Hub); Trentino Trasporti: CC BY 4.0 (catalogo dati.trentino.it)",
  "license_url": "https://dati.trentino.it/dataset/trasporti-pubblici-del-trentino-formato-gtfs",
  "limits": "File statici; nessun limite pubblicato.",
- "update_frequency": "Per cambio orario (STA più volte l'anno; Trentino: vedi catalogo)",
+ "update_frequency": "Per cambio orario: la validità di ogni feed si legge nei suoi file",
  "checks": [
   {
    "name": "Open Data Hub: elenco dataset GTFS",
@@ -69,5 +69,5 @@
   "STA Alto Adige: 153.5 MB, 6461 fermate (6245 nell'area pilota, 6 nella bbox Lagorai); validità fino al 20261212 (calendar.txt)",
   "Trentino extraurbano: 11.1 MB, 2857 fermate (2857 nell'area pilota, 82 nella bbox Lagorai); validità fino al 20270625 (feed_info.txt)"
  ],
- "checked_at": "2026-11-13T02:02:00+0000"
+ "checked_at": "2026-11-13T02:12:42+0000"
 }

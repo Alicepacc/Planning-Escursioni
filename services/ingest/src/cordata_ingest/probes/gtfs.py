@@ -67,7 +67,7 @@ def run(ctx: ProbeContext) -> ProbeResult:
         "(catalogo dati.trentino.it)",
         license_url=TT_PAGE,
         limits="File statici; nessun limite pubblicato.",
-        update_frequency="Per cambio orario (STA più volte l'anno; Trentino: vedi catalogo)",
+        update_frequency="Per cambio orario: la validità di ogni feed si legge nei suoi file",
     )
     listing = ctx.try_get(r, "Open Data Hub: elenco dataset GTFS", f"{ODH}/dataset", ttl=86400)
     sta_url = f"{ODH}/dataset/sta-time-tables/raw"

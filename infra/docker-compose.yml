@@ -1,0 +1,31 @@
+# Ambiente di sviluppo locale: PostGIS + GraphHopper. Non contiene segreti di produzione.
+# Avvio: docker compose -f infra/docker-compose.yml up -d
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: cordata
+      POSTGRES_USER: cordata
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cordata-dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cordata -d cordata"]
+      interval: 5s
+      retries: 10
+
+  routing:
+    build: ../services/routing
+    # il grafo si costruisce al primo avvio dall'estratto in data/osm (vedi services/routing/README.md)
+    volumes:
+      - ../data/osm:/data/osm:ro
+      - ../data/routing/graphhopper:/data/graphhopper
+    ports:
+      - "8989:8989"
+    environment:
+      JAVA_OPTS: "-Xmx4g -Xms1g"
+
+volumes:
+  pgdata:
