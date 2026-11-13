@@ -8,7 +8,7 @@ stato possibile verificare è indicato come tale.
 | Voce della SPEC (§11, Fase 0) | Esito |
 |---|---|
 | Monorepo `apps/web`, `services/ingest`, `services/routing`, `infra/` | fatto |
-| Linting, test, CI | fatto: 28 test Python, 8 test web, lint e build verdi in locale; la CI GitHub è scritta ma **non ancora vista girare** |
+| Linting, test, CI | fatto: 28 test Python, 8 test web, lint e build verdi in locale e nella CI di GitHub Actions (prima esecuzione riuscita il 13/11) |
 | Verifica di ogni fonte del §6 con script di campionamento | fatto: 15 script, registro in `docs/data-sources.md` |
 | Spike di routing GraphHopper vs BRouter sulla fixture | fatto: `reports/phase0/routing-spike/` |
 | Scelta dello stack | proposta in `docs/decisions/0001-stack.md` |
@@ -77,8 +77,8 @@ per il routing; PostGIS (Supabase o self-hosted, da decidere con il budget). Mot
 
 ## 5. Cosa non è stato verificato
 
-- La CI su GitHub Actions e i file Docker (`infra/docker-compose.yml`,
-  `services/routing/Dockerfile`): scritti ma mai eseguiti (in questo ambiente non c'è Docker).
+- I file Docker (`infra/docker-compose.yml`, `services/routing/Dockerfile`): scritti ma mai
+  eseguiti (in questo ambiente non c'è Docker).
 - Geofabrik e l'istanza principale di Overpass: irraggiungibili da questo ambiente.
 - L'estrazione dei PMTiles con la CLI `pmtiles` (binario non scaricabile da qui).
 - La copertura di `name:de` in Alto Adige (il campione è trentino).
