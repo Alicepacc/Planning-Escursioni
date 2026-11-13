@@ -1,0 +1,66 @@
+{
+ "source_id": "waymarked_trails",
+ "name": "Waymarked Trails (hiking)",
+ "status": "parziale",
+ "reachable": true,
+ "format": "JSON (elenchi, dettagli), GPX/KML/GeoJSON (geometria della relazione)",
+ "license": "ODbL 1.0 (dati OpenStreetMap); rendering CC BY-SA 3.0",
+ "license_url": "https://hiking.waymarkedtrails.org/help/legal",
+ "limits": "Nessun limite numerico pubblicato: servizio volontario, uso moderato e in cache.",
+ "update_frequency": "Aggiornamento continuo dai diff OSM (ritardo di minuti)",
+ "checks": [
+  {
+   "name": "elenco relazioni per bbox",
+   "ok": true,
+   "detail": "HTTP 200, 11612 byte, application/json",
+   "url": "https://hiking.waymarkedtrails.org/api/v1/list/by_area?bbox=1269042%2C5788365%2C1293532%2C5806027&limit=100"
+  },
+  {
+   "name": "la bbox Lagorai contiene relazioni escursionistiche",
+   "ok": true,
+   "detail": "58",
+   "url": null
+  },
+  {
+   "name": "sentiero 332 presente nell'area",
+   "ok": true,
+   "detail": "id 7034586 – Sentiero di Rava e di Caldenave",
+   "url": null
+  },
+  {
+   "name": "sentiero 360 presente nell'area",
+   "ok": true,
+   "detail": "id 7078882 – Sentiero di Val D'Inferno e di Val Vendrame",
+   "url": null
+  },
+  {
+   "name": "sentiero 326 presente nell'area",
+   "ok": false,
+   "detail": "non presente nell'elenco",
+   "url": null
+  },
+  {
+   "name": "dettaglio relazione",
+   "ok": true,
+   "detail": "HTTP 200, 30182 byte, application/json",
+   "url": "https://hiking.waymarkedtrails.org/api/v1/details/relation/7034586"
+  },
+  {
+   "name": "export GPX",
+   "ok": false,
+   "detail": "HTTP 404, 26 byte, application/json",
+   "url": "https://hiking.waymarkedtrails.org/api/v1/details/relation/7034586/geometry/gpx"
+  }
+ ],
+ "examples": [
+  "https://hiking.waymarkedtrails.org/api/v1/list/by_area?bbox=1269042%2C5788365%2C1293532%2C5806027&limit=100"
+ ],
+ "samples": [
+  "samples/waymarked_trails/list_by_area.json",
+  "samples/waymarked_trails/details_7034586.json"
+ ],
+ "notes": [
+  "Relazione 7034586: ref='332', name='Sentiero di Rava e di Caldenave', lunghezza mappata None m, cai_scale='E', osmc:symbol='red:red:white_stripe:332:black'"
+ ],
+ "checked_at": "2026-11-13T01:58:25+0000"
+}

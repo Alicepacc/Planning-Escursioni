@@ -1,0 +1,28 @@
+{
+  "titolo": "Anello in Val d'Inferno e Cima Nassere (2253 m)",
+  "gruppo_montuoso": "Catena del Lagorai",
+  "data": "2026-11-15",
+  "organizzatori": ["CAI Sezione di Merano", "CAI Sezione di Mestre", "Commissione Giovani CAI Alto Adige"],
+  "tipo_percorso": "anello",
+  "difficolta_cai": "EE",
+  "durata_dichiarata": "7:00",
+  "distanza_km": 15.5,
+  "dislivello_salita_m": 950,
+  "dislivello_discesa_m": 950,
+  "quota_max_m": 2253,
+  "partenza": { "nome": "Parcheggio Tedon", "quota_m": 1350, "comune": "Scurelle (TN)", "ora": "09:00" },
+  "sentieri_citati": ["332", "360", "326"],
+  "reti_citate": ["Alta Via del Granito", "Sentiero della Pace", "Translagorai", "Sentiero Italia CAI"],
+  "tratti_fuori_sentiero": ["traccia dal Lago Nassere a Cima Nassere"],
+  "punti_chiave_in_ordine": [
+    "Parcheggio Tedon (1350)", "strada forestale Campivelo", "Piana Caldenave (1752)",
+    "Rifugio Claudio e Renzo", "Laghi della Val d'Inferno (1950)", "Lago Nassere",
+    "Cima Nassere (2253)", "Laghetto del Cengello (1985)", "Cucuzzolo dei Morti (1924)",
+    "Malga Conseria (1848)", "Ponte Conseria (1460)", "Parcheggio Tedon"
+  ],
+  "mezzi": "mezzi propri/condivisi",
+  "attrezzatura": ["abbigliamento caldo", "calzature da montagna", "ramponcini consigliati"],
+  "note": ["pranzo al sacco", "rifugio chiuso per la stagione", "riservata CAI Giovani 18-35 anni"],
+  "cartografia": "Carta Tabacco 058",
+  "iscrizione": { "scadenza": "2026-11-13T18:30", "quota_eur": 5, "url_modulo": "<link al modulo della sezione>" }
+}

@@ -1,0 +1,76 @@
+# Sezioni CAI da cui scoprire le attività (SPEC §7.1). Verificato il 13/11/2026 con
+# `python -m cordata_ingest.probes cai_sections`. Nessun dato personale in questo file.
+#
+# site_type:
+#   wordpress_cai  – sottosito di organizzazione.cai.it (WordPress multisite, REST attiva)
+#   wordpress      – sito proprio WordPress con REST attiva
+#   sito_proprio   – CMS diverso: serve un adapter dedicato
+#   da_verificare  – sito ufficiale non individuato con certezza
+#
+# Per i siti WordPress l'elenco dei PDF è:
+#   {base_url}/wp-json/wp/v2/media?mime_type=application/pdf&per_page=100&page=N[&after=ISO8601]
+# con paginazione negli header X-WP-Total / X-WP-TotalPages.
+sections:
+  - slug: bolzano
+    name: CAI Sezione di Bolzano
+    group: CAI Alto Adige
+    base_url: https://organizzazione.cai.it/sez-bolzano-caiaa
+    site_type: wordpress_cai
+    pilot: true
+    notes: >-
+      Locandine singole per gita (convenzioni `NN_YYYYMMDD-Titolo`, `YYYY_MM_DD-Titolo`,
+      `YYYY-MM-DD Locandina Titolo`) mescolate a moduli, corsi, comunicati: serve il classificatore.
+  - slug: appiano
+    name: CAI Sezione di Appiano
+    group: CAI Alto Adige
+    base_url: https://organizzazione.cai.it/sez-appiano-caiaa
+    site_type: wordpress_cai
+    pilot: true
+    notes: Pubblica soprattutto il libretto annuale (PROGRAMMA-ATTIVITA-CAI-APPIANO-2026.pdf).
+  - slug: vipiteno
+    name: CAI Sezione di Vipiteno
+    group: CAI Alto Adige
+    base_url: https://organizzazione.cai.it/sez-vipiteno-caiaa
+    site_type: wordpress_cai
+    pilot: false
+    notes: Solo 4 PDF al momento della verifica.
+  - slug: bressanone
+    name: CAI Sezione di Bressanone
+    group: CAI Alto Adige
+    base_url: https://www.caibressanone.it
+    site_type: wordpress
+    pilot: true
+    notes: Sito proprio WordPress, REST attiva.
+  - slug: brunico
+    name: CAI Sezione di Brunico
+    group: CAI Alto Adige
+    base_url: https://www.caibrunico.it
+    site_type: wordpress
+    pilot: true
+    notes: Sito proprio WordPress, REST attiva.
+  - slug: mestre
+    name: CAI Sezione di Mestre
+    group: CAI Veneto
+    base_url: https://www.caimestre.it
+    site_type: wordpress
+    pilot: true
+    notes: Sito proprio WordPress, REST attiva, archivio ampio di PDF.
+  - slug: merano
+    name: CAI Sezione di Merano
+    group: CAI Alto Adige
+    base_url: null
+    site_type: da_verificare
+    pilot: false
+    notes: >-
+      Non è su organizzazione.cai.it/sez-merano-caiaa (404). Il dominio caimerano.it risponde ma
+      non espone API WordPress e il suo robots.txt restituisce una pagina di errore di un altro
+      sito: da non usare finché l'utente non conferma l'URL ufficiale della sezione.
+  - slug: sat
+    name: SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)
+    group: SAT
+    base_url: https://www.sat.tn.it
+    site_type: wordpress
+    pilot: false
+    notes: >-
+      Sede centrale; le gite sono organizzate dalle ~80 sezioni SAT locali, ciascuna con il
+      proprio canale: da mappare nella Fase 2.

@@ -1,0 +1,44 @@
+# GraphHopper (spike Fase 0) – profilo escursionistico per l'area pilota.
+# Avvio: vedi services/routing/README.md. I percorsi sono relativi alla cartella di lavoro
+# (data/routing/graphhopper), che non è versionata.
+graphhopper:
+  datareader.file: ../../osm/trentino-alto-adige.osm.pbf
+  graph.location: graph-cache
+  import.osm.ignored_highways: motorway,trunk
+
+  # Altimetria: tile SRTM 1" (formato "skadi") da AWS Open Data; interpolazione bilineare.
+  graph.elevation.provider: skadi
+  graph.elevation.cache_dir: elevation-cache
+  graph.elevation.interpolate: bilinear
+  graph.elevation.dataaccess: RAM_STORE
+
+  graph.encoded_values: >-
+    foot_access, foot_priority, foot_average_speed, foot_road_access, foot_network,
+    hike_rating, average_slope, max_slope, track_type, surface, road_class, osm_way_id
+
+  profiles:
+    # modello "hike" standard di GraphHopper (fino a sac_scale T5)
+    - name: hike
+      custom_model_files: [hike.json, foot_elevation.json]
+
+  # Nessuna contrazione (CH): i custom model per richiesta servono al planner (difficoltà massima)
+  # e alla ricostruzione delle tracce (preferenza per i sentieri citati).
+  profiles_ch: []
+  profiles_lm: []
+
+  routing.max_visited_nodes: 2000000
+  routing.snap_preventions_default: ""
+
+server:
+  application_connectors:
+    - type: http
+      port: 8989
+      bind_host: localhost
+  admin_connectors:
+    - type: http
+      port: 8990
+      bind_host: localhost
+  request_log:
+    appenders: []
+logging:
+  level: INFO

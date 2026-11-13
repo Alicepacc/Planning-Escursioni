@@ -1,0 +1,81 @@
+{
+ "source_id": "sat_trails",
+ "name": "SAT – sentieri del Trentino",
+ "status": "ok",
+ "reachable": true,
+ "format": "ZIP con GPX / KML (WGS84, EPSG:4326) o Shapefile (ETRS89 UTM 32N, EPSG:25832)",
+ "license": "ODbL 1.0; attribuzione richiesta: «© Società degli Alpinisti Tridentini (SAT)» con link a https://www.sat.tn.it/sentieri/",
+ "license_url": "https://www.sat.tn.it/sentieri/mappa-sentieri/",
+ "limits": "File statici, nessun limite pubblicato; la pagina chiede di accettare la licenza.",
+ "update_frequency": "Aggiornamenti all'inizio di ogni mese (dichiarato nella pagina)",
+ "checks": [
+  {
+   "name": "pagina di download e licenza",
+   "ok": true,
+   "detail": "HTTP 200, 686533 byte, text/html; charset=UTF-8",
+   "url": "https://www.sat.tn.it/sentieri/mappa-sentieri/"
+  },
+  {
+   "name": "la pagina dichiara la licenza ODbL",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "la pagina indica l'attribuzione a SAT",
+   "ok": true,
+   "detail": "",
+   "url": null
+  },
+  {
+   "name": "link ai tre formati (GPX, KML, SHP)",
+   "ok": true,
+   "detail": "https://sentieri.sat.tn.it/download/sentierisat.gpx.zip, https://sentieri.sat.tn.it/download/sentierisat.kml.zip, https://sentieri.sat.tn.it/download/sentierisat.shp.zip",
+   "url": null
+  },
+  {
+   "name": "download sentierisat.gpx.zip",
+   "ok": true,
+   "detail": "HTTP 200, 4986849 byte, application/zip",
+   "url": "https://sentieri.sat.tn.it/download/sentierisat.gpx.zip"
+  },
+  {
+   "name": "l'archivio contiene file GPX",
+   "ok": true,
+   "detail": "1080 GPX",
+   "url": null
+  },
+  {
+   "name": "sentiero 332 presente nei dati SAT",
+   "ok": true,
+   "detail": "est/E332.gpx, est/E332B.gpx, ovest/O332.gpx, ovest/O332A.gpx",
+   "url": null
+  },
+  {
+   "name": "sentiero 360 presente nei dati SAT",
+   "ok": true,
+   "detail": "est/E360.gpx, ovest/O360.gpx",
+   "url": null
+  },
+  {
+   "name": "sentiero 326 presente nei dati SAT",
+   "ok": true,
+   "detail": "est/E326.gpx, ovest/O326.gpx",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://sentieri.sat.tn.it/download/sentierisat.gpx.zip",
+  "https://sentieri.sat.tn.it/download/sentierisat.kml.zip",
+  "https://sentieri.sat.tn.it/download/sentierisat.shp.zip"
+ ],
+ "samples": [
+  "samples/sat_trails/sentierisat.gpx.zip"
+ ],
+ "notes": [
+  "sentierisat.gpx.zip: 5.0 MB, 1081 file; esempi: ['est/E101.gpx', 'est/E102.gpx', 'est/E102A.gpx', 'est/E102B.gpx']; Last-Modified: Thu, 12 Nov 2026 06:30:27 GMT",
+  "Primo GPX (est/E101.gpx): 421 punti traccia, quote assenti; intestazione: <?xml version=\"1.0\"?> <gpx version=\"1.1\" creator=\"GDAL 3.8.4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.topografix.com/GPX/1/1\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\"> <metadata> <bounds minlat=\"45.82716580000000",
+  "La pagina avverte che solo parte dei tracciati deriva da rilievo GPS di precisione: come da SPEC, i dati SAT arricchiscono e confrontano ma non sovrascrivono OSM."
+ ],
+ "checked_at": "2026-11-13T01:57:51+0000"
+}

@@ -1,0 +1,43 @@
+[project]
+name = "cordata-ingest"
+version = "0.1.0"
+description = "Cordata – worker di ingestion: verifica fonti, sincronizzazioni, pipeline attività CAI"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx>=0.27",
+  "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+# dipendenze pesanti usate dagli script di verifica e dalla pipeline (OSM, PDF, geometrie)
+geo = [
+  "osmium>=4",
+  "shapely>=2",
+  "pymupdf>=1.24",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cordata_ingest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # testo italiano: apostrofi e trattini tipografici ammessi

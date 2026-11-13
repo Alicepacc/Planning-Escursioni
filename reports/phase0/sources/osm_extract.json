@@ -1,0 +1,252 @@
+{
+ "source_id": "osm_extract",
+ "name": "OpenStreetMap – estratto regionale .osm.pbf",
+ "status": "parziale",
+ "reachable": true,
+ "format": "OSM PBF (nodi, way, relazioni con tutti i tag)",
+ "license": "ODbL 1.0 – © OpenStreetMap contributors",
+ "license_url": "https://www.openstreetmap.org/copyright",
+ "limits": "Un download per regione e per aggiornamento (file statici, niente API). OSM-FR vieta i client automatici via robots.txt; Geofabrik non verificabile da qui.",
+ "update_frequency": "Giornaliera (Estratti OSM Italia e OSM-FR); il progetto prevede settimanale",
+ "checks": [
+  {
+   "name": "Geofabrik: host raggiungibile",
+   "ok": false,
+   "detail": "errore di rete: ConnectError: [Errno 104] Connection reset by peer",
+   "url": "https://download.geofabrik.de/robots.txt"
+  },
+  {
+   "name": "OSM-FR: host raggiungibile",
+   "ok": true,
+   "detail": "robots.txt → HTTP 200",
+   "url": "https://download.openstreetmap.fr/robots.txt"
+  },
+  {
+   "name": "OSM-FR: download automatico consentito da robots.txt",
+   "ok": false,
+   "detail": "Disallow: / per tutti gli user-agent → fonte non usabile",
+   "url": "https://download.openstreetmap.fr/extracts/europe/italy/trentino_alto_adige.state.txt"
+  },
+  {
+   "name": "Estratti OSM Italia: testi informativi",
+   "ok": true,
+   "detail": "HTTP 200, 1828 byte, application/json",
+   "url": "https://osmit-estratti.wmcloud.org/locales/it.json"
+  },
+  {
+   "name": "Estratti OSM Italia: elenco regioni",
+   "ok": true,
+   "detail": "HTTP 200, 2725 byte, text/html; charset=UTF-8",
+   "url": "https://osmit-estratti.wmcloud.org/output/pbf/regioni/"
+  },
+  {
+   "name": "Estratti OSM Italia: regioni dell'area pilota",
+   "ok": true,
+   "detail": "04_Trentino-Alto_Adige-Südtirol.osm.pbf 113 MB del 12-Nov-2026 00:48; 05_Veneto.osm.pbf 242 MB del 12-Nov-2026 00:49",
+   "url": null
+  },
+  {
+   "name": "Estratti OSM Italia: download campione (comune di Scurelle)",
+   "ok": true,
+   "detail": "404884 byte, sha256 6a73ead8d8152b10…, Last-Modified Thu, 12 Nov 2026 01:35:02 GMT",
+   "url": "https://osmit-estratti.wmcloud.org/output/pbf/comuni/022171_Scurelle.osm.pbf"
+  },
+  {
+   "name": "campione comunale leggibile con pyosmium",
+   "ok": true,
+   "detail": "{'nodi': 38714, 'way': 3125, 'relazioni': 138}; relazioni escursionistiche nell'area: 25; sentieri della fixture presenti: ['326', '332', '360']",
+   "url": null
+  },
+  {
+   "name": "estratto regionale presente in data/osm/",
+   "ok": true,
+   "detail": "trentino_alto_adige-latest.osm.pbf, 137 MB",
+   "url": null
+  },
+  {
+   "name": "relazioni route=hiking nella bbox Lagorai",
+   "ok": true,
+   "detail": "59 (su 6253 nell'estratto)",
+   "url": null
+  },
+  {
+   "name": "tag ref sulle relazioni",
+   "ok": true,
+   "detail": "50/59 (84.7%)",
+   "url": null
+  },
+  {
+   "name": "tag cai_scale sulle relazioni",
+   "ok": true,
+   "detail": "41/59 (69.5%)",
+   "url": null
+  },
+  {
+   "name": "tag osmc:symbol sulle relazioni",
+   "ok": true,
+   "detail": "45/59 (76.3%)",
+   "url": null
+  },
+  {
+   "name": "tag duration:forward sulle relazioni",
+   "ok": true,
+   "detail": "37/59 (62.7%)",
+   "url": null
+  },
+  {
+   "name": "tag ascent sulle relazioni",
+   "ok": true,
+   "detail": "35/59 (59.3%)",
+   "url": null
+  },
+  {
+   "name": "tag ref:REI sulle relazioni",
+   "ok": false,
+   "detail": "0/59; in Trentino il prefisso SAT è in reg_ref (37/59)",
+   "url": null
+  },
+  {
+   "name": "sac_scale sui path",
+   "ok": true,
+   "detail": "849/1261 (67.3%), trail_visibility 67.2%; 356.4 km di path, 141.1 km dentro relazioni escursionistiche",
+   "url": null
+  },
+  {
+   "name": "fixture: Parcheggio Tedon",
+   "ok": true,
+   "detail": "2 oggetti; es. node 840891335 «Tedon» 46.148609,11.521522 ele=1350",
+   "url": null
+  },
+  {
+   "name": "fixture: Strada forestale Campivelo",
+   "ok": true,
+   "detail": "6 oggetti; es. node 297785975 «Ponte Campivelo» 46.145708,11.533964 ele=1499",
+   "url": null
+  },
+  {
+   "name": "fixture: Piana Caldenave",
+   "ok": true,
+   "detail": "1 oggetti; es. node 5085395985 «Piana Caldenave» 46.132426,11.548391 ele=1780",
+   "url": null
+  },
+  {
+   "name": "fixture: Rifugio Claudio e Renzo",
+   "ok": true,
+   "detail": "1 oggetti; es. way 125155395 «Rifugio Malga Caldenave \"Claudio e Renzo\"» 46.134645,11.544509 ele=1792",
+   "url": null
+  },
+  {
+   "name": "fixture: Laghi della Val d'Inferno",
+   "ok": true,
+   "detail": "1 oggetti; es. node 471948773 «Laghi Val del'Inferno» 46.142094,11.552249 ele=1958",
+   "url": null
+  },
+  {
+   "name": "fixture: Lago Nassere",
+   "ok": true,
+   "detail": "4 oggetti; es. way 104198239 «Lago Nassere (Busa del Lago)» 46.147699,11.549063 ele=None",
+   "url": null
+  },
+  {
+   "name": "fixture: Cima Nassere",
+   "ok": true,
+   "detail": "1 oggetti; es. node 4732288836 «Cima Nassere» 46.150821,11.550534 ele=2253",
+   "url": null
+  },
+  {
+   "name": "fixture: Laghetto del Cengello",
+   "ok": true,
+   "detail": "3 oggetti; es. way 170790528 «Rio laghetto di Monte Cengello» 46.160918,11.554456 ele=None",
+   "url": null
+  },
+  {
+   "name": "fixture: Cucuzzolo dei Morti",
+   "ok": true,
+   "detail": "1 oggetti; es. node 3252444311 «Cocuzzolo dei Morti» 46.17224,11.545211 ele=None",
+   "url": null
+  },
+  {
+   "name": "fixture: Malga Conseria",
+   "ok": true,
+   "detail": "9 oggetti; es. node 10716055966 «Rifugio Malga Conseria» 46.170365,11.539451 ele=1845",
+   "url": null
+  },
+  {
+   "name": "fixture: Ponte Conseria",
+   "ok": true,
+   "detail": "4 oggetti; es. node 1820543037 «Ponte Conseria» 46.161152,11.52899 ele=1460",
+   "url": null
+  },
+  {
+   "name": "fixture: sentiero 332",
+   "ok": true,
+   "detail": "relazione 7034586 «Sentiero di Rava e di Caldenave» cai_scale=E reg_ref=E332",
+   "url": null
+  },
+  {
+   "name": "fixture: sentiero 360",
+   "ok": true,
+   "detail": "relazione 7078882 «Sentiero di Val D'Inferno e di Val Vendrame» cai_scale=E reg_ref=E360",
+   "url": null
+  },
+  {
+   "name": "fixture: sentiero 326",
+   "ok": true,
+   "detail": "relazione 7070415 «» cai_scale=E reg_ref=E326",
+   "url": null
+  },
+  {
+   "name": "fixture: rete «Alta Via del Granito»",
+   "ok": true,
+   "detail": "relazioni 11539317",
+   "url": null
+  },
+  {
+   "name": "fixture: rete «Sentiero della Pace»",
+   "ok": true,
+   "detail": "relazioni 3477430",
+   "url": null
+  },
+  {
+   "name": "fixture: rete «Translagorai»",
+   "ok": true,
+   "detail": "relazioni 17017471, 17017699",
+   "url": null
+  },
+  {
+   "name": "fixture: rete «Sentiero Italia CAI»",
+   "ok": true,
+   "detail": "relazioni 1029179, 10014677, 12295344",
+   "url": null
+  }
+ ],
+ "examples": [
+  "https://osmit-estratti.wmcloud.org/output/pbf/regioni/04_Trentino-Alto_Adige-Südtirol.osm.pbf",
+  "https://osmit-estratti.wmcloud.org/output/pbf/regioni/05_Veneto.osm.pbf",
+  "https://osmit-estratti.wmcloud.org/output/pbf/comuni/022171_Scurelle.osm.pbf"
+ ],
+ "samples": [
+  "samples/osm_extract/022171_Scurelle.osm.pbf",
+  "samples/osm_extract/lagorai_summary.json",
+  "samples/osm_extract/fixture_val_inferno_osm.json"
+ ],
+ "notes": [
+  "Geofabrik non è verificabile da questo ambiente (connessione chiusa durante il TLS): licenza, dimensione di nord-est-latest.osm.pbf e copertura del Tirolo restano da controllare da una rete normale.",
+  "robots.txt di OSM-FR: 'User-agent: / * / Disallow: / /'",
+  "Estratti OSM Italia: «Estratti OpenStreetMap Italia è un servizio che permette di estrarre dati relativi all’Italia presenti nel database OpenStreetMap.» «I dati sono aggiornati con frequenza giornaliera.»",
+  "Estratto analizzato: trentino_alto_adige-latest.osm.pbf, md5 a11c22ebedbdf17a49f88bc5cd9fdbf0",
+  "POI acqua potabile (amenity=drinking_water): 161 – name 1.9%, name:it 0.0%, name:de 0.0%, ele 0.0%",
+  "POI bivacco (tourism=wilderness_hut): 15 – name 93.3%, name:it 0.0%, name:de 0.0%, ele 40.0%",
+  "POI cima (natural=peak): 71 – name 85.9%, name:it 0.0%, name:de 0.0%, ele 100.0%",
+  "POI lago / specchio d'acqua (natural=water): 65 – name 32.3%, name:it 0.0%, name:de 0.0%, ele 6.2%",
+  "POI località (place=locality): 170 – name 99.4%, name:it 0.0%, name:de 0.0%, ele 6.5%",
+  "POI palina segnavia (information=guidepost): 231 – name 31.6%, name:it 0.0%, name:de 0.0%, ele 21.6%",
+  "POI parcheggio (amenity=parking): 567 – name 3.5%, name:it 0.0%, name:de 0.0%, ele 0.4%",
+  "POI punto panoramico (tourism=viewpoint): 12 – name 16.7%, name:it 0.0%, name:de 0.0%, ele 16.7%",
+  "POI rifugio (tourism=alpine_hut): 4 – name 100.0%, name:it 0.0%, name:de 0.0%, ele 75.0%",
+  "POI riparo (amenity=shelter): 43 – name 53.5%, name:it 0.0%, name:de 0.0%, ele 25.6%",
+  "POI sella (natural=saddle / mountain_pass): 24 – name 95.8%, name:it 0.0%, name:de 0.0%, ele 83.3%",
+  "POI sorgente (natural=spring): 24 – name 8.3%, name:it 0.0%, name:de 0.0%, ele 0.0%"
+ ],
+ "checked_at": "2026-11-12T21:17:39+0000"
+}

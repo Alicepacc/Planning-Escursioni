@@ -1,0 +1,138 @@
+{
+ "source_id": "cai_sections",
+ "name": "Siti delle sezioni CAI (locandine e programmi PDF)",
+ "status": "parziale",
+ "reachable": true,
+ "format": "WordPress REST (JSON) → PDF; siti non WordPress: HTML",
+ "license": "Contenuti delle sezioni; uso consentito dal CAI con citazione dei crediti (§3). Dati personali dei capigita mai memorizzati.",
+ "license_url": "",
+ "limits": "Nessun limite pubblicato: 1 richiesta ogni pochi secondi per host; robots.txt vieta solo /wp-admin/.",
+ "update_frequency": "Irregolare: nuove locandine 1-3 settimane prima di ogni gita",
+ "checks": [
+  {
+   "name": "bolzano: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 24555 byte, application/json; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/sez-bolzano-caiaa/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "appiano: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 8927 byte, application/json; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/sez-appiano-caiaa/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "vipiteno: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 859 byte, application/json; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/sez-vipiteno-caiaa/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "bressanone: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 15950 byte, application/json; charset=UTF-8",
+   "url": "https://www.caibressanone.it/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "brunico: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 253358 byte, application/json; charset=UTF-8",
+   "url": "https://www.caibrunico.it/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "mestre: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 20335 byte, application/json; charset=UTF-8",
+   "url": "https://www.caimestre.it/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "merano: sito verificabile",
+   "ok": false,
+   "detail": "da_verificare: None",
+   "url": null
+  },
+  {
+   "name": "sat: elenco PDF via REST",
+   "ok": true,
+   "detail": "HTTP 200, 21155 byte, application/json; charset=UTF-8",
+   "url": "https://www.sat.tn.it/wp-json/wp/v2/media?_fields=id%2Cdate%2Ctitle%2Csource_url&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "bolzano: filtro incrementale after=",
+   "ok": true,
+   "detail": "HTTP 200, 547 byte, application/json; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/sez-bolzano-caiaa/wp-json/wp/v2/media?_fields=id%2Cdate&after=2026-10-01T00%3A00%3A00&mime_type=application%2Fpdf&per_page=100"
+  },
+  {
+   "name": "after= restituisce solo PDF successivi alla data",
+   "ok": true,
+   "detail": "13 PDF",
+   "url": null
+  },
+  {
+   "name": "bolzano: sitemap XML (fallback)",
+   "ok": false,
+   "detail": "HTTP 404, 117763 byte, text/html; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/sez-bolzano-caiaa/wp-sitemap.xml"
+  },
+  {
+   "name": "download locandina di gita (Bolzano)",
+   "ok": true,
+   "detail": "HTTP 200, 411256 byte, application/pdf",
+   "url": "https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/10/32_20261011-Val-di-Cembra-Tappa-2.pdf"
+  },
+  {
+   "name": "locandina di gita (Bolzano): testo estraibile senza OCR",
+   "ok": true,
+   "detail": "32_20261011-Val-di-Cembra-Tappa-2.pdf: {'pagine': 1, 'caratteri': 2750, 'immagini': 3, 'testuale': True}",
+   "url": null
+  },
+  {
+   "name": "download libretto annuale (Appiano)",
+   "ok": true,
+   "detail": "HTTP 200, 1751208 byte, application/pdf",
+   "url": "https://organizzazione.cai.it/sez-appiano-caiaa/wp-content/uploads/sites/152/2025/12/PROGRAMMA-ATTIVITA-CAI-APPIANO-2026-1.pdf"
+  },
+  {
+   "name": "libretto annuale (Appiano): testo estraibile senza OCR",
+   "ok": true,
+   "detail": "PROGRAMMA-ATTIVITA-CAI-APPIANO-2026-1.pdf: {'pagine': 21, 'caratteri': 33079, 'immagini': 8, 'testuale': True}",
+   "url": null
+  },
+  {
+   "name": "Quaderno n.1 CCE (formula dei tempi, §8)",
+   "ok": true,
+   "detail": "HTTP 200, 6967498 byte, application/pdf",
+   "url": "https://organizzazione.cai.it/sez-appiano-caiaa/wp-content/uploads/sites/152/2026/02/SENTIERI-QUADERNO-NR.-1-CCE.pdf"
+  },
+  {
+   "name": "namespace REST cai-activities/v1",
+   "ok": true,
+   "detail": "HTTP 200, 8323 byte, application/json; charset=UTF-8",
+   "url": "https://organizzazione.cai.it/wp-json/cai-activities/v1"
+  }
+ ],
+ "examples": [
+  "https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/10/32_20261011-Val-di-Cembra-Tappa-2.pdf",
+  "https://organizzazione.cai.it/sez-appiano-caiaa/wp-content/uploads/sites/152/2025/12/PROGRAMMA-ATTIVITA-CAI-APPIANO-2026-1.pdf"
+ ],
+ "samples": [
+  "samples/cai_sections/32_20261011-Val-di-Cembra-Tappa-2.pdf",
+  "samples/cai_sections/PROGRAMMA-ATTIVITA-CAI-APPIANO-2026-1.pdf",
+  "samples/cai_sections/SENTIERI-QUADERNO-NR.-1-CCE.pdf"
+ ],
+ "notes": [
+  "bolzano: 116 PDF totali (2 pagine da 100); tra gli ultimi 100, 52 hanno un nome file da locandina datata; più recente 2026-11-09",
+  "appiano: 33 PDF totali (1 pagine da 100); tra gli ultimi 33, 0 hanno un nome file da locandina datata; più recente 2026-11-10",
+  "vipiteno: 4 PDF totali (1 pagine da 100); tra gli ultimi 4, 0 hanno un nome file da locandina datata; più recente 2024-12-29",
+  "bressanone: 194 PDF totali (2 pagine da 100); tra gli ultimi 77, 1 hanno un nome file da locandina datata; più recente 2026-11-06",
+  "brunico: 121 PDF totali (2 pagine da 100); tra gli ultimi 100, 1 hanno un nome file da locandina datata; più recente 2026-10-29",
+  "mestre: 613 PDF totali (7 pagine da 100); tra gli ultimi 100, 16 hanno un nome file da locandina datata; più recente 2026-11-01",
+  "sat: 1133 PDF totali (12 pagine da 100); tra gli ultimi 100, 1 hanno un nome file da locandina datata; più recente 2026-11-06",
+  "Quaderno n.1: {'pagine': 104, 'caratteri': 168227, 'immagini': 143, 'testuale': True}",
+  "organizzazione.cai.it espone il namespace REST «cai-activities/v1» (rotte: difficulties, group-classes, groups, map, not-members-registration, provinces, regional-groups, regions, search, section-list, sections, starting-regions, subsection, themes, typologies). La ricerca è POST e risponde 403 «Origin header mancante»: è un'API riservata ai frontend del CAI e NON viene usata senza autorizzazione esplicita (SPEC §13-bis).",
+  "Il nome del file è un segnale debole: il prefisso con data cattura anche documenti come «2026_11_03-Guida-alla-prima-iscrizione-online» (Bolzano). Serve il classificatore sul contenuto (SPEC §7.3).",
+  "Locandina reale della fixture (Val d'Inferno, 15/11/2026): non trovata con la ricerca «Nassere» / «Inferno» sul sito di CAI Mestre; il sito di CAI Merano è da individuare."
+ ],
+ "checked_at": "2026-11-13T01:58:08+0000"
+}

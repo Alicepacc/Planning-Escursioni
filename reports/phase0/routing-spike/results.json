@@ -1,0 +1,692 @@
+{
+ "generated_at": "2026-11-13T01:46:07+0000",
+ "declared": {
+  "km": 15.5,
+  "up": 950,
+  "max": 2253,
+  "duration": "7:00"
+ },
+ "osm_extract": "trentino-alto-adige.osm.pbf",
+ "dem": "SRTM 1 arcsec (tile skadi, AWS Open Data), bilineare, passo 15 m, media mobile 75 m",
+ "runs": [
+  {
+   "engine": "graphhopper",
+   "scenario": "completo",
+   "variant": "profilo hike",
+   "distance_km": 16.41,
+   "native": {
+    "distance_m": 16770.088,
+    "ascent_m": 1337.540283203125,
+    "descent_m": 1337.540283203125,
+    "time_h": 5.831516944444444
+   },
+   "dem": {
+    "ascent_raw_m": 1319,
+    "descent_raw_m": 1319,
+    "ascent_h5_m": 1065,
+    "descent_h5_m": 1069,
+    "ascent_h10_m": 1011,
+    "descent_h10_m": 1014,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.502,
+   "share_on_hiking_relations": 0.835,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.006,
+    "path": 0.802,
+    "service": 0.027,
+    "track": 0.039,
+    "unclassified": 0.125
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "360",
+    "fuori rete CAI",
+    "332",
+    "altro sentiero",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 49,
+   "waypoint_offsets_m": [
+    2,
+    7,
+    4,
+    10,
+    8,
+    49,
+    3,
+    37,
+    9,
+    10,
+    5,
+    2
+   ],
+   "din33466": "7:25",
+   "errors": {
+    "distance_pct": 5.9,
+    "ascent_pct": 6.4,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 47
+  },
+  {
+   "engine": "brouter",
+   "scenario": "completo",
+   "variant": "hiking-mountain",
+   "distance_km": 16.47,
+   "native": {
+    "distance_m": 17070.0,
+    "ascent_m": 1066.0,
+    "descent_m": null,
+    "time_h": 5.741388888888889
+   },
+   "dem": {
+    "ascent_raw_m": 1324,
+    "descent_raw_m": 1324,
+    "ascent_h5_m": 1068,
+    "descent_h5_m": 1067,
+    "ascent_h10_m": 989,
+    "descent_h10_m": 992,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2246,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.48,
+   "share_on_hiking_relations": 0.875,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.006,
+    "path": 0.854,
+    "service": 0.027,
+    "track": 0.041,
+    "unclassified": 0.072
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "360",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332",
+    "altro sentiero",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 49,
+   "waypoint_offsets_m": [
+    2,
+    7,
+    4,
+    10,
+    8,
+    49,
+    3,
+    37,
+    9,
+    10,
+    5,
+    2
+   ],
+   "din33466": "7:20",
+   "errors": {
+    "distance_pct": 6.2,
+    "ascent_pct": 4.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 121
+  },
+  {
+   "engine": "graphhopper",
+   "scenario": "rado",
+   "variant": "profilo hike",
+   "distance_km": 15.62,
+   "native": {
+    "distance_m": 15959.478,
+    "ascent_m": 1283.5772705078125,
+    "descent_m": 1283.5772705078125,
+    "time_h": 5.559425833333333
+   },
+   "dem": {
+    "ascent_raw_m": 1267,
+    "descent_raw_m": 1267,
+    "ascent_h5_m": 1014,
+    "descent_h5_m": 1016,
+    "ascent_h10_m": 980,
+    "descent_h10_m": 983,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.53,
+   "share_on_hiking_relations": 0.83,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.007,
+    "path": 0.792,
+    "service": 0.03,
+    "track": 0.041,
+    "unclassified": 0.13
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 10,
+   "waypoint_offsets_m": [
+    2,
+    10,
+    3,
+    10,
+    2
+   ],
+   "din33466": "7:10",
+   "errors": {
+    "distance_pct": 0.8,
+    "ascent_pct": 3.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 33
+  },
+  {
+   "engine": "brouter",
+   "scenario": "rado",
+   "variant": "hiking-mountain",
+   "distance_km": 15.72,
+   "native": {
+    "distance_m": 16286.0,
+    "ascent_m": 1020.0,
+    "descent_m": null,
+    "time_h": 5.735555555555556
+   },
+   "dem": {
+    "ascent_raw_m": 1277,
+    "descent_raw_m": 1277,
+    "ascent_h5_m": 1022,
+    "descent_h5_m": 1024,
+    "ascent_h10_m": 989,
+    "descent_h10_m": 992,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2246,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.504,
+   "share_on_hiking_relations": 0.869,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.007,
+    "path": 0.847,
+    "service": 0.029,
+    "track": 0.043,
+    "unclassified": 0.075
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "360",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 10,
+   "waypoint_offsets_m": [
+    2,
+    10,
+    3,
+    10,
+    2
+   ],
+   "din33466": "7:15",
+   "errors": {
+    "distance_pct": 1.4,
+    "ascent_pct": 4.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 62
+  },
+  {
+   "engine": "graphhopper",
+   "scenario": "rado",
+   "variant": "hike + preferenza sentieri citati",
+   "distance_km": 15.62,
+   "native": {
+    "distance_m": 15959.478,
+    "ascent_m": 1283.5772705078125,
+    "descent_m": 1283.5772705078125,
+    "time_h": 5.559425833333333
+   },
+   "dem": {
+    "ascent_raw_m": 1267,
+    "descent_raw_m": 1267,
+    "ascent_h5_m": 1014,
+    "descent_h5_m": 1016,
+    "ascent_h10_m": 980,
+    "descent_h10_m": 983,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.53,
+   "share_on_hiking_relations": 0.83,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.007,
+    "path": 0.792,
+    "service": 0.03,
+    "track": 0.041,
+    "unclassified": 0.13
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 10,
+   "waypoint_offsets_m": [
+    2,
+    10,
+    3,
+    10,
+    2
+   ],
+   "din33466": "7:10",
+   "errors": {
+    "distance_pct": 0.8,
+    "ascent_pct": 3.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 155
+  },
+  {
+   "engine": "graphhopper",
+   "scenario": "rado",
+   "variant": "hike, difficoltà max E",
+   "distance_km": 15.62,
+   "native": {
+    "distance_m": 15959.478,
+    "ascent_m": 1283.5772705078125,
+    "descent_m": 1283.5772705078125,
+    "time_h": 5.559425833333333
+   },
+   "dem": {
+    "ascent_raw_m": 1267,
+    "descent_raw_m": 1267,
+    "ascent_h5_m": 1014,
+    "descent_h5_m": 1016,
+    "ascent_h10_m": 980,
+    "descent_h10_m": 983,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.53,
+   "share_on_hiking_relations": 0.83,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.007,
+    "path": 0.792,
+    "service": 0.03,
+    "track": 0.041,
+    "unclassified": 0.13
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 10,
+   "waypoint_offsets_m": [
+    2,
+    10,
+    3,
+    10,
+    2
+   ],
+   "din33466": "7:10",
+   "errors": {
+    "distance_pct": 0.8,
+    "ascent_pct": 3.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 44
+  },
+  {
+   "engine": "brouter",
+   "scenario": "rado",
+   "variant": "hiking-mountain, max T2",
+   "distance_km": 15.72,
+   "native": {
+    "distance_m": 16286.0,
+    "ascent_m": 1020.0,
+    "descent_m": null,
+    "time_h": 5.735555555555556
+   },
+   "dem": {
+    "ascent_raw_m": 1277,
+    "descent_raw_m": 1277,
+    "ascent_h5_m": 1022,
+    "descent_h5_m": 1024,
+    "ascent_h10_m": 989,
+    "descent_h10_m": 992,
+    "max_ele_m": 2232,
+    "min_ele_m": 1347
+   },
+   "native_max_ele_m": 2246,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.504,
+   "share_on_hiking_relations": 0.869,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "footway": 0.007,
+    "path": 0.847,
+    "service": 0.029,
+    "track": 0.043,
+    "unclassified": 0.075
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "360",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "326",
+    "fuori rete CAI",
+    "326",
+    "altro sentiero",
+    "fuori rete CAI",
+    "altro sentiero",
+    "332"
+   ],
+   "max_waypoint_offset_m": 10,
+   "waypoint_offsets_m": [
+    2,
+    10,
+    3,
+    10,
+    2
+   ],
+   "din33466": "7:15",
+   "errors": {
+    "distance_pct": 1.4,
+    "ascent_pct": 4.1,
+    "max_ele_m": -21
+   },
+   "status": "auto_ok",
+   "ms": 71
+  },
+  {
+   "engine": "graphhopper",
+   "scenario": "minimo",
+   "variant": "profilo hike",
+   "distance_km": 10.69,
+   "native": {
+    "distance_m": 11020.129,
+    "ascent_m": 1080.0877685546875,
+    "descent_m": 1080.0877685546875,
+    "time_h": 4.269380277777778
+   },
+   "dem": {
+    "ascent_raw_m": 1074,
+    "descent_raw_m": 1074,
+    "ascent_h5_m": 987,
+    "descent_h5_m": 984,
+    "ascent_h10_m": 960,
+    "descent_h10_m": 959,
+    "max_ele_m": 2232,
+    "min_ele_m": 1360
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.16,
+   "share_on_hiking_relations": 0.72,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "path": 0.929,
+    "service": 0.011,
+    "track": 0.06
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "332"
+   ],
+   "max_waypoint_offset_m": 3,
+   "waypoint_offsets_m": [
+    2,
+    3,
+    2
+   ],
+   "din33466": "6:25",
+   "errors": {
+    "distance_pct": -31.0,
+    "ascent_pct": 1.0,
+    "max_ele_m": -21
+   },
+   "status": "da_rivedere",
+   "ms": 39
+  },
+  {
+   "engine": "brouter",
+   "scenario": "minimo",
+   "variant": "hiking-mountain",
+   "distance_km": 10.69,
+   "native": {
+    "distance_m": 11180.0,
+    "ascent_m": 999.0,
+    "descent_m": null,
+    "time_h": 5.250277777777778
+   },
+   "dem": {
+    "ascent_raw_m": 1073,
+    "descent_raw_m": 1073,
+    "ascent_h5_m": 977,
+    "descent_h5_m": 974,
+    "ascent_h10_m": 947,
+    "descent_h10_m": 946,
+    "max_ele_m": 2232,
+    "min_ele_m": 1360
+   },
+   "native_max_ele_m": 2246,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.16,
+   "share_on_hiking_relations": 0.72,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "path": 0.929,
+    "service": 0.011,
+    "track": 0.06
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "fuori rete CAI",
+    "altro sentiero",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "altro sentiero",
+    "fuori rete CAI",
+    "332"
+   ],
+   "max_waypoint_offset_m": 3,
+   "waypoint_offsets_m": [
+    2,
+    3,
+    2
+   ],
+   "din33466": "6:25",
+   "errors": {
+    "distance_pct": -31.0,
+    "ascent_pct": -0.3,
+    "max_ele_m": -21
+   },
+   "status": "da_rivedere",
+   "ms": 44
+  },
+  {
+   "engine": "graphhopper",
+   "scenario": "minimo",
+   "variant": "hike + preferenza sentieri citati",
+   "distance_km": 12.15,
+   "native": {
+    "distance_m": 12446.397,
+    "ascent_m": 1092.0814208984375,
+    "descent_m": 1092.0814208984375,
+    "time_h": 4.619930277777778
+   },
+   "dem": {
+    "ascent_raw_m": 1084,
+    "descent_raw_m": 1084,
+    "ascent_h5_m": 962,
+    "descent_h5_m": 961,
+    "ascent_h10_m": 909,
+    "descent_h10_m": 902,
+    "max_ele_m": 2232,
+    "min_ele_m": 1360
+   },
+   "native_max_ele_m": 2231,
+   "loop_closure_m": 0.0,
+   "share_on_cited_trails": 0.871,
+   "share_on_hiking_relations": 0.871,
+   "share_unmatched": 0.0,
+   "highway_share": {
+    "path": 0.901,
+    "service": 0.044,
+    "track": 0.054
+   },
+   "max_sac_scale": "mountain_hiking",
+   "trail_sequence": [
+    "332",
+    "360",
+    "fuori rete CAI",
+    "360",
+    "332"
+   ],
+   "max_waypoint_offset_m": 3,
+   "waypoint_offsets_m": [
+    2,
+    3,
+    2
+   ],
+   "din33466": "6:20",
+   "errors": {
+    "distance_pct": -21.6,
+    "ascent_pct": -4.3,
+    "max_ele_m": -21
+   },
+   "status": "da_rivedere",
+   "ms": 36
+  }
+ ]
+}

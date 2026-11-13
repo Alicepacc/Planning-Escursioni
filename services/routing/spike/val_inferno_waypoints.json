@@ -1,0 +1,23 @@
+{
+  "_nota": "Punti chiave della fixture golden (SPEC §2) geocodificati sugli oggetti OSM dell'estratto. Coordinate in WGS84 (lon, lat).",
+  "cited_relations": {"332": 7034586, "360": 7078882, "326": 7070415},
+  "waypoints": [
+    {"key": "tedon", "nome": "Parcheggio Tedon", "quota_dichiarata": 1350, "lon": 11.521522, "lat": 46.148609, "osm": "node/840891335 (palina «Tedon», ele 1350)"},
+    {"key": "campivelo", "nome": "strada forestale Campivelo", "quota_dichiarata": null, "lon": 11.534049, "lat": 46.145777, "osm": "node/840891531 (palina «Ponte Campivelo», ele 1499)"},
+    {"key": "caldenave", "nome": "Piana Caldenave", "quota_dichiarata": 1752, "lon": 11.54215, "lat": 46.137833, "osm": "node/840891800 (palina «Ponte Caldenave», ele 1752)"},
+    {"key": "rifugio", "nome": "Rifugio Claudio e Renzo", "quota_dichiarata": null, "lon": 11.544509, "lat": 46.134645, "osm": "way/125155395 (Rifugio Malga Caldenave «Claudio e Renzo», ele 1792)"},
+    {"key": "laghi_inferno", "nome": "Laghi della Val d'Inferno", "quota_dichiarata": 1950, "lon": 11.552249, "lat": 46.142094, "osm": "node/471948773 (palina «Laghi Val del'Inferno», ele 1958)"},
+    {"key": "lago_nassere", "nome": "Lago Nassere", "quota_dichiarata": null, "lon": 11.549063, "lat": 46.147699, "osm": "way/104198239 (Lago Nassere – Busa del Lago)"},
+    {"key": "cima_nassere", "nome": "Cima Nassere", "quota_dichiarata": 2253, "lon": 11.550534, "lat": 46.150821, "osm": "node/4732288836 (natural=peak, ele 2253)"},
+    {"key": "cengello", "nome": "Laghetto del Cengello", "quota_dichiarata": 1985, "lon": 11.557641, "lat": 46.158333, "osm": "way/170790546 (Laghetto del Cengello)"},
+    {"key": "morti", "nome": "Cucuzzolo dei Morti", "quota_dichiarata": 1924, "lon": 11.545211, "lat": 46.17224, "osm": "node/3252444311 (località «Cocuzzolo dei Morti»)"},
+    {"key": "malga_conseria", "nome": "Malga Conseria", "quota_dichiarata": 1848, "lon": 11.540086, "lat": 46.170415, "osm": "way/103589635 (Rifugio Malga Consèria, ele 1848)"},
+    {"key": "ponte_conseria", "nome": "Ponte Conseria", "quota_dichiarata": 1460, "lon": 11.52899, "lat": 46.161152, "osm": "node/1820543037 (palina «Ponte Conseria», ele 1460)"},
+    {"key": "tedon_fine", "nome": "Parcheggio Tedon", "quota_dichiarata": 1350, "lon": 11.521522, "lat": 46.148609, "osm": "node/840891335"}
+  ],
+  "scenarios": {
+    "completo": ["tedon", "campivelo", "caldenave", "rifugio", "laghi_inferno", "lago_nassere", "cima_nassere", "cengello", "morti", "malga_conseria", "ponte_conseria", "tedon_fine"],
+    "rado": ["tedon", "rifugio", "cima_nassere", "malga_conseria", "tedon_fine"],
+    "minimo": ["tedon", "cima_nassere", "tedon_fine"]
+  }
+}

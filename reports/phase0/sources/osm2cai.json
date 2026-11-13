@@ -1,0 +1,157 @@
+{
+ "source_id": "osm2cai",
+ "name": "OSM2CAI – catasto sentieri CAI (SOSEC)",
+ "status": "parziale",
+ "reachable": true,
+ "format": "JSON (indici {id: updated_at}), GeoJSON (dettaglio, MultiLineString), GPX",
+ "license": "Uso consentito con citazione dei crediti CAI (conferma scritta all'utente, §3); geometrie derivate da OpenStreetMap (ODbL)",
+ "license_url": "https://osm2cai.cai.it/api/documentation",
+ "limits": "Header X-RateLimit-Limit: 60 (richieste al minuto, limite standard Laravel); robots.txt senza divieti; nessuna chiave richiesta",
+ "update_frequency": "Sincronizzazione con OSM; indici con updated_at per l'incrementale",
+ "checks": [
+  {
+   "name": "documentazione OpenAPI",
+   "ok": true,
+   "detail": "HTTP 200, 172880 byte, application/json",
+   "url": "https://osm2cai.cai.it/docs?api-docs.json"
+  },
+  {
+   "name": "legenda sda nella documentazione",
+   "ok": true,
+   "detail": "SDA (stato di accatastamento) (e.g. 0,1,2,3,4). SDA=3 means ready to be validated, SDA=4 means validated by CAI expert",
+   "url": null
+  },
+  {
+   "name": "endpoint di dettaglio itinerario documentato",
+   "ok": false,
+   "detail": "la documentazione elenca solo /api/v2/itinerary/list",
+   "url": null
+  },
+  {
+   "name": "indice bbox Lagorai sda=4",
+   "ok": true,
+   "detail": "HTTP 200, 540 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/bb/11.4,46.05,11.62,46.16/4"
+  },
+  {
+   "name": "indice bbox Lagorai sda=3",
+   "ok": true,
+   "detail": "HTTP 200, 2 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/bb/11.4,46.05,11.62,46.16/3"
+  },
+  {
+   "name": "la bbox Lagorai contiene sentieri validati (sda 4)",
+   "ok": true,
+   "detail": "{4: 18, 3: 0}",
+   "url": null
+  },
+  {
+   "name": "indice bbox fixture sda=4",
+   "ok": true,
+   "detail": "HTTP 200, 481 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/bb/11.5,46.1,11.62,46.19/4"
+  },
+  {
+   "name": "sentiero 332 della fixture",
+   "ok": true,
+   "detail": "id 12711, relazione OSM 7034586, cai_scale E, 11.9 km, +1428/-958 m, 315/270 min, sda 4, validato il 2023-01-04, percorribilità: sconosciuto",
+   "url": null
+  },
+  {
+   "name": "sentiero 360 della fixture",
+   "ok": true,
+   "detail": "id 12692, relazione OSM 7078882, cai_scale E, 7.5 km, +821/-630 m, 195/165 min, sda 4, validato il 2023-02-12, percorribilità: sconosciuto",
+   "url": null
+  },
+  {
+   "name": "sentiero 326 della fixture",
+   "ok": true,
+   "detail": "id 12729, relazione OSM 7070415, cai_scale E, 7.7 km, +918/-383 m, 210/150 min, sda 4, validato il 2023-02-12, percorribilità: sconosciuto",
+   "url": null
+  },
+  {
+   "name": "indice bbox pilota sda=4",
+   "ok": true,
+   "detail": "HTTP 200, 54743 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/bb/10.38,45.67,12.75,47.1/4"
+  },
+  {
+   "name": "indice bbox pilota sda=3",
+   "ok": true,
+   "detail": "HTTP 200, 25452 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/bb/10.38,45.67,12.75,47.1/3"
+  },
+  {
+   "name": "indice regione C sda=4",
+   "ok": true,
+   "detail": "HTTP 200, 33844 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/region/C/4"
+  },
+  {
+   "name": "indice regione B sda=4",
+   "ok": true,
+   "detail": "HTTP 200, 14354 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/region/B/4"
+  },
+  {
+   "name": "elenco itinerari",
+   "ok": true,
+   "detail": "HTTP 200, 858 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/itinerary/list"
+  },
+  {
+   "name": "dettaglio itinerario /api/v2/itinerary/{id}",
+   "ok": false,
+   "detail": "HTTP 500 (text/html; charset=utf-8): endpoint non documentato",
+   "url": "https://osm2cai.cai.it/api/v2/itinerary/3"
+  },
+  {
+   "name": "POI entro 1 km da un sentiero (way)",
+   "ok": true,
+   "detail": "HTTP 200, 1721 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v2/ecpois/12692/W"
+  },
+  {
+   "name": "POI per bbox /ecpois/bb/{bbox}/N",
+   "ok": false,
+   "detail": "HTTP 500",
+   "url": "https://osm2cai.cai.it/api/v2/ecpois/bb/11.4,46.05,11.62,46.16/N"
+  },
+  {
+   "name": "settori CAI (v3) per bbox",
+   "ok": true,
+   "detail": "HTTP 200, 229 byte, application/json",
+   "url": "https://osm2cai.cai.it/api/v3/sectors/list?bbox=11.4%2C46.05%2C11.62%2C46.16"
+  },
+  {
+   "name": "export GPX di un sentiero",
+   "ok": true,
+   "detail": "HTTP 200, 49719 byte, application/gpx+xml",
+   "url": "https://osm2cai.cai.it/api/v2/hiking-routes/12711.gpx"
+  }
+ ],
+ "examples": [
+  "https://osm2cai.cai.it/api/v2/hiking-routes/bb/11.4,46.05,11.62,46.16/4",
+  "https://osm2cai.cai.it/api/v2/hiking-route/12711"
+ ],
+ "samples": [
+  "samples/osm2cai/index_lagorai_sda4.json",
+  "samples/osm2cai/hiking_route_12692.geojson",
+  "samples/osm2cai/hiking_route_12711.geojson",
+  "samples/osm2cai/hiking_route_12729.geojson"
+ ],
+ "notes": [
+  "OpenAPI «OSM2CAI» 1.0.0: 30 path",
+  "L'indice per bbox restituisce solo i sentieri interamente contenuti nel riquadro: il 332 (11,9 km) compare nella bbox Lagorai ma non in quella stretta della fixture, il 326 il contrario. Per la sincronizzazione usare gli indici per regione o una bbox con margine.",
+  "Campi del dettaglio: ascent, cai_scale, descent, description, distance, duration_backward, duration_forward, ele_from, ele_max, ele_min, ele_to, excerpt, from, id, issues_description, issues_last_update, issues_status, itinerary, layers, name, network, osm_id, public_page, ref, relation_id, roundtrip, sda, source, taxonomy_where, to, updated_at, validation_date",
+  "Area pilota 10.38,45.67,12.75,47.1: 1844 sentieri con sda=4",
+  "Area pilota 10.38,45.67,12.75,47.1: 858 sentieri con sda=3",
+  "Regione CAI «C»: 1138 sentieri sda 4; es. 12292 → San Lorenzo Dorsino",
+  "Regione CAI «B»: 485 sentieri sda 4; es. 15706 → Feltre",
+  "Itinerari in elenco: 32",
+  "ecpois del sentiero 360 (tipo W): 1 elementi",
+  "Settori nella bbox Lagorai: ['CTNE4', 'CTNE2', 'CTNE3']",
+  "Il GPX di OSM2CAI ha <ele>0</ele> su tutti i punti: le quote vanno prese dal DEM."
+ ],
+ "checked_at": "2026-11-13T01:55:44+0000"
+}

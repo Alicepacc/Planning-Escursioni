@@ -1,0 +1,16 @@
+# Aree geografiche del progetto. bbox = [min_lon, min_lat, max_lon, max_lat] (WGS84).
+pilot:
+  name: "Trentino-Alto Adige + Dolomiti venete"
+  bbox: [10.38, 45.67, 12.75, 47.10]
+  # codici regione usati da OSM2CAI / ISTAT, utili per le sincronizzazioni per regione
+  regions: ["Trentino-Alto Adige", "Veneto"]
+
+# Area di campionamento usata dagli script di verifica delle fonti (Fase 0)
+lagorai:
+  name: "Lagorai (campione Fase 0)"
+  bbox: [11.40, 46.05, 11.62, 46.16]
+
+# Area stretta attorno alla fixture golden "Val d'Inferno e Cima Nassere"
+val_inferno:
+  name: "Val d'Inferno / Cima Nassere (fixture #0)"
+  bbox: [11.50, 46.10, 11.62, 46.19]

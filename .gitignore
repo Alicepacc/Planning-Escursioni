@@ -1,0 +1,31 @@
+# dati scaricati, cache e artefatti pesanti (riproducibili dagli script)
+/data/
+*.osm.pbf
+*.rd5
+*.pmtiles
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+.svelte-kit/
+build/
+dist/
+.vite/
+*.tsbuildinfo
+
+# segreti e ambienti locali
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/
