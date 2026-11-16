@@ -52,6 +52,20 @@ cd services/ingest && uv run python -m cordata_ingest.build all
 cd services/ingest && uv run python -m cordata_ingest.calibration
 ```
 
+### Pipeline attività CAI (Fase 2, pilota)
+
+```bash
+cd services/ingest
+uv run python -m cordata_ingest.activities discover     # metadati dei PDF delle sezioni pilota
+uv run python -m cordata_ingest.activities archive      # solo i candidati di config/pilot/candidates.yaml
+uv run python -m cordata_ingest.activities extract      # testo, OCR (tesseract-ocr ita+deu), dati personali rimossi
+uv run python -m cordata_ingest.activities gazetteer    # luoghi OSM con nome in PostGIS (osmium)
+uv run python -m cordata_ingest.activities reconstruct  # tracce (GraphHopper avviato); --solo-parser
+uv run python -m cordata_ingest.activities report       # reports/pilot-<data>/pilot.html
+```
+
+Nessun crawler periodico: l'estensione a tutte le sezioni aspetta l'approvazione del pilota.
+
 ## Moduli
 
 | Modulo | Cosa fa |
@@ -64,6 +78,7 @@ cd services/ingest && uv run python -m cordata_ingest.calibration
 | `difficulty.py` | Scala CAI, mappatura indicativa da `sac_scale`, colore del segnavia |
 | `build/` | PostGIS → PMTiles e documenti JSON per la PWA |
 | `calibration.py` | Calibrazione di dislivello e tempi contro OSM2CAI |
+| `activities/` | Locandine CAI: scoperta, archivio privato, testo, parser, gazetteer, ricostruzione, rapporto |
 | `osm/flex.lua` | Configurazione di osm2pgsql |
 | `sql/derive.sql` | Tabelle `trails` e `trail_ways` |
 

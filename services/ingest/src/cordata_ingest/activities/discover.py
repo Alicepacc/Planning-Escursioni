@@ -47,7 +47,11 @@ def sections(pilot_only: bool = True) -> list[dict[str, Any]]:
     return out
 
 
-def list_pdfs(client: PoliteClient, section: dict[str, Any]) -> list[DocumentRef]:
+def list_pdfs(
+    client: PoliteClient, section: dict[str, Any], totals: dict[str, int] | None = None
+) -> list[DocumentRef]:
+    """PDF pubblici della sezione. In `totals` il numero dichiarato da `X-WP-Total`, che può
+    essere maggiore: WordPress conta anche gli allegati di contenuti non pubblici."""
     base = section["base_url"].rstrip("/")
     refs: list[DocumentRef] = []
     page = 1
@@ -77,6 +81,8 @@ def list_pdfs(client: PoliteClient, section: dict[str, Any]) -> list[DocumentRef
                     guess=classify_name(f"{title} {url.rsplit('/', 1)[-1]}"),
                 )
             )
+        if totals is not None:
+            totals[section["slug"]] = int(res.header("x-wp-total", "0") or 0)
         total_pages = int(res.header("x-wp-totalpages", "1") or 1)
         if page >= total_pages:
             break
@@ -92,13 +98,15 @@ def discover(client: PoliteClient, out: Path | None = None, pilot_only: bool = T
         client.host_intervals.setdefault(host, HOST_INTERVAL_S)
     docs: list[DocumentRef] = []
     per_section: dict[str, int] = {}
+    declared: dict[str, int] = {}
     for s in sections(pilot_only):
-        found = list_pdfs(client, s)
+        found = list_pdfs(client, s, declared)
         per_section[s["slug"]] = len(found)
         docs.extend(found)
     payload = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "per_section": per_section,
+        "declared_total": declared,  # X-WP-Total: include allegati non pubblici
         "documents": [asdict(d) for d in docs],
     }
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")

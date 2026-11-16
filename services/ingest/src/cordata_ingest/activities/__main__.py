@@ -25,6 +25,8 @@ def main(argv: list[str] | None = None) -> int:
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
     rec.add_argument("ids", nargs="*", help="solo queste attività (default: tutte)")
     rec.add_argument("--solo-parser", action="store_true", help="campi del parser, senza revisione")
+    rep = sub.add_parser("report", help="genera reports/pilot-<data>/pilot.html")
+    rep.add_argument("--data", default="2026-11-16", help="data del pilota (AAAA-MM-GG)")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -61,6 +63,14 @@ def main(argv: list[str] | None = None) -> int:
         source = "parser" if args.solo_parser else "rivista"
         for row in run_reconstruction(args.ids or None, source):
             print(f"{row['status']:12} {row['id'][:48]:48} {row['seconds']:5}s", row["reasons"])
+    elif args.cmd == "report":
+        from ..config import repo_root
+        from .evaluate import evaluate_all
+        from .report import build
+
+        evaluate_all()  # aggiorna i campi del parser in data/activities/parsed
+        out = build(repo_root() / "reports" / f"pilot-{args.data}", args.data)
+        print(f"rapporto: {out}")
     return 0
 
 
