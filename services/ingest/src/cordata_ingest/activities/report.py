@@ -257,7 +257,7 @@ def build(report_dir: Path, date: str) -> Path:
         geo[aid] = {
             "coords": coords,
             "points": [
-                {"n": i, "nome": p["nome"], "lon": p["lon"], "lat": p["lat"]}
+                {"n": i, "nome": p["nome"], "lon": round(p["lon"], 6), "lat": round(p["lat"], 6)}
                 for i, p in enumerate(t["points"], 1)
                 if p.get("lon") is not None
             ],
