@@ -1,9 +1,8 @@
 # Sezioni CAI da cui scoprire le attività (SPEC §7.1). Verificato il 13/11/2026 con
 # `python -m cordata_ingest.probes cai_sections`. Nessun dato personale in questo file.
 #
-# `pilot: true` = sezioni scelte dall'utente il 16/11/2026 per il pilota della Fase 2.
-# Nota: la SPEC (§7.6) chiede attività da almeno 4 sezioni; con tre sezioni (e Vipiteno con
-# soli 4 PDF) la scelta va completata prima della Fase 2.
+# `pilot: true` = sezioni scelte dall'utente per il pilota della Fase 2: Bolzano, Appiano e
+# Vipiteno (16/11/2026, prima risposta), Bressanone e sezioni SAT (checkpoint della Fase 1).
 #
 # site_type:
 #   wordpress_cai  – sottosito di organizzazione.cai.it (WordPress multisite, REST attiva)
@@ -43,7 +42,7 @@ sections:
     group: CAI Alto Adige
     base_url: https://www.caibressanone.it
     site_type: wordpress
-    pilot: false
+    pilot: true
     notes: Sito proprio WordPress, REST attiva.
   - slug: brunico
     name: CAI Sezione di Brunico
@@ -74,7 +73,7 @@ sections:
     group: SAT
     base_url: https://www.sat.tn.it
     site_type: wordpress
-    pilot: false
+    pilot: true
     notes: >-
       Sede centrale; le gite sono organizzate dalle ~80 sezioni SAT locali, ciascuna con il
       proprio canale: da mappare nella Fase 2.

@@ -2,7 +2,7 @@
 # Avvio: vedi services/routing/README.md. I percorsi sono relativi alla cartella di lavoro
 # (data/routing/graphhopper), che non è versionata.
 graphhopper:
-  datareader.file: ../../osm/trentino-alto-adige.osm.pbf
+  datareader.file: ../../osm/pilot.osm.pbf
   graph.location: graph-cache
   import.osm.ignored_highways: motorway,trunk
 
