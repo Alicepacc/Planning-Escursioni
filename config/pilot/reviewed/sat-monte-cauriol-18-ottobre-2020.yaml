@@ -1,0 +1,27 @@
+sezione: SAT Mezzolombardo
+titolo: Monte Cauriol
+data: 2020-10-18
+zona: Lagorai
+tipo_percorso: anello
+difficolta: EE
+durata: "5:00"
+distanza_km: 11
+salita_m: 900
+discesa_m: 900
+quota_max_m: 2494
+partenza: {nome: Rifugio Cauriol, quota_m: 1600, comune: Ziano di Fiemme}
+arrivo: {nome: Rifugio Cauriol, quota_m: 1600}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: 0
+sentieri: []
+reti: [Via Italiana, Via Austriaca]
+punti_chiave:
+  - {nome: Rifugio Cauriol, quota_m: 1600}
+  - {nome: Passo Sadole, quota_m: 2066}
+  - {nome: Selletta Carteri}
+  - {nome: Monte Cauriol, quota_m: 2494}
+  - {nome: Selletta Carteri}
+  - {nome: Passo Sadole, quota_m: 2066}
+  - {nome: Rifugio Cauriol, quota_m: 1600}
+note_revisione: anello in cima (Via Italiana in salita, Via Austriaca in discesa) con tratto comune fino al passo Sadole; gratis per i soci, 5 € per i non soci

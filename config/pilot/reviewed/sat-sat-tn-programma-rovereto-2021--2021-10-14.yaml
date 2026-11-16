@@ -1,0 +1,24 @@
+sezione: SAT Rovereto
+documento: sat-sat-tn-programma-rovereto-2021
+pagina: 1
+titolo: Lago di Tovel – Malga Flavona
+data: 2021-10-14
+zona: Dolomiti di Brenta
+tipo_percorso: anello
+difficolta: E
+durata: null
+distanza_km: null
+salita_m: 720
+discesa_m: 720
+quota_max_m: null
+partenza: {nome: Lago di Tovel}
+arrivo: {nome: Lago di Tovel}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Lago di Tovel}
+  - {nome: Malga Flavona}
+  - {nome: Lago di Tovel}
+note_revisione: riga di calendario (attività "leggera", SPEC §7.1): solo destinazione, difficoltà, dislivello e tipologia

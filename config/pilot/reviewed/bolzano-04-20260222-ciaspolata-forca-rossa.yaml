@@ -1,0 +1,24 @@
+sezione: CAI Bolzano
+titolo: Ciaspolata alla Forca Rossa
+data: 2026-02-22
+zona: Passo San Pellegrino
+tipo_percorso: anello
+difficolta: EAI
+durata: "5:00"
+distanza_km: null
+salita_m: 600
+discesa_m: 600
+quota_max_m: 2490
+partenza: {nome: Passo San Pellegrino, quota_m: 1890}
+arrivo: {nome: Passo San Pellegrino, quota_m: 1890}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 17
+sentieri: ["SI", "607", "670", "694"]
+punti_chiave:
+  - {nome: Passo San Pellegrino, quota_m: 1890}
+  - {nome: Rifugio Fuciade, quota_m: 1982}
+  - {nome: Forca Rossa, quota_m: 2490}
+  - {nome: Casoni di Valfredda, quota_m: 1908}
+  - {nome: Rifugio Flora Alpina, quota_m: 1818}
+  - {nome: Passo San Pellegrino, quota_m: 1890}

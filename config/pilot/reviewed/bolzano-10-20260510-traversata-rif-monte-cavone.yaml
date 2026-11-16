@@ -1,0 +1,24 @@
+sezione: CAI Bolzano
+titolo: Da San Costantino al Monte Cavone
+data: 2026-05-10
+zona: Gruppo Sciliar Catinaccio
+tipo_percorso: traversata
+difficolta: E
+durata: "5:00"
+distanza_km: null
+salita_m: 670
+discesa_m: 600
+quota_max_m: 1737
+partenza: {nome: San Costantino, quota_m: 900, comune: Fiè allo Sciliar}
+arrivo: {nome: Bagni di Lavina Bianca, quota_m: 1200}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 17
+sentieri: ["15", "7", "7B", "4"]
+punti_chiave:
+  - {nome: San Costantino, quota_m: 900}
+  - {nome: Laghetti di Fiè, quota_m: 1036}
+  - {nome: Malga Tuff, quota_m: 1280}
+  - {nome: Malga Hoferalp, quota_m: 1390}
+  - {nome: Rifugio Monte Cavone, quota_m: 1737}
+  - {nome: Bagni di Lavina Bianca, quota_m: 1200}

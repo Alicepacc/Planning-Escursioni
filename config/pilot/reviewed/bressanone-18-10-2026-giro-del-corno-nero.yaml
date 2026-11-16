@@ -1,0 +1,25 @@
+sezione: CAI Bressanone
+titolo: Escursione Corno Nero
+data: 2026-10-18
+zona: Dolomiti di Fiemme
+tipo_percorso: anello
+difficolta: EE
+durata: "4:30"
+distanza_km: 10
+salita_m: 700
+discesa_m: 700
+quota_max_m: 2439
+partenza: {nome: Passo Oclini, quota_m: 1989}
+arrivo: {nome: Passo Oclini, quota_m: 1989}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["14", "502"]
+punti_chiave:
+  - {nome: Passo Oclini, quota_m: 1989}
+  - {nome: Malga Isi}
+  - {nome: Malga Cugola}
+  - {nome: Monte Palone, quota_m: 2345}
+  - {nome: Corno Nero, quota_m: 2439}
+  - {nome: Passo Oclini, quota_m: 1989}
+note_revisione: durata = 3 h salita + 1,5 h discesa; scadenza iscrizioni scritta 16/09/2026 (refuso per 16/10)

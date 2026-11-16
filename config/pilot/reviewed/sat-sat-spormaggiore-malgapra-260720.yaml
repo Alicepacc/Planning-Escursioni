@@ -1,0 +1,22 @@
+sezione: SAT Spormaggiore
+titolo: Malga Prà dal Giovo – Cima Bedolè
+data: 2020-07-26
+zona: Dolomiti di Brenta (Sporminore)
+tipo_percorso: andata_ritorno
+difficolta: null
+durata: "5:30"
+distanza_km: null
+salita_m: 900
+discesa_m: 900
+quota_max_m: 1549
+partenza: {nome: Pian del Benon, quota_m: 650}
+arrivo: {nome: Pian del Benon, quota_m: 650}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: 0
+sentieri: []
+punti_chiave:
+  - {nome: Pian del Benon, quota_m: 650}
+  - {nome: Plan del Solach}
+  - {nome: Malga Prà dal Giovo, quota_m: 1549}
+note_revisione: scansione (OCR); due itinerari, qui il n. 1 (il n. 2 prosegue a Cima Bedolè, 2414 m, 10 h, +1900 m); gratis per i soci, 2 € per i non soci

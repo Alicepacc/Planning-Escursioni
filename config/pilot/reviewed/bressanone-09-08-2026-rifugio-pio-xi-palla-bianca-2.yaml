@@ -1,0 +1,23 @@
+sezione: CAI Bressanone
+titolo: Escursione Rifugio Pio XI – Palla Bianca
+data: 2026-08-09
+zona: Vallelunga
+tipo_percorso: anello
+difficolta: EE
+durata: "5:00"
+distanza_km: 11
+salita_m: 750
+discesa_m: 750
+quota_max_m: 2557
+partenza: {nome: Melago, quota_m: 1912, comune: Curon Venosta}
+arrivo: {nome: Melago, quota_m: 1912}
+ora_ritrovo: "06:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["3", "1A", "2A", "2"]
+punti_chiave:
+  - {nome: Melago, quota_m: 1912}
+  - {nome: Rifugio Pio XI, quota_m: 2557}
+  - {nome: Malga di Melago}
+  - {nome: Melago, quota_m: 1912}
+note_revisione: salita per 3, 1A e 2A, discesa per il 2 e la malga: anello; durata = 3 h + 2 h

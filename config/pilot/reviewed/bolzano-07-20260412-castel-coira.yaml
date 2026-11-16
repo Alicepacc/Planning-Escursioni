@@ -1,0 +1,22 @@
+sezione: CAI Bolzano
+titolo: Sentiero rogge di Sluderno con visita al Castel Coira e Abbazia di Monte Maria
+data: 2026-04-12
+zona: Alta Val Venosta
+tipo_percorso: anello
+difficolta: E
+durata: "2:00"
+distanza_km: null
+salita_m: 238
+discesa_m: 238
+quota_max_m: 1159
+partenza: {nome: Castel Coira, quota_m: 921, comune: Sluderno}
+arrivo: {nome: Castel Coira, quota_m: 921}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 22
+sentieri: ["17", "18B"]
+punti_chiave:
+  - {nome: Castel Coira, quota_m: 921}
+  - {nome: Maso Vernalhof, quota_m: 1159}
+  - {nome: Edelweisssteig}
+  - {nome: Castel Coira, quota_m: 921}

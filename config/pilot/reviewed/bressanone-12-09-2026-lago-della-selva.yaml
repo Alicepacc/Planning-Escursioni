@@ -1,0 +1,22 @@
+sezione: CAI Bressanone
+titolo: Escursione Lago della Selva
+data: 2026-09-12
+zona: Valle Aurina
+tipo_percorso: andata_ritorno
+difficolta: EE
+durata: "5:00"
+distanza_km: 14
+salita_m: 870
+discesa_m: 870
+quota_max_m: 2330
+partenza: {nome: Predoi, quota_m: 1460}
+arrivo: {nome: Predoi, quota_m: 1460}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["16B", "15A"]
+punti_chiave:
+  - {nome: Predoi, quota_m: 1460}
+  - {nome: Malga Waldner, quota_m: 2070}
+  - {nome: Lago della Selva, quota_m: 2330}
+note_revisione: ritorno per la stessa via fino alla malga, poi sulla forestale; stesso lago (Waldner See) dell'anello CAI Bolzano del 26/07 → caso di deduplica

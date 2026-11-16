@@ -1,0 +1,25 @@
+sezione: SAT Trento
+titolo: Lago di Erdemolo e Rifugio Sette Selle
+data: 2020-10-25
+zona: Valle dei Mocheni
+tipo_percorso: anello
+difficolta: null
+difficolta_testo: Media
+durata: "4:00"
+distanza_km: null
+salita_m: 600
+discesa_m: 600
+quota_max_m: 2036
+partenza: {nome: Palù del Fersina}
+arrivo: {nome: Palù del Fersina}
+ora_ritrovo: "08:30"
+mezzi: null
+quota_eur: 0
+sentieri: ["E325", "E324", "E343"]
+punti_chiave:
+  - {nome: Palù del Fersina}
+  - {nome: Vrotten}
+  - {nome: Lago di Erdemolo, quota_m: 2036}
+  - {nome: Rifugio Sette Selle, quota_m: 1978}
+  - {nome: Palù del Fersina}
+note_revisione: difficoltà "Media", non nella scala CAI; discesa non dichiarata, uguale alla salita perché è un anello

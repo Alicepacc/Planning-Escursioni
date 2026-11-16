@@ -1,0 +1,210 @@
+# Candidati per il pilota della Fase 2 (SPEC §7.6), scelti il 16/11/2026 dall'indice della
+# scoperta (data/activities/index.json) per coprire il mix richiesto: anelli, traversate,
+# andata/ritorno, EE, EAI, calendari annuali, PDF difficili. Le 20 attività del pilota
+# si scelgono tra questi dopo l'estrazione del testo (la tipologia si vede solo nel PDF).
+# I PDF restano nell'archivio privato (data/activities/raw); qui ci sono solo i link pubblici.
+candidates:
+  - id: bolzano-07-20260412-castel-coira
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/03/07_20260412-Castel-Coira.pdf
+    published: '2026-03-27'
+  - id: bolzano-22-20260726-anello-waldnersee
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/07/22_20260726-Anello-Waldnersee.pdf
+    published: '2026-07-20'
+  - id: bolzano-10-20260510-traversata-rif-monte-cavone
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/04/10_20260510-Traversata-Rif.-Monte-Cavone.pdf
+    published: '2026-04-24'
+  - id: bolzano-09-20260426-val-di-cembra-tappa-1
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/04/09_20260426-Val-di-Cembra-Tappa-1.pdf
+    published: '2026-04-13'
+  - id: bolzano-25-20260823-laghi-di-sopranes
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/08/25_20260823-Laghi-di-Sopranes.pdf
+    published: '2026-08-06'
+  - id: bolzano-26-20260830-croda-della-calva
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/08/26_20260830-Croda-della-Calva.pdf
+    published: '2026-08-18'
+  - id: bolzano-17-20260621-cima-matatz
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/06/17_20260621-Cima-Matatz.pdf
+    published: '2026-06-09'
+  - id: bolzano-19-20260705-rifugio-vedretta-pendente
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/06/19_20260705-Rifugio-Vedretta-Pendente.pdf
+    published: '2026-06-25'
+  - id: bolzano-28-20260913-viel-del-pan
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/09/28_20260913-Viel-del-Pan.pdf
+    published: '2026-09-03'
+  - id: bolzano-30-20260927-prati-di-croda-rossa
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/09/30_20260927-Prati-di-Croda-Rossa.pdf
+    published: '2026-09-18'
+  - id: bolzano-04-20260222-ciaspolata-forca-rossa
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/02/04_20260222-Ciaspolata-Forca-Rossa.pdf
+    published: '2026-02-05'
+  - id: bolzano-05-20260308-ciaspolata-rifugio-vallaccia
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/02/05_20260308-Ciaspolata-Rifugio-Vallaccia.pdf
+    published: '2026-02-16'
+  - id: bolzano-23a-20260802-malga-e-lago-bocche
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/07/23a_20260802-Malga-e-Lago-Bocche.pdf
+    published: '2026-07-21'
+  - id: bolzano-27-20260906-val-di-roia
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/08/27_20260906-Val-di-Roia.pdf
+    published: '2026-08-25'
+  - id: bolzano-2026-10-04-locandina-monte-pic
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/09/2026-10-04-Locandina-Monte-Pic.pdf
+    published: '2026-09-21'
+  - id: bolzano-14-20260531-malghe-di-proves
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2026/05/14_20260531-Malghe-di-Proves.pdf
+    published: '2026-05-22'
+  - id: bolzano-attivita-cai-2026-compressed
+    section: bolzano
+    url: https://organizzazione.cai.it/sez-bolzano-caiaa/wp-content/uploads/sites/6/2025/12/Attivita-Cai-2026_compressed.pdf
+    published: '2025-12-17'
+  - id: appiano-programma-attivita-cai-appiano-2026-1
+    section: appiano
+    url: https://organizzazione.cai.it/sez-appiano-caiaa/wp-content/uploads/sites/152/2025/12/PROGRAMMA-ATTIVITA-CAI-APPIANO-2026-1.pdf
+    published: '2025-12-23'
+  - id: bressanone-18-10-2026-giro-del-corno-nero
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/10/18.10.2026_Giro-del-Corno-Nero.pdf
+    published: '2026-10-09'
+  - id: bressanone-12-09-2026-lago-della-selva
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/09/12.09.2026_Lago-della-Selva.pdf
+    published: '2026-09-06'
+  - id: bressanone-escursione-da-laion-a-ortisei-del-07-06-2026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/05/Escursione-da-Laion-a-Ortisei-del-07.06.2026.pdf
+    published: '2026-05-28'
+  - id: bressanone-locandina-ciaspolata-giogo-di-terento-01-03-2026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/02/Locandina-ciaspolata-Giogo-di-Terento-01.03.2026.pdf
+    published: '2026-02-25'
+  - id: bressanone-2026-01-10-ciaspolata-in-val-venegia-cai-giovani
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/01/2026.01.10-Ciaspolata-in-Val-Venegia-CAI-Giovani-1.pdf
+    published: '2026-01-03'
+  - id: bressanone-malga-saxner-15-03-2026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/03/MALGA-SAXNER-15.03.2026.pdf
+    published: '2026-03-09'
+  - id: bressanone-09-08-2026-rifugio-pio-xi-palla-bianca-2
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/07/09.08.2026_Rifugio-Pio-XI-Palla-Bianca-2.pdf
+    published: '2026-07-31'
+  - id: bressanone-locandina-monte-seceda-09-05-2026-1
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/04/Locandina-Monte-Seceda-09.05.2026-1.pdf
+    published: '2026-04-30'
+  - id: bressanone-cima-nodice-1
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/04/cima-nodice-1.pdf
+    published: '2026-04-02'
+  - id: bressanone-monte-spico
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/03/monte-SPICO.pdf
+    published: '2026-03-10'
+  - id: bressanone-doc-20250128-wa0009
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2025/03/DOC-20250128-WA0009.pdf
+    published: '2025-03-11'
+  - id: bressanone-satrivadelgarda-settimanaescursionismo-centenari
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/09/SATRivadelGarda_SettimanaEscursionismo_Centenario.pdf
+    published: '2026-09-02'
+  - id: bressanone-cai-bx-libretto-sezionale-2025-definitivo-bis
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2025/01/CAI_BX_Libretto-sezionale-2025_definitivo_bis.pdf
+    published: '2025-01-08'
+  - id: bressanone-locandina-zinsnock-1
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/02/locandina-Zinsnock-1.pdf
+    published: '2026-02-23'
+  - id: bressanone-locandina-17052026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/05/Locandina_17052026.pdf
+    published: '2026-05-11'
+  - id: bressanone-locandina-05072026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/06/Locandina_05072026.pdf
+    published: '2026-06-27'
+  - id: bressanone-locandina-27092026
+    section: bressanone
+    url: https://www.caibressanone.it/wp-content/uploads/2026/09/Locandina_27092026.pdf
+    published: '2026-09-19'
+  - id: sat-lago-di-erdemolo-e-rifugio-sette-selle
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/10/Lago-di-Erdemolo-e-Rifugio-Sette-Selle.pdf
+    published: '2020-10-13'
+  - id: sat-monte-cauriol-18-ottobre-2020
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/10/Monte-Cauriol-18-ottobre-2020.pdf
+    published: '2020-10-12'
+  - id: sat-traversata-giovo-stulles
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/08/Traversata-Giovo-Stulles.pdf
+    published: '2020-08-17'
+  - id: sat-sat-laghi-saldura-val-mazia
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/07/SAT_LAGHI_SALDURA_VAL_MAZIA.pdf
+    published: '2020-07-13'
+  - id: sat-forcella-segura
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/07/FORCELLA-SEGURA.pdf
+    published: '2020-07-02'
+  - id: sat-cimadasta
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/04/CIMADASTA.pdf
+    published: '2020-04-24'
+  - id: sat-tappa-30-perimetro-del-trentino
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2022/06/Tappa-30-perimetro-del-trentino.pdf
+    published: '2022-06-06'
+  - id: sat-notturna-malga-cislon-04-02-2023
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2023/01/Notturna-Malga-Cislon-04-02-2023.pdf
+    published: '2023-01-30'
+  - id: sat-2023-02-04-malga-zambana
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2023/01/2023-02-04-Malga-Zambana.pdf
+    published: '2023-01-23'
+  - id: sat-volantino-escursione-in-bigonda-sat-12-02-23
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2023/02/Volantino-Escursione-in-Bigonda-SAT-_12.02.23.pdf
+    published: '2023-02-09'
+  - id: sat-calendario-2021-sat-ton1
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2021/03/calendario_2021_sat-ton1.pdf
+    published: '2021-03-15'
+  - id: sat-sat-tn-programma-rovereto-2021
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2021/07/SAT_TN_programma_Rovereto_2021.pdf
+    published: '2021-07-15'
+  - id: sat-sopramonte-malga-brigolina
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/11/sopramonte-malga-brigolina.pdf
+    published: '2020-11-25'
+  - id: sat-sat-spormaggiore-malgapra-260720
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/07/SAT_Spormaggiore_MalgaPra_260720.pdf
+    published: '2020-07-12'
+  - id: sat-monte-brugnol-2
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/10/Monte-Brugnol-2.pdf
+    published: '2020-10-01'
+  - id: sat-cima-sassara
+    section: sat
+    url: https://www.sat.tn.it/wp-content/uploads/2020/09/cima-Sassara.pdf
+    published: '2020-09-15'

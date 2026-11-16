@@ -1,0 +1,28 @@
+sezione: CAI Bolzano
+titolo: Il Cammino delle Terre Sospese – Tappa 1
+data: 2026-04-26
+zona: Val di Cembra
+tipo_percorso: traversata
+difficolta: E
+durata: "4:30"
+distanza_km: 14
+salita_m: 715
+discesa_m: 410
+quota_max_m: 700
+partenza: {nome: Lavis, quota_m: 378}
+arrivo: {nome: Lisignago, quota_m: 582}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 17
+sentieri: []
+reti: [Cammino delle Terre Sospese]
+punti_chiave:
+  - {nome: Lavis, quota_m: 378}
+  - {nome: Maso Franch}
+  - {nome: Palù di Giovo, quota_m: 550}
+  - {nome: Verla di Giovo, quota_m: 502}
+  - {nome: Chiesetta di San Floriano, quota_m: 670}
+  - {nome: Ceola}
+  - {nome: Chiesetta di San Leonardo}
+  - {nome: Lisignago, quota_m: 582}
+note_revisione: la quota di Lavis è 387 nel testo e 378 nel riquadro; vale il riquadro

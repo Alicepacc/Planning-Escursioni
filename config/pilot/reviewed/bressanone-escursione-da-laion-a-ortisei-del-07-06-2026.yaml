@@ -1,0 +1,25 @@
+sezione: CAI Bressanone
+titolo: Sul Sentiero della Posta da Laion alla Chiesetta di San Giacomo a Ortisei
+data: 2026-06-07
+zona: Val Gardena
+tipo_percorso: traversata
+difficolta: E
+durata: "5:30"
+distanza_km: 16
+salita_m: 593
+discesa_m: 418
+quota_max_m: null
+partenza: {nome: Laion}
+arrivo: {nome: Ortisei}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["8A", "9B", "6B"]
+reti: [Sentiero della Posta, Passeggiata Luis Trenker]
+punti_chiave:
+  - {nome: Laion}
+  - {nome: San Pietro}
+  - {nome: Pontives}
+  - {nome: Baita Pauli}
+  - {nome: Chiesetta di San Giacomo}
+  - {nome: Ortisei}

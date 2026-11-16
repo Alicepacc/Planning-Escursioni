@@ -1,0 +1,22 @@
+sezione: SAT Aldeno
+titolo: Escursione in notturna alla Malga Cislon – Trodena
+data: 2023-02-04
+zona: Parco Naturale Monte Corno
+tipo_percorso: anello
+difficolta: null
+durata: "3:00"
+distanza_km: null
+salita_m: 300
+discesa_m: 300
+quota_max_m: 1250
+partenza: {nome: Trodena}
+arrivo: {nome: Trodena}
+ora_ritrovo: "16:30"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["3", "1", "3A"]
+punti_chiave:
+  - {nome: Trodena}
+  - {nome: Malga Cislon, quota_m: 1250}
+  - {nome: Trodena}
+note_revisione: notturna invernale (ciaspole o ramponcini secondo le condizioni); difficoltà non indicata

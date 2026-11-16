@@ -1,0 +1,23 @@
+sezione: CAI Bressanone
+titolo: Cascate di Barbiano e Tre Chiese
+data: 2026-05-17
+zona: Valle Isarco
+tipo_percorso: anello
+difficolta: E
+durata: "3:30"
+distanza_km: 8
+salita_m: 484
+discesa_m: 481
+quota_max_m: null
+partenza: {nome: Barbiano}
+arrivo: {nome: Barbiano}
+ora_ritrovo: "07:30"
+mezzi: null
+quota_eur: 20
+sentieri: ["6", "11"]
+reti: [Sentiero delle Cascate]
+punti_chiave:
+  - {nome: Barbiano}
+  - {nome: Cascate di Barbiano}
+  - {nome: Tre Chiese}
+  - {nome: Barbiano}

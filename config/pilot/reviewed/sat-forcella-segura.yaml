@@ -1,0 +1,28 @@
+sezione: SAT Borgo Valsugana
+titolo: Val Orsera – Forcella Segura – Val Campelle
+data: 2020-07-19
+zona: Lagorai
+tipo_percorso: anello
+difficolta: EEA
+durata: "8:00"
+distanza_km: null
+salita_m: 1200
+discesa_m: 1200
+quota_max_m: 2436
+partenza: {nome: Tedon, quota_m: 1334, comune: Scurelle}
+arrivo: {nome: Tedon, quota_m: 1334}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["332", "373"]
+punti_chiave:
+  - {nome: Tedon, quota_m: 1334}
+  - {nome: Rifugio Caldenave, quota_m: 1792}
+  - {nome: Forcella Orsera, quota_m: 2295}
+  - {nome: Forcella Segura, quota_m: 2436}
+  - {nome: Forcella Quarazza, quota_m: 2275}
+  - {nome: Forzelon de Rava, quota_m: 2397}
+  - {nome: Forcella Ravetta, quota_m: 2219}
+  - {nome: Rifugio Caldenave, quota_m: 1792}
+  - {nome: Tedon, quota_m: 1334}
+note_revisione: nel testo "rifugio Cadenave" (refuso per Caldenave); stessa partenza della fixture Val d'Inferno

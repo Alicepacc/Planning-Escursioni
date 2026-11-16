@@ -1,0 +1,27 @@
+sezione: CAI Bolzano
+titolo: Laghi di Sopranes
+data: 2026-08-23
+zona: Gruppo del Tessa
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "6:00"
+distanza_km: null
+salita_m: 1200
+discesa_m: 1200
+quota_max_m: 2530
+partenza: {nome: Stazione a monte funivia Alta Muta, quota_m: 1360, comune: Tirolo}
+arrivo: {nome: Stazione a monte funivia Alta Muta, quota_m: 1360}
+ora_ritrovo: "06:45"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["22", "22A", "25", "6", "7"]
+punti_chiave:
+  - {nome: Stazione a monte funivia Alta Muta, quota_m: 1360}
+  - {nome: Mutkopf, quota_m: 1684}
+  - {nome: Lago di Vizze}
+  - {nome: Lago di Casera}
+  - {nome: Malga Oberkaser, quota_m: 2132}
+  - {nome: Lago Verde}
+  - {nome: Lago Lungo}
+  - {nome: Laghi del Latte, quota_m: 2530}
+note_revisione: ritorno per gli stessi sentieri (andata e ritorno con giro facoltativo ai Laghi del Latte); "6-22" letto come sentieri 6 e 22

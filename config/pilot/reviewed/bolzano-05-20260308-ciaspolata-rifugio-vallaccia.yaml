@@ -1,0 +1,22 @@
+sezione: CAI Bolzano
+titolo: Ciaspolata al Rifugio Vallaccia
+data: 2026-03-08
+zona: Val di Fassa
+tipo_percorso: andata_ritorno
+difficolta: EAI
+durata: "5:30"
+distanza_km: null
+salita_m: 865
+discesa_m: 865
+quota_max_m: 2275
+partenza: {nome: Ristorante La Soldanella, quota_m: 1410, comune: Pozza di Fassa}
+arrivo: {nome: Ristorante La Soldanella, quota_m: 1410}
+ora_ritrovo: "07:00"
+mezzi: pullman
+quota_eur: 17
+sentieri: ["603", "624"]
+punti_chiave:
+  - {nome: Ristorante La Soldanella, quota_m: 1410}
+  - {nome: Malga Crocifisso}
+  - {nome: Malga Monzoni}
+  - {nome: Rifugio Vallaccia, quota_m: 2275}

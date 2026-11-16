@@ -1,0 +1,25 @@
+sezione: SAT (trekking del 150°)
+titolo: Il Perimetro del Trentino – Tappa 30 • Alb. Monte Baldo – Baita Fos-ce
+data: null
+zona: Monte Baldo
+tipo_percorso: traversata
+difficolta: null
+durata: "4:00"
+distanza_km: 10.55
+salita_m: null
+discesa_m: null
+quota_max_m: 1467
+partenza: {nome: Albergo Monte Baldo, quota_m: 1115}
+arrivo: {nome: Rifugio Baita Fos-ce, quota_m: 1427}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["80", "653", "654"]
+punti_chiave:
+  - {nome: Albergo Monte Baldo, quota_m: 1115}
+  - {nome: Malga Trembari, quota_m: 1388}
+  - {nome: Malga Prà Alpesina, quota_m: 1467}
+  - {nome: Malga Zocchi, quota_m: 1360}
+  - {nome: Torrente Aviana, quota_m: 1210}
+  - {nome: Rifugio Baita Fos-ce, quota_m: 1427}
+note_revisione: tappa di trekking senza data; distanza, tempi e quote dalla tabella (layout a celle); dislivelli non dichiarati

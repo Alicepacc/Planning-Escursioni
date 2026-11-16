@@ -1,0 +1,24 @@
+sezione: CAI Bolzano
+titolo: Anello Waldnersee
+data: 2026-07-26
+zona: Alpi dei Tauri
+tipo_percorso: anello
+difficolta: E
+durata: "5:30"
+distanza_km: 13
+salita_m: 840
+discesa_m: 840
+quota_max_m: 2414
+partenza: {nome: Casere, quota_m: 1580, comune: Predoi}
+arrivo: {nome: Casere, quota_m: 1580}
+ora_ritrovo: "06:30"
+mezzi: pullman
+quota_eur: 22
+sentieri: ["15", "15A", "16B", "17"]
+punti_chiave:
+  - {nome: Casere, quota_m: 1580}
+  - {nome: Starkalm}
+  - {nome: Archbichl, quota_m: 2414}
+  - {nome: Waldner See, quota_m: 2338}
+  - {nome: Waldner Alm, quota_m: 2068}
+  - {nome: Casere, quota_m: 1580}

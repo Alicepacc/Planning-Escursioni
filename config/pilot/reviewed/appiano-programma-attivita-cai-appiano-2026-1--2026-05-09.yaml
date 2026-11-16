@@ -1,0 +1,30 @@
+sezione: CAI Appiano
+documento: appiano-programma-attivita-cai-appiano-2026-1
+pagina: 12
+titolo: Anello da Tiso – San Valentino – San Pietro – San Giacomo – Tiso
+data: 2026-05-09
+zona: Val di Funes
+tipo_percorso: anello
+difficolta: E
+durata: "5:00"
+distanza_km: null
+salita_m: 550
+discesa_m: 550
+quota_max_m: null
+partenza: {nome: Tiso}
+arrivo: {nome: Tiso}
+ora_ritrovo: null
+mezzi: pullman o mezzi propri
+quota_eur: null
+sentieri: ["11", "30", "30A"]
+punti_chiave:
+  - {nome: Tiso}
+  - {nome: Miglanzer Hof}
+  - {nome: San Valentino}
+  - {nome: San Pietro}
+  - {nome: San Giacomo}
+  - {nome: Moarhof}
+  - {nome: Jochkreuz}
+  - {nome: Wetterkreuz}
+  - {nome: Tiso}
+note_revisione: riga del libretto annuale; discesa uguale alla salita perché è un anello
