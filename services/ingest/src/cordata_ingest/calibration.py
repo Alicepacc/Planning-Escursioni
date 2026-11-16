@@ -207,7 +207,12 @@ def write_report(out: Path, samples: list[Sample], skipped: dict, result: dict) 
         )
     lines += [
         "",
-        "## Parametri scelti",
+        "## Migliori parametri rispetto al catasto",
+        "",
+        "Le frecce nelle tabelle indicano i parametri più vicini ai valori del catasto. Per il "
+        "dislivello Cordata **non** li adotta: il catasto conta tutte le micro-risalite, mentre le "
+        "sezioni dichiarano un dislivello «da escursionista». Parametri adottati e motivazioni in "
+        "`docs/decisions/0007-modelli-dei-tempi-e-delle-quote.md`.",
         "",
         f"- Dislivello: media mobile {be['window'] * STEP_M:.0f} m, isteresi "
         f"{be['hysteresis_m']:.0f} m → D+ errore medio {be['ascent']['mae']:.0f} m, "

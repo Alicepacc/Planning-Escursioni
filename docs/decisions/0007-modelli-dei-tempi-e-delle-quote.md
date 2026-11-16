@@ -32,8 +32,9 @@ uso comune e sono stati **verificati contro il diagramma ufficiale**:
 **Parametri.** Pendenza limitata a ±40% (oltre, il tratto viene segnalato come «tempo poco
 affidabile»); tempo calcolato su tratti di 15 m lungo il profilo smussato.
 
-**Confronto con il catasto** (1.080 sentieri validati dell'area pilota, calcolo indipendente sul
-DEM Mapterhorn): errore medio 18-19 minuti, distorsione entro ±3 minuti, errore mediano 13-14%.
+**Confronto con il catasto** (1.375 sentieri validati dell'area pilota, calcolo indipendente sul
+DEM Mapterhorn): con i parametri scelti errore medio 18,6 minuti, distorsione −2,1 minuti,
+errore mediano 14,3%; in tutta la griglia provata l'errore medio resta tra 18 e 20 minuti.
 Il residuo viene dal DEM diverso e dagli arrotondamenti: i tempi del catasto sono multipli di 15
 minuti e una parte è inserita a mano dalle sezioni (`manual_data`).
 
@@ -62,16 +63,16 @@ modo che salita − discesa = quota finale − quota iniziale.
 **Due definizioni diverse di «dislivello».** La calibrazione ha mostrato che:
 
 - il **catasto CAI** riporta valori più alti persino della somma grezza sul nostro DEM
-  (distorsione −29 m senza alcun filtro, −86 m con media mobile di 75 m e soglia di 10 m):
+  (distorsione −24 m senza alcun filtro, −82 m con media mobile di 75 m e soglia di 10 m):
   conta tutte le micro-risalite del suo modello del terreno;
-- la **locandina** della fixture dichiara 950 m, contro 1.175 m grezzi e 1.030 m filtrati.
+- la **locandina** della fixture dichiara 950 m, contro 1.175 m grezzi e 1.037 m filtrati.
 
 Non esiste quindi un solo valore «vero». Regole adottate:
 
 1. dove esistono, si mostrano i valori **ufficiali** (catasto o sezione), con i calcolati come
    confronto (SPEC §8);
 2. per gli itinerari calcolati da Cordata si usano media mobile 75 m e soglia 10 m, i parametri
-   più vicini a come le sezioni dichiarano il dislivello (fixture: +8%);
+   più vicini a come le sezioni dichiarano il dislivello (fixture: +9%);
 3. nella **Fase 2** i parametri si ricalibrano sulle 20 attività del pilota, confrontando con i
    dislivelli dichiarati dalle sezioni.
 

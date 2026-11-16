@@ -10,12 +10,13 @@
 	import type { TrailDoc, TrailWayProps } from '#lib/data/types.ts';
 
 	// vista iniziale: Lagorai centrale (proposta d'esempio); i sentieri locali compaiono da z11
-	const START_BBOX: [number, number, number, number] = [11.46, 46.1, 11.64, 46.2];
+	const START_BBOX: [number, number, number, number] = [11.49, 46.12, 11.6, 46.19];
 
 	let selection = $state<{
 		refs: string;
 		scale: string;
 		derived: boolean;
+		ids: string[];
 		docs: TrailDoc[];
 	} | null>(null);
 	let loading = $state(false);
@@ -23,7 +24,7 @@
 	async function onTrailClick(ways: TrailWayProps[]) {
 		const way = ways[0];
 		const ids = [...new Set(ways.flatMap((w) => (w.cai ? w.cai.split(',') : [])))].slice(0, 4);
-		selection = { refs: way.refs, scale: way.scale, derived: way.scale_derived, docs: [] };
+		selection = { refs: way.refs, scale: way.scale, derived: way.scale_derived, ids, docs: [] };
 		if (!ids.length) return;
 		loading = true;
 		const docs = await Promise.all(
@@ -44,7 +45,13 @@
 
 <div class="esplora">
 	<div class="mappa">
-		<MapView bbox={START_BBOX} label="Mappa dei sentieri dell'area pilota" {onTrailClick} />
+		<MapView
+			bbox={START_BBOX}
+			line={selection?.docs[0]?.line}
+			lineColor="#1f2933"
+			label="Mappa dei sentieri dell'area pilota"
+			{onTrailClick}
+		/>
 	</div>
 
 	<section class="foglio" aria-live="polite">
@@ -80,6 +87,8 @@
 						</li>
 					{/each}
 				</ul>
+			{:else if selection.ids.length}
+				<p>Le schede del catasto per questo tratto non sono disponibili ora: riprova più tardi.</p>
 			{:else}
 				<p>
 					Questo tratto non ha una scheda nel catasto CAI.

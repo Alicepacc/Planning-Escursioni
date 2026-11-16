@@ -4,15 +4,16 @@ Progressive Web App mobile-first per programmare escursioni in montagna con soli
 proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite di gruppo, meteo
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
-**Stato: Fase 0 (ricognizione e fondamenta) completata, in attesa del checkpoint.**
-Rapporto: [`reports/phase0/README.md`](reports/phase0/README.md).
+**Stato: Fase 1 (dati OSM e mappa) completata, in attesa del checkpoint.**
+Rapporti: [`reports/phase1/README.md`](reports/phase1/README.md) ·
+[`reports/phase0/README.md`](reports/phase0/README.md).
 
 ## Struttura
 
 | Cartella | Contenuto |
 |---|---|
-| `apps/web` | PWA SvelteKit (per ora: guscio dell'app, i18n, pagina Fonti e licenze) |
-| `services/ingest` | Python: client HTTP «educato», verifiche delle fonti, geometria e tempi |
+| `apps/web` | PWA SvelteKit: mappa dei sentieri, schede di sentieri e itinerari con profilo altimetrico, pagina Fonti e licenze |
+| `services/ingest` | Python: verifiche delle fonti, sincronizzazione OSM2CAI, import OSM in PostGIS, quote e tempi, tile e schede per la PWA ([README](services/ingest/README.md)) |
 | `services/routing` | GraphHopper: configurazione, Dockerfile, spike sulla fixture |
 | `infra` | Docker Compose per lo sviluppo locale |
 | `config` | Aree geografiche e sezioni CAI |
@@ -31,7 +32,7 @@ CORDATA_CONTACT="https://esempio.it/contatti" uv run python -m cordata_ingest.pr
 ```
 
 ```bash
-# web
+# web (i dati della mappa si generano con la pipeline di services/ingest)
 cd apps/web
 pnpm install
 pnpm run lint && pnpm run check && pnpm run test && pnpm run build

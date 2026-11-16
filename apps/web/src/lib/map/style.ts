@@ -126,7 +126,7 @@ export function withCordataLayers(base: StyleSpecification, opts: CordataStyleOp
 				filter: ['>', ['get', 'level'], 0],
 				layout: {
 					'symbol-placement': 'line',
-					'text-field': ['concat', ['number-format', ['get', 'ele'], {}], ' m'],
+					'text-field': ['concat', ['number-format', ['get', 'ele'], { locale: 'it-IT' }], ' m'],
 					'text-font': FONT_REGULAR,
 					'text-size': 10
 				},
