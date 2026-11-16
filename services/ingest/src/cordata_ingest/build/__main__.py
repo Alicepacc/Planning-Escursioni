@@ -44,18 +44,25 @@ def main(argv: list[str] | None = None) -> int:
         elif step == "derive":
             run_sql_file(conn, repo_root() / "services" / "ingest" / "sql" / "derive.sql")
             counts = conn.execute(
-                "SELECT (SELECT count(*) FROM trails), (SELECT count(*) FROM trails WHERE osm2cai_id IS NOT NULL),"
+                "SELECT (SELECT count(*) FROM trails),"
+                " (SELECT count(*) FROM trails WHERE osm2cai_id IS NOT NULL),"
                 " (SELECT count(*) FROM trail_ways)"
             ).fetchone()
             result = {"trails": counts[0], "with_osm2cai": counts[1], "trail_ways": counts[2]}
         elif step == "tiles":
-            result = tiles.build(conn, WEB_STATIC / "tiles" / "pilota.pmtiles", data_dir() / "build")
+            result = tiles.build(
+                conn, WEB_STATIC / "tiles" / "pilota.pmtiles", data_dir() / "build"
+            )
         elif step == "trails":
             result = documents.build_trails(store, conn, dem, WEB_STATIC / "data" / "sentieri")
         else:
-            fixture = json.loads((repo_root() / "fixtures/golden/val-d-inferno.json").read_text("utf-8"))
+            fixture = json.loads(
+                (repo_root() / "fixtures/golden/val-d-inferno.json").read_text("utf-8")
+            )
             waypoints = json.loads(
-                (repo_root() / "services/routing/spike/val_inferno_waypoints.json").read_text("utf-8")
+                (repo_root() / "services/routing/spike/val_inferno_waypoints.json").read_text(
+                    "utf-8"
+                )
             )
             tracks = json.loads(
                 (repo_root() / "reports/phase0/routing-spike/tracks.geojson").read_text("utf-8")
@@ -80,7 +87,8 @@ def main(argv: list[str] | None = None) -> int:
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")), "utf-8")
             result = {"stages": len(doc["stages"]), "trails": [t["ref"] for t in doc["trails"]]}
-        print(f"{step}: {result} ({time.time() - t0:.0f} s; tile DEM scaricati {dem.tiles_downloaded})")
+        elapsed = time.time() - t0
+        print(f"{step}: {result} ({elapsed:.0f} s; tile DEM scaricati {dem.tiles_downloaded})")
     client.close()
     return 0
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+import json
 
 import pytest
 
@@ -119,3 +120,13 @@ def test_trail_document_keeps_official_values_and_adds_computed():
     assert doc["color"] == "red" and doc["links"]["osm"].endswith("/7034586")
     entry = index_entry(doc)
     assert entry["min"] == 45 and entry["up"] == 205, "nell'indice prevalgono i valori ufficiali"
+
+
+def test_tile_zoom_filter_rules():
+    from cordata_ingest.build.tiles import POI_MINZOOM, zoom_filter
+
+    rules = zoom_filter()
+    assert rules["sentieri"][0] == "any" and [">=", "$zoom", 11] in rules["sentieri"]
+    flat = json.dumps(rules["poi"])
+    for kind in POI_MINZOOM:
+        assert f'"{kind}"' in flat or POI_MINZOOM[kind] >= 14

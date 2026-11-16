@@ -98,7 +98,9 @@ def osm_relations(conn: psycopg.Connection) -> dict[int, dict[str, Any]]:
     return {r[0]: {"network": r[1], "osmc": r[2], "name_de": r[3], "operator": r[4]} for r in rows}
 
 
-def trail_document(feature: dict[str, Any], osm: dict[str, Any], dem, params=DEFAULT_PARAMS) -> dict:
+def trail_document(
+    feature: dict[str, Any], osm: dict[str, Any], dem, params=DEFAULT_PARAMS
+) -> dict:
     p = feature["properties"]
     coords, gaps = as_single_line(shape(feature["geometry"]))
     prof = compute_profile(coords, dem, params, gaps=gaps)
@@ -133,7 +135,11 @@ def trail_document(feature: dict[str, Any], osm: dict[str, Any], dem, params=DEF
             "description": localized(p.get("issues_description")) or "",
             "updated": localized(p.get("issues_last_update")) or "",
         },
-        "values_source": "manuale" if p.get("manual_data") else "DEM OSM2CAI" if p.get("dem_data") else None,
+        "values_source": "manuale"
+        if p.get("manual_data")
+        else "DEM OSM2CAI"
+        if p.get("dem_data")
+        else None,
         "official": official,
         "computed": computed_payload(prof),
         "bbox": [round(min(xs), 5), round(min(ys), 5), round(max(xs), 5), round(max(ys), 5)],
@@ -191,7 +197,9 @@ def build_trails(store: Osm2caiStore, conn: psycopg.Connection, dem, out_dir: Pa
         index.append(index_entry(doc))
     index.sort(key=lambda x: (x["ref"] or "~", x["id"]))
     (out_dir / "index.json").write_text(
-        json.dumps({"schema": SCHEMA_VERSION, "trails": index}, ensure_ascii=False, separators=(",", ":")),
+        json.dumps(
+            {"schema": SCHEMA_VERSION, "trails": index}, ensure_ascii=False, separators=(",", ":")
+        ),
         encoding="utf-8",
     )
     return {"trails": len(index), "skipped_without_geometry": skipped}
@@ -203,7 +211,9 @@ TRAILS_ALONG_SQL = """
 WITH route AS (SELECT ST_SetSRID(ST_GeomFromText(%s), 4326) AS g),
 hits AS (
     SELECT t.relation_id, t.osm2cai_id, t.ref, t.name, t.cai_scale, t.network,
-           ST_Length(ST_Intersection(ST_Buffer(route.g::geography, 8)::geometry, tw.geom)::geography) AS len,
+           ST_Length(ST_Intersection(
+               ST_Buffer(route.g::geography, 8)::geometry, tw.geom
+           )::geography) AS len,
            ST_LineLocatePoint(route.g, ST_ClosestPoint(tw.geom, route.g)) AS pos
     FROM route
     JOIN trail_ways tw ON ST_DWithin(tw.geom::geography, route.g::geography, 8)
@@ -219,7 +229,9 @@ ORDER BY min(pos)
 def trails_along(conn: psycopg.Connection, coords: Sequence[Sequence[float]]) -> list[dict]:
     wkt = "LINESTRING(" + ",".join(f"{c[0]} {c[1]}" for c in coords) + ")"
     out = []
-    for rel, cai_id, ref, name, scale, network, length, _pos in conn.execute(TRAILS_ALONG_SQL, (wkt,)):
+    for rel, cai_id, ref, name, scale, network, length, _pos in conn.execute(
+        TRAILS_ALONG_SQL, (wkt,)
+    ):
         out.append(
             {
                 "relation_id": rel,
@@ -244,7 +256,9 @@ def stages(prof: Profile, waypoints: list[dict[str, Any]]) -> list[dict[str, Any
     out, start = [], 0
     for k, wp in enumerate(waypoints):
         last = k == len(waypoints) - 1
-        candidates = range(len(prof.coords) - 1, start - 1, -1) if last else range(start, len(prof.coords))
+        candidates = (
+            range(len(prof.coords) - 1, start - 1, -1) if last else range(start, len(prof.coords))
+        )
         best = min(candidates, key=lambda i: haversine_m(prof.coords[i], (wp["lon"], wp["lat"])))
         start = best
         out.append(
@@ -284,7 +298,10 @@ def fixture_itinerary(
         "group": fixture["gruppo_montuoso"],
         "type": fixture["tipo_percorso"],
         "start": fixture["partenza"],
-        "difficulty": {"cai": normalize_cai(fixture["difficolta_cai"]), "raw": fixture["difficolta_cai"]},
+        "difficulty": {
+            "cai": normalize_cai(fixture["difficolta_cai"]),
+            "raw": fixture["difficolta_cai"],
+        },
         "declared": declared,
         "computed": computed_payload(prof),
         "trails": trails_along(conn, coords),
@@ -297,7 +314,9 @@ def fixture_itinerary(
         "activity": {
             "date": fixture["data"],
             "organizers": fixture["organizzatori"],
-            "signup_note": "Iscrizione sul sito della sezione: l'app non gestisce le iscrizioni CAI.",
+            "signup_note": (
+                "Iscrizione sul sito della sezione: l'app non gestisce le iscrizioni CAI."
+            ),
             "source_url": None,
         },
         "bbox": [round(min(xs), 5), round(min(ys), 5), round(max(xs), 5), round(max(ys), 5)],
@@ -305,7 +324,8 @@ def fixture_itinerary(
         "profile": profile_payload(prof),
         "reconstruction": engine_note,
         "attribution": [
-            "Attività: CAI Sezione di Merano, CAI Sezione di Mestre, Commissione Giovani CAI Alto Adige",
+            "Attività: CAI Sezione di Merano, CAI Sezione di Mestre, "
+            "Commissione Giovani CAI Alto Adige",
             "© OpenStreetMap contributors (ODbL)",
             "© Club Alpino Italiano – INFOMONT (ODbL)",
             "Quote: Mapterhorn",

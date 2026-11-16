@@ -8,7 +8,8 @@ Due modelli:
    Wanderwege», 2013, p. 66). Il diagramma è la rappresentazione grafica di un polinomio nella
    pendenza: tempo [min] = distanza orizzontale [km] × f(pendenza %), con f(0) = 14,271 min/km
    (4,2 km/h in piano, come dichiarato nel manuale ASTRA §3.1.2). I coefficienti sono verificati
-   contro il diagramma ufficiale digitalizzato (vedi `docs/decisions/0007-modelli-dei-tempi.md`).
+   contro il diagramma ufficiale digitalizzato
+   (vedi `docs/decisions/0007-modelli-dei-tempi-e-delle-quote.md`).
    Il manuale ASTRA esclude i tratti con pendenza oltre il 40%: lì il tempo va stimato a parte.
 2. **DIN 33466** (usata da DAV/AVS), come confronto.
 

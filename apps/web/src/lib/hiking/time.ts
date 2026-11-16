@@ -4,7 +4,7 @@
 /**
  * Coefficienti C0…C15 del modello CAI / Sentieri Svizzeri: minuti per km di distanza
  * orizzontale in funzione della pendenza in percento. Provenienza e verifica contro il
- * diagramma ufficiale: docs/decisions/0007-modelli-dei-tempi.md.
+ * diagramma ufficiale: docs/decisions/0007-modelli-dei-tempi-e-delle-quote.md.
  */
 export const SWISS_COEFFICIENTS = [
 	14.271, 3.6992e-1, 2.5922e-2, -1.4384e-3, 3.2105e-5, 8.1542e-6, -9.0261e-8, -2.0757e-8,

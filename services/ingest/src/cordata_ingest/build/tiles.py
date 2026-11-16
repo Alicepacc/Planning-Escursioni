@@ -52,9 +52,20 @@ WHERE geom && ST_MakeEnvelope(%s, %s, %s, %s, 4326)
 
 def trail_features(conn: psycopg.Connection, bbox) -> list[dict]:
     out = []
-    for (way_id, highway, sac, vis, refs, rels, cai_ids, scales, net_rank, sda, osmc, geom) in conn.execute(
-        TRAIL_SQL, bbox
-    ):
+    for (
+        way_id,
+        highway,
+        sac,
+        vis,
+        refs,
+        rels,
+        cai_ids,
+        scales,
+        net_rank,
+        sda,
+        osmc,
+        geom,
+    ) in conn.execute(TRAIL_SQL, bbox):
         scale_rank = max((cai_rank(s) for s in scales or []), default=0)
         derived = False
         if scale_rank == 0:
@@ -74,14 +85,13 @@ def trail_features(conn: psycopg.Connection, bbox) -> list[dict]:
             "sda": int(sda),
             "color": osmc_color(osmc) or "red",
         }
-        minzoom = 8 if net_rank <= 2 else 9 if net_rank == 3 else 11
         out.append(
             {
                 "type": "Feature",
                 "id": way_id,
                 "properties": props,
                 "geometry": json.loads(geom),
-                "tippecanoe": {"layer": "sentieri", "minzoom": minzoom},
+                "tippecanoe": {"layer": "sentieri"},
             }
         )
     return out
@@ -100,10 +110,35 @@ def poi_features(conn: psycopg.Connection, bbox) -> list[dict]:
                 "type": "Feature",
                 "properties": props,
                 "geometry": json.loads(geom),
-                "tippecanoe": {"layer": "poi", "minzoom": POI_MINZOOM.get(kind, 13)},
+                "tippecanoe": {"layer": "poi"},
             }
         )
     return out
+
+
+def zoom_filter() -> dict:
+    """Filtro di tippecanoe (`-j`) che decide da quale zoom compare ogni elemento.
+
+    Non si usa il `minzoom` per singolo elemento: con tippecanoe 2.49 faceva sparire quasi tutti
+    gli elementi anche agli zoom superiori (verificato: 1 tratto su 7 nel tile della fixture).
+    Reti: internazionali e nazionali da z8, regionali da z9, locali da z11.
+    """
+    by_zoom: dict[int, list[str]] = {}
+    for kind, zoom in POI_MINZOOM.items():
+        by_zoom.setdefault(zoom, []).append(kind)
+    poi_rules: list = [[">=", "$zoom", 14]]
+    for zoom, kinds in sorted(by_zoom.items()):
+        if zoom < 14:
+            poi_rules.append(["all", ["in", "kind", *sorted(kinds)], [">=", "$zoom", zoom]])
+    return {
+        "sentieri": [
+            "any",
+            [">=", "$zoom", 11],
+            ["<=", "net", 2],
+            ["all", ["==", "net", 3], [">=", "$zoom", 9]],
+        ],
+        "poi": ["any", *poi_rules],
+    }
 
 
 def build(conn: psycopg.Connection, out_file: Path, work_dir: Path) -> dict:
@@ -118,7 +153,8 @@ def build(conn: psycopg.Connection, out_file: Path, work_dir: Path) -> dict:
     out_file.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         "tippecanoe",
-        "-o", str(out_file),
+        "-o",
+        str(out_file),
         "--force",
         "--minimum-zoom=8",
         "--maximum-zoom=14",
@@ -128,6 +164,8 @@ def build(conn: psycopg.Connection, out_file: Path, work_dir: Path) -> dict:
         "--simplification=4",
         "--drop-densest-as-needed",
         "--maximum-tile-bytes=1000000",
+        "-j",
+        json.dumps(zoom_filter()),
         "--quiet",
         str(seq),
     ]
