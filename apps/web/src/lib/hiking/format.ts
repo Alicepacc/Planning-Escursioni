@@ -1,4 +1,4 @@
-// Formattazione dei numeri in italiano: 15,5 km · 2.253 m · 5:50 h.
+// Formattazione dei numeri in italiano: 15,5 km · 2253 m · 12.345 m · 5:50 h.
 import { formatMinutes } from './time';
 
 const km1 = new Intl.NumberFormat('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });

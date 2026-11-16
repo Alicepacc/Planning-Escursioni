@@ -5,7 +5,9 @@ import { formatDate, formatDuration, formatKm, formatMeters } from './format';
 describe('formattazione', () => {
 	it('usa le convenzioni italiane', () => {
 		expect(formatKm(15.5)).toBe('15,5 km');
-		expect(formatMeters(2253)).toBe('2.253 m');
+		// in italiano (CLDR) le cifre si raggruppano da 5 in su: 2253 m, 12.345 m
+		expect(formatMeters(2253)).toBe('2253 m');
+		expect(formatMeters(12345)).toBe('12.345 m');
 		expect(formatDuration(350)).toBe('5:50 h');
 		expect(formatDate('2026-11-15')).toBe('15 novembre 2026');
 	});
