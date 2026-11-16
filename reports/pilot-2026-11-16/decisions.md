@@ -147,3 +147,13 @@ da OSM e OSM2CAI (ODbL) e lo dichiarano.
 3. SAT: cercare i siti delle sezioni uno per uno, o scrivere alla SAT per un canale dati?
 4. Passare alla Fase 3 (Esplora + archivio attività + integrazione SAT + deduplica) usando le 20
    attività del pilota come primo contenuto della sezione attività?
+
+## Risposte dell'utente al checkpoint (16/11/2026)
+
+1. **Pilota approvato**: si passa alla Fase 3 partendo dalle 20 attività del pilota; l'ingestion
+   delle altre locandine si fa a blocchi dentro la Fase 3.
+2. **Regole di auto_ok confermate** (punto 6): dato dichiarato incoerente escluso dal confronto,
+   almeno un confronto su km o dislivello, al massimo un punto intermedio non trovato.
+3. **SAT**: cercare i siti delle singole sezioni, una per una, con le stesse regole di cortesia.
+4. **Revisione**: per ora la fa Claude Code in sessione; a demo finita l'utente farà verifiche
+   proprie (la coda di revisione del §7.7 resta da costruire per quel momento).
