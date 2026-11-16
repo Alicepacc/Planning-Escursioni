@@ -36,11 +36,21 @@ export const CAI_SCALES: Record<CaiScale, ScaleInfo> = {
 		label: 'Esperti con attrezzatura',
 		description: 'Percorsi attrezzati o vie ferrate: servono imbrago, set da ferrata e casco.',
 		color: '#1f2933'
+	},
+	EAI: {
+		code: 'EAI',
+		label: 'Escursionismo in ambiente innevato',
+		description:
+			'Itinerari con racchette da neve su terreno innevato: servono ARTVA, pala e sonda e la lettura del bollettino valanghe.',
+		color: '#1d5f8f'
 	}
 };
 
 export function scaleInfo(code: string | null | undefined): ScaleInfo | null {
 	if (!code) return null;
-	const base = code.toUpperCase().split(':')[0] as CaiScale;
+	const upper = code.toUpperCase().split(':')[0];
+	if (upper.startsWith('EAI')) return CAI_SCALES.EAI; // EAI-F, EAI-PD…
+	// «E-EE» (tratti EE): si mostra il grado più alto
+	const base = upper.split('-').pop() as CaiScale;
 	return CAI_SCALES[base] ?? null;
 }

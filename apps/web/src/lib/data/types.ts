@@ -1,7 +1,7 @@
 // Formato dei documenti JSON prodotti da services/ingest/src/cordata_ingest/build/documents.py.
 // I due file vanno tenuti allineati (campo `schema`).
 
-export type CaiScale = 'T' | 'E' | 'EE' | 'EEA';
+export type CaiScale = 'T' | 'E' | 'EE' | 'EEA' | 'EAI';
 
 /** [distanza m, quota m, lon, lat, minuti cumulati in andata (modello CAI)] */
 export type ProfilePoint = [number, number, number, number, number];
@@ -95,20 +95,29 @@ export interface TrailOnRoute {
 
 export interface ItineraryDoc {
 	schema: number;
-	kind: 'itinerario';
+	/** itinerario (fixture) o attività CAI dell'archivio (build/activities.py) */
+	kind: 'itinerario' | 'attivita';
 	id: string;
 	title: string;
 	group: string;
 	type: string;
-	start: { nome: string; quota_m: number; comune: string; ora?: string };
+	start: {
+		nome: string;
+		quota_m: number | null;
+		comune: string;
+		ora?: string;
+		lon?: number;
+		lat?: number;
+	};
 	difficulty: Difficulty;
+	/** valori della locandina: possono mancare (null) */
 	declared: {
-		distance_km: number;
-		ascent_m: number;
-		descent_m: number;
-		max_ele_m: number;
-		duration: string;
-		difficulty: string;
+		distance_km: number | null;
+		ascent_m: number | null;
+		descent_m: number | null;
+		max_ele_m: number | null;
+		duration: string | null;
+		difficulty: string | null;
 	};
 	computed: ComputedStats;
 	trails: TrailOnRoute[];
@@ -118,11 +127,22 @@ export interface ItineraryDoc {
 	equipment: string[];
 	notes: string[];
 	map_reference: string;
+	/** sintesi composta dai soli dati (attività) */
+	summary?: string;
 	activity: {
-		date: string;
+		date: string | null;
+		future?: boolean;
 		organizers: string[];
 		signup_note: string;
 		source_url: string | null;
+		source_page?: number | null;
+		transport?: string | null;
+	};
+	/** esito della ricostruzione automatica (attività) */
+	verification?: {
+		status: 'auto_ok' | 'da_rivedere' | 'fallita';
+		reasons: string[];
+		on_cited_share: number | null;
 	};
 	bbox: [number, number, number, number];
 	line: [number, number][];
@@ -161,4 +181,12 @@ export interface TrailWayProps {
 	rel: string;
 	sda: number;
 	color: string;
+}
+
+/** Punto di partenza di una proposta in Esplora (k: s sentiero, a attività, i itinerario). */
+export interface MapPoint {
+	id: string;
+	lon: number;
+	lat: number;
+	k: string;
 }

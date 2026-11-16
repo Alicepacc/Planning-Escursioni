@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 
@@ -10,6 +10,22 @@ const trailEntries: `/${string}`[] = existsSync(trailIndex)
 	? JSON.parse(readFileSync(trailIndex, 'utf8')).trails.map(
 			(t: { id: string }) => `/sentiero/${t.id}` as const
 		)
+	: [];
+
+// Schede delle attività CAI (archivio del pilota, `python -m cordata_ingest.build activities`)
+const activityIndex = 'static/data/attivita/index.json';
+const activityEntries: `/${string}`[] = existsSync(activityIndex)
+	? JSON.parse(readFileSync(activityIndex, 'utf8')).map(
+			(a: { id: string }) => `/attivita/${a.id}` as const
+		)
+	: [];
+
+// itinerari (oggi la fixture Val d'Inferno), non più collegati da un link statico di Esplora
+const itineraryDir = 'static/data/itinerari';
+const itineraryEntries: `/${string}`[] = existsSync(itineraryDir)
+	? readdirSync(itineraryDir)
+			.filter((f) => f.endsWith('.json'))
+			.map((f) => `/itinerario/${f.replace(/\.json$/, '')}` as const)
 	: [];
 
 export default defineConfig({
@@ -27,7 +43,7 @@ export default defineConfig({
 			// sotto-percorso per GitHub Pages (es. BASE_PATH=/Planning-Escursioni); vuoto altrove
 			paths: { base: (process.env.BASE_PATH ?? '') as '' | `/${string}` },
 			prerender: {
-				entries: ['*', ...trailEntries],
+				entries: ['*', ...trailEntries, ...activityEntries, ...itineraryEntries],
 				// senza i dati generati (es. in CI) le schede non esistono: avvisa e prosegui
 				handleHttpError: 'warn',
 				handleUnseenRoutes: 'warn'

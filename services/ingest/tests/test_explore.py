@@ -55,3 +55,10 @@ def test_attrezzatura_indicativa():
 def test_indirizzo_leggibile_e_stabile():
     act = {"data": date(2026, 7, 26), "titolo": "Anello Waldnersee", "sezione": "CAI Bolzano"}
     assert activity_slug("x", act) == "2026-07-26-anello-waldnersee-bolzano"
+
+
+def test_etichette_dai_nomi_dei_punti_chiave():
+    from cordata_ingest.build.explore import tags_from_names
+
+    assert tags_from_names(["Albergo Monte Baldo", "Rifugio Baita Fos-ce"]) == {"rifugio"}
+    assert tags_from_names(["Casere", "Waldner See", "Cima Nassere"]) == {"lago", "cima"}

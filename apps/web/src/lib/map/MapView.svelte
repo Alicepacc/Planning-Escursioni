@@ -12,7 +12,7 @@
 	import { generatedAsset } from '../data/paths';
 	// MapLibre 6 (ESM) carica il worker relativo a sé stesso: con Vite va dichiarato come asset
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
-	import type { TrailWayProps } from '../data/types';
+	import type { MapPoint, TrailWayProps } from '../data/types';
 	import { BASEMAP_STYLE_URL, TERRAIN_MAXZOOM, TERRAIN_TILES, withCordataLayers } from './style';
 
 	interface StageMarker {
@@ -26,20 +26,36 @@
 		bbox?: [number, number, number, number];
 		line?: [number, number][];
 		lineColor?: string;
+		/** traccia tratteggiata: ricostruzione non ancora verificata */
+		lineDashed?: boolean;
 		cursor?: [number, number] | null;
 		stages?: StageMarker[];
 		label?: string;
 		onTrailClick?: (ways: TrailWayProps[], lngLat: [number, number]) => void;
+		/** proposte da mostrare come punti cliccabili */
+		points?: MapPoint[];
+		selected?: string | null;
+		onPointClick?: (id: string) => void;
+		/** riquadro visibile dopo ogni spostamento; `byUser` se l'ha mosso l'utente */
+		onMoveEnd?: (bbox: [number, number, number, number], byUser: boolean) => void;
+		/** riquadro da inquadrare quando cambia */
+		focus?: [number, number, number, number] | null;
 	}
 
 	let {
 		bbox,
 		line,
 		lineColor = '#c0392b',
+		lineDashed = false,
 		cursor = null,
 		stages = [],
 		label = 'Mappa dei sentieri',
-		onTrailClick
+		onTrailClick,
+		points = [],
+		selected = null,
+		onPointClick,
+		onMoveEnd,
+		focus = null
 	}: Props = $props();
 
 	let container: HTMLDivElement;
@@ -48,6 +64,7 @@
 	let failed = $state<string | null>(null);
 	let cursorMarker: MlMarker | undefined;
 	let stageMarkers: MlMarker[] = [];
+	let resizeObserver: ResizeObserver | undefined;
 	let lib: typeof import('maplibre-gl') | undefined;
 
 	const PILOT_BOUNDS: [number, number, number, number] = [10.38, 45.67, 12.75, 47.1];
@@ -75,6 +92,17 @@
 			console.warn('isoipse non disponibili', err);
 			return undefined;
 		}
+	}
+
+	function pointsGeoJSON(list: MapPoint[], sel: string | null) {
+		return {
+			type: 'FeatureCollection' as const,
+			features: list.map((p) => ({
+				type: 'Feature' as const,
+				properties: { id: p.id, k: p.k, sel: p.id === sel ? 1 : 0 },
+				geometry: { type: 'Point' as const, coordinates: [p.lon, p.lat] }
+			}))
+		};
 	}
 
 	function lineGeoJSON(coords: [number, number][] | undefined) {
@@ -147,18 +175,65 @@
 						id: 'percorso',
 						type: 'line',
 						source: 'percorso',
-						layout: { 'line-cap': 'round', 'line-join': 'round' },
-						paint: { 'line-color': lineColor, 'line-width': 5 }
+						// estremità piatte per il tratteggio: quelle arrotondate riempirebbero gli spazi
+						layout: { 'line-cap': lineDashed ? 'butt' : 'round', 'line-join': 'round' },
+						paint: {
+							'line-color': lineColor,
+							'line-width': 5,
+							...(lineDashed ? { 'line-dasharray': [2, 1.5] } : {})
+						}
 					},
 					'sentieri-numeri'
 				);
+				map.addSource('proposte', { type: 'geojson', data: pointsGeoJSON(points, selected) });
+				map.addLayer({
+					id: 'proposte',
+					type: 'circle',
+					source: 'proposte',
+					paint: {
+						'circle-radius': [
+							'case',
+							['==', ['get', 'sel'], 1],
+							9,
+							['==', ['get', 'k'], 's'],
+							4.5,
+							6.5
+						],
+						'circle-color': ['match', ['get', 'k'], 'a', '#c0392b', 'i', '#1f2933', '#2c6e9b'],
+						'circle-stroke-color': '#ffffff',
+						'circle-stroke-width': ['case', ['==', ['get', 'sel'], 1], 3, 1.5]
+					}
+				});
+				map.on('click', 'proposte', (e) => {
+					const id = e.features?.[0]?.properties?.id;
+					if (id && onPointClick) onPointClick(String(id));
+				});
+				map.on('mouseenter', 'proposte', () => map && (map.getCanvas().style.cursor = 'pointer'));
+				map.on('mouseleave', 'proposte', () => map && (map.getCanvas().style.cursor = ''));
 				ready = true;
 				container.dataset.ready = 'true';
 			});
+			map.on('moveend', (e) => {
+				if (!map || !onMoveEnd) return;
+				const b = map.getBounds();
+				onMoveEnd(
+					[b.getWest(), b.getSouth(), b.getEast(), b.getNorth()],
+					Boolean((e as { originalEvent?: unknown }).originalEvent)
+				);
+			});
+			// il contenitore cambia dimensione con il layout (griglia, pannelli): la mappa si adatta
+			resizeObserver = new ResizeObserver(() => map?.resize());
+			resizeObserver.observe(container);
 			// accesso alla mappa per i test end-to-end (Playwright)
 			(container as HTMLDivElement & { maplibreMap?: MlMap }).maplibreMap = map;
 			map.on('click', 'sentieri', (e) => {
-				if (!onTrailClick || !e.features?.length) return;
+				if (!onTrailClick || !e.features?.length || !map) return;
+				// un clic su una proposta non è anche un clic sul sentiero sotto
+				if (
+					map.getLayer('proposte') &&
+					map.queryRenderedFeatures(e.point, { layers: ['proposte'] }).length
+				)
+					return;
 				const props = e.features.map((f) => f.properties as unknown as TrailWayProps);
 				onTrailClick(props, [e.lngLat.lng, e.lngLat.lat]);
 			});
@@ -169,7 +244,21 @@
 		}
 	});
 
-	onDestroy(() => map?.remove());
+	onDestroy(() => {
+		resizeObserver?.disconnect();
+		map?.remove();
+	});
+
+	// proposte (Esplora)
+	$effect(() => {
+		const data = pointsGeoJSON(points, selected);
+		if (ready && map) (map.getSource('proposte') as GeoJSONSource | undefined)?.setData(data);
+	});
+
+	// inquadratura richiesta dalla pagina
+	$effect(() => {
+		if (ready && map && focus) map.fitBounds(focus, { padding: 40, maxZoom: 14, duration: 600 });
+	});
 
 	// traccia evidenziata
 	$effect(() => {

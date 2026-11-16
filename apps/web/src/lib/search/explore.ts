@@ -19,11 +19,12 @@ export interface ExploreItem {
 	src: string;
 	date?: string | null;
 	fut?: boolean;
-	min: number;
-	km: number;
-	up: number;
-	dn: number;
-	max: number;
+	/** null quando il dato non è dichiarato e la traccia non è verificata */
+	min: number | null;
+	km: number | null;
+	up: number | null;
+	dn: number | null;
+	max: number | null;
 	d: string | null;
 	ty: string;
 	s: LonLat;
@@ -176,16 +177,19 @@ function intersects(a: BBox, b: BBox): boolean {
 	return a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1];
 }
 
+/** Dato sconosciuto (null): escluso quando il filtro su quel dato è attivo. */
+function outside(value: number | null, min: number | null, max: number | null): boolean {
+	if (min == null && max == null) return false;
+	if (value == null) return true;
+	return (min != null && value < min) || (max != null && value > max);
+}
+
 export function matches(item: ExploreItem, f: Filters): boolean {
 	if (f.text && textScore(item, f.text) < 1) return false;
-	if (f.minMinutes != null && item.min < f.minMinutes) return false;
-	if (f.maxMinutes != null && item.min > f.maxMinutes) return false;
-	if (f.minKm != null && item.km < f.minKm) return false;
-	if (f.maxKm != null && item.km > f.maxKm) return false;
-	if (f.minUp != null && item.up < f.minUp) return false;
-	if (f.maxUp != null && item.up > f.maxUp) return false;
-	if (f.minEle != null && item.max < f.minEle) return false;
-	if (f.maxEle != null && item.max > f.maxEle) return false;
+	if (outside(item.min, f.minMinutes, f.maxMinutes)) return false;
+	if (outside(item.km, f.minKm, f.maxKm)) return false;
+	if (outside(item.up, f.minUp, f.maxUp)) return false;
+	if (outside(item.max, f.minEle, f.maxEle)) return false;
 	if (!difficultyMatches(item, f.difficulties)) return false;
 	if (f.types.length && !f.types.includes(item.ty as RouteType)) return false;
 	if (f.tags.some((t) => !tagMatches(item, t))) return false;
@@ -224,10 +228,10 @@ export function sortItems(
 			if (from) out.sort((a, b) => haversineKm(a.s, from) - haversineKm(b.s, from));
 			break;
 		case 'durata':
-			out.sort((a, b) => a.min - b.min);
+			out.sort((a, b) => (a.min ?? Infinity) - (b.min ?? Infinity));
 			break;
 		case 'dislivello':
-			out.sort((a, b) => a.up - b.up);
+			out.sort((a, b) => (a.up ?? Infinity) - (b.up ?? Infinity));
 			break;
 		case 'data':
 			out.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));

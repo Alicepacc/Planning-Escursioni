@@ -138,7 +138,38 @@ def _trail_items(sentieri_dir: Path) -> list[dict[str, Any]]:
     return items
 
 
+NAME_TAGS: dict[str, tuple[str, ...]] = {
+    "lago": ("lago", "laghi", "laghetto", "laghetti", "see"),
+    "cima": ("cima", "monte", "corno", "punta", "croda", "spitze", "kofel", "dosso", "piz"),
+    "rifugio": ("rifugio", "malga", "baita", "hutte", "hütte", "alm"),
+    "acqua": ("sorgente", "fontana"),
+}
+
+
+def tags_from_names(names: list[str]) -> set[str]:
+    """Etichette dai nomi dei punti chiave, quando la traccia non è verificata: conta la prima
+    parola («Rifugio Monte Cavone» è un rifugio, non una cima) o il suffisso tedesco («See»)."""
+    out = set()
+    for name in names:
+        words = name.lower().replace("-", " ").split()
+        if not words:
+            continue
+        for tag, keys in NAME_TAGS.items():
+            if words[0] in keys or (tag in {"lago", "rifugio"} and words[-1] in keys):
+                out.add(tag)
+    return out
+
+
+def _minutes(duration: str | None) -> int | None:
+    if not duration:
+        return None
+    h, m = str(duration).split(":")
+    return int(h) * 60 + int(m)
+
+
 def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
+    """Attività e itinerari. Se la traccia non è verificata, solo i valori dichiarati: un
+    valore calcolato su una traccia forse sbagliata sarebbe un'informazione falsa."""
     items = []
     if not folder.exists():
         return items
@@ -151,11 +182,17 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
         organizers = ", ".join(o for o in act.get("organizers", []) if o)
         when = act.get("date")
         src = f"{organizers}, {'/'.join(reversed(when.split('-')))}" if when else organizers
-        minutes = None
-        if d.get("duration"):
-            h, m = str(d["duration"]).split(":")
-            minutes = int(h) * 60 + int(m)
         verification = doc.get("verification") or {}
+        verified = verification.get("status", "auto_ok") == "auto_ok"
+
+        def pick(declared: Any, computed: Any, digits: int = 0, ok: bool = verified) -> Any:
+            value = declared if declared is not None else (computed if ok else None)
+            return None if value is None else round(float(value), digits or None)
+
+        stage_names = [s["name"] for s in doc.get("stages") or []]
+        stage_eles = [
+            s["declared_ele_m"] for s in doc.get("stages") or [] if s.get("declared_ele_m")
+        ]
         items.append(
             {
                 "id": doc["id"],
@@ -165,19 +202,23 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
                 "src": src,
                 "date": when,
                 "fut": bool(act.get("future")),
-                "min": minutes or round(c["cai_forward_min"] * 1.0),
-                "km": round(d.get("distance_km") or c["distance_km"], 1),
-                "up": round(d.get("ascent_m") or c["ascent_m"]),
-                "dn": round(d.get("descent_m") or c["descent_m"]),
-                "max": round(d.get("max_ele_m") or c["max_ele_m"]),
+                "min": pick(_minutes(d.get("duration")), c["cai_forward_min"]),
+                "km": pick(d.get("distance_km"), c["distance_km"], 1),
+                "up": pick(d.get("ascent_m"), c["ascent_m"]),
+                "dn": pick(d.get("descent_m"), c["descent_m"]),
+                "max": pick(d.get("max_ele_m"), c["max_ele_m"]),
                 "d": (doc.get("difficulty") or {}).get("cai")
                 or ((doc.get("difficulty") or {}).get("raw") or None),
                 "ty": doc.get("type") or "traversata",
                 "s": [round(doc["line"][0][0], 5), round(doc["line"][0][1], 5)],
                 "b": doc["bbox"],
-                "p": mini_profile(doc["profile"]["points"]),
-                "ok": verification.get("status", "auto_ok") == "auto_ok",
+                "p": mini_profile(doc["profile"]["points"]) if verified else [],
+                "ok": verified,
                 "_line": doc["line"],
+                "_names": None if verified else stage_names,
+                "_season_ele": d.get("max_ele_m")
+                or (max(stage_eles) if stage_eles else None)
+                or c["max_ele_m"],
             }
         )
     return items
@@ -214,8 +255,11 @@ def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
     )
     tags = _tags_for(conn, {it["id"]: it["_line"] for it in items})
     for it in items:
-        it["tag"] = sorted(tags.get(it["id"], set()))
-        it["mo"] = season(it["max"], it.get("d"))
+        names = it.pop("_names", None)
+        it["tag"] = sorted(
+            tags_from_names(names) if names is not None else tags.get(it["id"], set())
+        )
+        it["mo"] = season(it.pop("_season_ele", None) or it["max"], it.get("d"))
         del it["_line"]
     out = data / "esplora"
     out.mkdir(parents=True, exist_ok=True)

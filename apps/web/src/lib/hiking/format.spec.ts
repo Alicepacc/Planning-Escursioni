@@ -24,7 +24,9 @@ describe('scala CAI', () => {
 	it('riconosce le varianti e scarta i valori sconosciuti', () => {
 		expect(scaleInfo('EEA:PD')?.code).toBe('EEA');
 		expect(scaleInfo('ee')?.label).toBe('Escursionisti esperti');
-		expect(scaleInfo('EAI')).toBeNull();
+		expect(scaleInfo('EAI-F')?.code).toBe('EAI'); // ciaspolate (SPEC §5.1)
+		expect(scaleInfo('E-EE')?.code).toBe('EE'); // si mostra il grado più alto
+		expect(scaleInfo('XYZ')).toBeNull();
 		expect(scaleInfo(null)).toBeNull();
 	});
 });
