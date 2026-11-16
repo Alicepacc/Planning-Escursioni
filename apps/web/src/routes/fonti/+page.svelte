@@ -3,18 +3,20 @@
 	import { dataSources } from '#lib/sources.ts';
 </script>
 
-<h1>{t('sources.title')}</h1>
-<p>{t('sources.intro')}</p>
+<div class="pagina">
+	<h1>{t('sources.title')}</h1>
+	<p>{t('sources.intro')}</p>
 
-<ul>
-	{#each dataSources as source (source.name)}
-		<li>
-			<h2><a href={source.url} rel="external noopener">{source.name}</a></h2>
-			<p>{source.use}</p>
-			<p><strong>{source.license}</strong> · {source.attribution}</p>
-		</li>
-	{/each}
-</ul>
+	<ul>
+		{#each dataSources as source (source.name)}
+			<li>
+				<h2><a href={source.url} rel="external noopener">{source.name}</a></h2>
+				<p>{source.use}</p>
+				<p><strong>{source.license}</strong> · {source.attribution}</p>
+			</li>
+		{/each}
+	</ul>
+</div>
 
 <style>
 	ul {

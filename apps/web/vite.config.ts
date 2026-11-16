@@ -1,6 +1,16 @@
 import { defineConfig } from 'vitest/config';
-import adapter from '@sveltejs/adapter-auto';
+import { existsSync, readFileSync } from 'node:fs';
+import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+
+// Schede dei sentieri da prerenderizzare: tutte quelle prodotte dalla pipeline di ingestion
+// (services/ingest, `python -m cordata_ingest.build trails`). Senza dati la build funziona lo stesso.
+const trailIndex = 'static/data/sentieri/index.json';
+const trailEntries: `/${string}`[] = existsSync(trailIndex)
+	? JSON.parse(readFileSync(trailIndex, 'utf8')).trails.map(
+			(t: { id: string }) => `/sentiero/${t.id}` as const
+		)
+	: [];
 
 export default defineConfig({
 	plugins: [
@@ -11,10 +21,14 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-			// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-			adapter: adapter()
+			// sito statico su Cloudflare Pages (ADR 0005); 404.html fa da fallback per le pagine
+			// non prerenderizzate, che vengono disegnate nel browser
+			adapter: adapter({ fallback: '404.html' }),
+			prerender: {
+				entries: ['*', ...trailEntries],
+				// senza i dati generati (es. in CI) le schede non esistono: avvisa e prosegui
+				handleHttpError: 'warn'
+			}
 		})
 	],
 	test: {

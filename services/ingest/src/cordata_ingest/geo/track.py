@@ -33,26 +33,29 @@ def length_m(coords: Sequence[Sequence[float]]) -> float:
     return cumulative_distances_m(coords)[-1] if coords else 0.0
 
 
-def resample(coords: Sequence[Sequence[float]], step_m: float = 15.0) -> list[LonLat]:
-    """Ricampiona la traccia a passo costante (interpolazione lineare lungo i segmenti).
+def resample_along(
+    coords: Sequence[Sequence[float]], step_m: float = 15.0
+) -> tuple[list[LonLat], list[float]]:
+    """Ricampiona la traccia a passo costante e restituisce anche la distanza progressiva.
 
-    Primo e ultimo punto sono sempre conservati. Serve per interrogare il DEM in modo uniforme
-    (SPEC §8: un punto ogni 10-20 m).
+    La distanza restituita è quella misurata **lungo la traccia originale** (i, i·passo, …,
+    totale), non la somma delle corde tra i punti ricampionati: sui tornanti le corde tagliano
+    le curve e accorcerebbero il percorso. Primo e ultimo punto sono sempre conservati.
+    Serve per interrogare il DEM in modo uniforme (SPEC §8: un punto ogni 10-20 m).
     """
     if step_m <= 0:
         raise ValueError("step_m deve essere positivo")
     if len(coords) < 2:
-        return [(c[0], c[1]) for c in coords]
+        return [(c[0], c[1]) for c in coords], [0.0] * len(coords)
     cum = cumulative_distances_m(coords)
     total = cum[-1]
     if total == 0:
-        return [(coords[0][0], coords[0][1])]
-    out: list[LonLat] = []
-    seg = 0
-    n_steps = int(total // step_m)
-    targets = [i * step_m for i in range(n_steps + 1)]
+        return [(coords[0][0], coords[0][1])], [0.0]
+    targets = [i * step_m for i in range(int(total // step_m) + 1)]
     if total - targets[-1] > 1e-6:
         targets.append(total)
+    out: list[LonLat] = []
+    seg = 0
     for target in targets:
         while seg < len(cum) - 2 and cum[seg + 1] < target:
             seg += 1
@@ -60,4 +63,9 @@ def resample(coords: Sequence[Sequence[float]], step_m: float = 15.0) -> list[Lo
         t = 0.0 if span == 0 else (target - cum[seg]) / span
         a, b = coords[seg], coords[seg + 1]
         out.append((a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t))
-    return out
+    return out, targets
+
+
+def resample(coords: Sequence[Sequence[float]], step_m: float = 15.0) -> list[LonLat]:
+    """Solo i punti di `resample_along`."""
+    return resample_along(coords, step_m)[0]

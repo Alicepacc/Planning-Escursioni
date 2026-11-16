@@ -81,10 +81,10 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100dvh;
-		max-width: 48rem;
-		margin: 0 auto;
 	}
 	header {
+		background: var(--surface);
+		border-bottom: 1px solid var(--border);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -107,7 +107,16 @@
 	}
 	main {
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+	:global(.pagina) {
+		width: 100%;
+		max-width: 52rem;
+		margin: 0 auto;
 		padding: 0.5rem 1rem 1.5rem;
+		box-sizing: border-box;
 	}
 	nav {
 		position: sticky;

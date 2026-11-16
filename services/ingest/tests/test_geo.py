@@ -9,7 +9,13 @@ import numpy as np
 import pytest
 
 from cordata_ingest.geo.elevation import HGT_SIZE, HgtDem, ascent_descent, moving_average, tile_name
-from cordata_ingest.geo.track import cumulative_distances_m, haversine_m, length_m, resample
+from cordata_ingest.geo.track import (
+    cumulative_distances_m,
+    haversine_m,
+    length_m,
+    resample,
+    resample_along,
+)
 
 
 def test_haversine_one_degree_of_latitude():
@@ -54,7 +60,8 @@ def test_hysteresis_filters_dem_noise():
     raw_up, raw_down = ascent_descent(noisy, threshold_m=0)
     up, down = ascent_descent(noisy, threshold_m=5)
     assert raw_up > 200 and raw_down > 100, "senza soglia il rumore gonfia il dislivello"
-    assert up == pytest.approx(100, abs=6) and down == 0
+    assert up == pytest.approx(100, abs=6) and down <= 2
+    assert up - down == pytest.approx(noisy[-1] - noisy[0])
 
 
 def test_hysteresis_keeps_real_ups_and_downs():
@@ -65,14 +72,25 @@ def test_hysteresis_keeps_real_ups_and_downs():
 
 
 def test_moving_average():
+    # finestra simmetrica anche ai bordi: gli estremi restano invariati
     assert moving_average([0, 10, 0, 10, 0], 3) == [
-        5,
+        0,
         pytest.approx(10 / 3),
         pytest.approx(20 / 3),
         pytest.approx(10 / 3),
-        5,
+        0,
     ]
     assert moving_average([1, 2], 3) == [1, 2]
+    ramp = [float(v) for v in range(0, 100, 5)]
+    assert moving_average(ramp, 5) == pytest.approx(ramp), "su una rampa lineare non cambia nulla"
+
+
+def test_hysteresis_net_change_is_preserved():
+    # traccia che termina in salita: gli ultimi metri sotto soglia non vanno persi
+    climb = [1000 + 1.5 * i for i in range(134)]  # +199,5 m
+    up, down = ascent_descent(climb, threshold_m=10)
+    assert up - down == pytest.approx(climb[-1] - climb[0])
+    assert up == pytest.approx(199.5) and down == 0
 
 
 def test_tile_name():
@@ -97,3 +115,12 @@ def test_hgt_bilinear_interpolation(tmp_path):
 def test_missing_tile_without_client_raises(tmp_path):
     with pytest.raises(FileNotFoundError):
         HgtDem(tmp_path).elevation(11.5, 46.5)
+
+
+def test_resample_along_keeps_true_length_on_hairpins():
+    # zig-zag stretto: le corde tra punti a 15 m taglierebbero i tornanti
+    zigzag = [(11.5 + (i % 2) * 0.0001, 46.0 + i * 0.00005) for i in range(200)]
+    points, dist = resample_along(zigzag, step_m=15)
+    assert dist[-1] == pytest.approx(length_m(zigzag), rel=1e-9)
+    assert length_m(points) < dist[-1], "le corde sono più corte della traccia"
+    assert len(points) == len(dist) and dist[0] == 0

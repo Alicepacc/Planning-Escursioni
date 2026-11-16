@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cordata – wireframe a bassa fedeltà</title>
+<style>
+  :root { --ink: #222; --mid: #777; --line: #bbb; --fill: #eee; --paper: #fafafa; --accent: #444; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; background: #e6e6e6; color: var(--ink); font: 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .intro { max-width: 1180px; margin: 0 0 18px; color: #444; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 24px; max-width: 1180px; }
+  .frame { background: var(--paper); border: 2px solid #333; border-radius: 26px; height: 700px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+  .caption { font-weight: 700; font-size: 15px; margin: 0 0 6px; }
+  .notes { margin: 8px 2px 0; padding-left: 16px; color: #333; font-size: 12px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fff; font-weight: 700; }
+  .nav { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: #fff; margin-top: auto; }
+  .nav span { text-align: center; padding: 12px 0; color: var(--mid); font-size: 12px; }
+  .nav .on { color: var(--ink); font-weight: 700; box-shadow: inset 0 3px 0 var(--ink); }
+  .map { background: repeating-linear-gradient(45deg, #e9e9e9 0 10px, #e1e1e1 10px 20px); position: relative; flex: 1; min-height: 120px; }
+  .map .trail { position: absolute; border-top: 3px dashed #555; transform-origin: left; }
+  .pin { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #333; color: #fff; font-size: 10px; text-align: center; line-height: 18px; font-weight: 700; }
+  .box { border: 1.5px solid var(--line); border-radius: 10px; background: #fff; padding: 8px 10px; }
+  .muted { color: var(--mid); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1.5px solid #888; border-radius: 16px; padding: 4px 10px; font-size: 12px; background: #fff; }
+  .chip.on { background: #333; color: #fff; border-color: #333; }
+  .btn { border: 2px solid #333; border-radius: 10px; padding: 10px; text-align: center; font-weight: 700; background: #fff; }
+  .btn.primary { background: #333; color: #fff; }
+  .sheet { background: #fff; border-top: 1.5px solid var(--line); border-radius: 16px 16px 0 0; padding: 8px 12px 10px; box-shadow: 0 -3px 10px rgba(0,0,0,.08); }
+  .handle { width: 40px; height: 4px; border-radius: 2px; background: #bbb; margin: 0 auto 8px; }
+  .card { display: grid; grid-template-columns: 1fr 68px; gap: 6px; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px; margin-bottom: 6px; background: #fff; }
+  .metrics { display: flex; gap: 8px; font-weight: 700; flex-wrap: wrap; align-items: center; }
+  .badge { border: 2px solid #333; border-radius: 5px; padding: 0 5px; font-weight: 800; font-size: 12px; }
+  .mini { height: 30px; background: linear-gradient(170deg, transparent 50%, #ccc 50%); border-radius: 4px; }
+  .search { margin: 8px 10px 0; border: 1.5px solid #888; border-radius: 22px; padding: 8px 12px; background: #fff; color: var(--mid); }
+  .float { position: absolute; left: 50%; transform: translateX(-50%); top: 10px; background: #fff; border: 1.5px solid #333; border-radius: 16px; padding: 4px 10px; font-weight: 700; font-size: 12px; }
+  .slider { height: 32px; position: relative; margin: 2px 0 6px; }
+  .slider .hist { position: absolute; inset: 0 0 10px; display: flex; align-items: flex-end; gap: 2px; }
+  .slider .hist i { flex: 1; background: #ccc; }
+  .slider .track { position: absolute; left: 0; right: 0; bottom: 4px; height: 3px; background: #999; }
+  .slider .knob { position: absolute; bottom: -1px; width: 13px; height: 13px; border-radius: 50%; background: #333; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 6px 8px; background: #fff; border-bottom: 1px solid var(--line); font-size: 11px; }
+  .stats b { display: block; font-size: 14px; }
+  .warn { border-left: 4px solid #333; background: #fff; padding: 6px 8px; font-size: 12px; }
+  .field { border: 1.5px solid #999; border-radius: 8px; padding: 7px 9px; background: #fff; color: var(--mid); }
+  label { font-size: 11px; color: #555; display: block; margin: 6px 0 2px; }
+  .scroll { overflow: hidden; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .profile { height: 48px; background: linear-gradient(160deg, transparent 45%, #d5d5d5 45%, #d5d5d5 60%, transparent 60%), linear-gradient(20deg, transparent 50%, #d5d5d5 50%); border: 1px solid var(--line); border-radius: 6px; position: relative; }
+  .profile::after { content: ""; position: absolute; left: 46%; top: 0; bottom: 0; border-left: 2px dashed #333; }
+  .legend { font-size: 11px; color: #555; }
+</style>
+</head>
+<body>
+<h1>Cordata – wireframe a bassa fedeltà (Fase 1)</h1>
+<p class="intro">Sei schermate mobile richieste dalla SPEC (§9): servono a fissare struttura e priorità, non la grafica. Principi applicati: mappa al centro con pannello inferiore a tre altezze, metriche nell'ordine della locandina (tempo · difficoltà · km · dislivello), difficoltà sempre con lettere, avvisi in linea e mai bloccanti, pulsanti di almeno 48 px.</p>
+<div class="grid">
+
+<!-- 1. ESPLORA -->
+<section>
+  <p class="caption">1 · Esplora</p>
+  <div class="frame">
+    <div class="bar"><span>Cordata</span><span class="muted">Fonti</span></div>
+    <div class="search">🔍 Luogo, cima, rifugio… oppure «anello di 5 ore con lago»</div>
+    <div class="chips" style="padding:8px 10px 0"><span class="chip on">Giornata intera</span><span class="chip">Mezza giornata</span><span class="chip">Laghi</span><span class="chip">Cima</span><span class="chip">Con bambini</span><span class="chip">⚙ Filtri (2)</span></div>
+    <div class="map" style="margin-top:8px">
+      <span class="float">↻ Cerca in quest'area</span>
+      <div class="trail" style="left:40px;top:120px;width:150px;transform:rotate(-20deg)"></div>
+      <div class="trail" style="left:150px;top:90px;width:120px;transform:rotate(35deg);border-top-style:solid;border-top-width:5px"></div>
+      <span class="pin" style="left:60px;top:150px">P</span>
+    </div>
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="row" style="margin-bottom:6px"><b>37 proposte</b><span class="muted">Ordina: rilevanza ▾</span></div>
+      <div class="card"><div><b>Anello in Val d'Inferno</b><div class="metrics">7:00 h · <span class="badge">EE</span> · 15,5 km · ↗ 950 m</div><div class="muted">⟲ anello · CAI Merano, 15/11/2026</div></div><div class="mini"></div></div>
+      <div class="card"><div><b>Lago di Erdemolo</b><div class="metrics">3:30 h · <span class="badge">E</span> · 9,8 km · ↗ 640 m</div><div class="muted">⇄ andata e ritorno · rete OSM</div></div><div class="mini"></div></div>
+    </div>
+    <div class="nav"><span class="on">Esplora</span><span>Pianifica</span><span>Uscite</span><span>Profilo</span></div>
+  </div>
+  <ul class="notes"><li>Mappa e lista sincronizzate: la card evidenziata accende la traccia.</li><li>Ricerca in linguaggio naturale → filtri visibili come chip modificabili.</li><li>Pannello a 3 altezze; su desktop diventa laterale.</li></ul>
+</section>
+
+<!-- 2. FILTRI -->
+<section>
+  <p class="caption">2 · Filtri</p>
+  <div class="frame">
+    <div class="bar"><span>✕ Filtri</span><span class="muted">Azzera</span></div>
+    <div class="scroll">
+      <div><div class="row"><b>Durata</b><span>4 – 7 h</span></div>
+        <div class="slider"><div class="hist"><i style="height:20%"></i><i style="height:45%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:70%"></i><i style="height:40%"></i><i style="height:25%"></i><i style="height:10%"></i></div><div class="track"></div><span class="knob" style="left:25%"></span><span class="knob" style="left:62%"></span></div></div>
+      <div><div class="row"><b>Dislivello in salita</b><span>500 – 1100 m</span></div>
+        <div class="slider"><div class="hist"><i style="height:60%"></i><i style="height:90%"></i><i style="height:100%"></i><i style="height:70%"></i><i style="height:45%"></i><i style="height:30%"></i><i style="height:15%"></i><i style="height:8%"></i></div><div class="track"></div><span class="knob" style="left:20%"></span><span class="knob" style="left:55%"></span></div></div>
+      <div><div class="row"><b>Lunghezza · Quota massima</b><span class="muted">tutte</span></div></div>
+      <div><b>Difficoltà</b><div class="chips" style="margin-top:4px"><span class="chip">T</span><span class="chip on">E</span><span class="chip on">EE</span><span class="chip">EEA</span><span class="chip">EAI ❄</span></div></div>
+      <div><b>Tipo</b><div class="chips" style="margin-top:4px"><span class="chip on">⟲ Anello</span><span class="chip">⇄ Andata e ritorno</span><span class="chip">→ Traversata</span></div></div>
+      <div><b>Partenza</b><div class="field">Entro 60 min da Bolzano (in auto)</div></div>
+      <div><b>Altro</b><div class="chips" style="margin-top:4px"><span class="chip">Rifugio aperto</span><span class="chip">Acqua lungo il percorso</span><span class="chip">Solo gite CAI con data</span><span class="chip">Stagione: autunno</span></div></div>
+      <div class="warn">Se una combinazione di filtri non dà risultati, compare un suggerimento: «allarga la <b>durata</b> fino a 8 h: +12 proposte».</div>
+    </div>
+    <div style="padding:10px 12px"><div class="btn primary">Mostra 37 itinerari</div></div>
+  </div>
+  <ul class="notes"><li>Slider doppi con istogramma della distribuzione.</li><li>Conteggio in tempo reale sul pulsante; mai una lista vuota senza suggerimento.</li></ul>
+</section>
+
+<!-- 3. SCHEDA -->
+<section>
+  <p class="caption">3 · Scheda itinerario</p>
+  <div class="frame">
+    <div class="bar"><span>‹ Anello in Val d'Inferno</span><span>♡ ⤴</span></div>
+    <div class="map" style="flex:0 0 150px"><span class="pin" style="left:40px;top:90px">1</span><span class="pin" style="left:120px;top:40px">5</span><span class="pin" style="left:220px;top:70px">7</span><div class="trail" style="left:50px;top:95px;width:180px;transform:rotate(-12deg);border-top-style:solid"></div></div>
+    <div class="scroll">
+      <div class="metrics" style="justify-content:space-between"><span class="box">7:00 h</span><span class="box"><span class="badge">EE</span></span><span class="box">15,5 km</span><span class="box">↗950 ↘950</span></div>
+      <div class="profile"></div><div class="legend">Profilo interattivo: scorrendo, il marker si muove sulla mappa · tratti ripidi evidenziati</div>
+      <div class="box"><b>Condizioni per sab 15/11</b> <span class="badge">GIALLO</span><br><span class="muted">Zero termico 2100 m: possibile ghiaccio in cima. Vento 35 km/h in cresta. Nessun temporale.</span></div>
+      <div class="box"><b>Gita CAI</b> · Sez. Merano · 15/11/2026 <span class="muted">— iscrizione sul sito della sezione ›</span></div>
+      <div class="box"><b>Sentieri</b> 332 · 360 · 326 · AVG · <span class="muted">tappe con quota e tempo cumulato…</span></div>
+      <div class="chips"><span class="chip">⬇ GPX</span><span class="chip">✎ Modifica nel planner</span><span class="chip">🧭 Come arrivare</span></div>
+    </div>
+    <div style="padding:8px 12px"><div class="btn primary">Organizza un'uscita</div></div>
+  </div>
+  <ul class="notes"><li>Valori dichiarati dalla sezione in evidenza, calcolati come confronto.</li><li>Condizioni sempre con spiegazione testuale, mai solo colore. 112 e GeoResQ in fondo.</li></ul>
+</section>
+
+<!-- 4. PLANNER -->
+<section>
+  <p class="caption">4 · Pianifica</p>
+  <div class="frame">
+    <div class="stats"><span><b>12,4 km</b>distanza</span><span><b>↗ 820 ↘ 820</b>dislivello</span><span><b>5:10 h</b>tempo netto</span><span><b>2.250 m</b>quota max</span><span><b><span class="badge">EE</span></b>max incontrata</span><span><b>Max: E ▾</b>difficoltà ammessa</span></div>
+    <div class="map">
+      <span class="pin" style="left:40px;top:220px">A</span><span class="pin" style="left:160px;top:120px">2</span><span class="pin" style="left:250px;top:200px">3</span>
+      <div class="trail" style="left:50px;top:225px;width:150px;transform:rotate(-38deg);border-top-style:solid;border-top-width:4px"></div>
+      <div class="trail" style="left:168px;top:128px;width:115px;transform:rotate(36deg)"></div>
+      <span class="float" style="top:auto;bottom:10px">✋ tratto a mano libera (fuori sentiero)</span>
+    </div>
+    <div class="sheet">
+      <div class="warn" style="margin-bottom:6px">⚠ 300 m del percorso sono <b>EE</b> (sentiero 366B), oltre la difficoltà scelta (E). <u>Evita il tratto</u></div>
+      <div class="warn" style="margin-bottom:6px">Routing non disponibile ora (server spento): puoi tracciare a mano, le quote si calcolano comunque.</div>
+      <div class="chips"><span class="chip">↶</span><span class="chip">↷</span><span class="chip">⟲ Chiudi anello</span><span class="chip">⇄ Inverti</span><span class="chip">A/R</span><span class="chip">⬆ Importa GPX</span></div>
+    </div>
+    <div class="nav"><span>Esplora</span><span class="on">Pianifica</span><span>Uscite</span><span>Profilo</span></div>
+  </div>
+  <ul class="notes"><li>Tocca per aggiungere, trascina per spostare, tocca la linea per inserire.</li><li>Statistiche sempre visibili; stato del piano nell'URL (Indietro = annulla).</li></ul>
+</section>
+
+<!-- 5. ORGANIZZA USCITA -->
+<section>
+  <p class="caption">5 · Organizza un'uscita</p>
+  <div class="frame">
+    <div class="bar"><span>✕ Nuova uscita</span><span class="muted">1/2</span></div>
+    <div class="scroll">
+      <div class="box"><b>Anello in Val d'Inferno</b> · 7:00 h · <span class="badge">EE</span> · 15,5 km</div>
+      <label>Data e ora</label><div class="field">sab 21/11 · 07:30</div>
+      <label>Ritrovo</label><div class="field">📍 Parcheggio Tedon (tocca la mappa)</div>
+      <label>Mezzi</label><div class="chips"><span class="chip on">Auto condivise</span><span class="chip">Mezzi pubblici</span></div>
+      <label>Posti e termine iscrizione</label><div class="row"><div class="field" style="flex:1">8 posti</div><div class="field" style="flex:1">ven 20/11 18:00</div></div>
+      <label>Attrezzatura obbligatoria</label><div class="field">☑ ramponcini ☑ frontale ☐ bastoncini</div>
+      <label>Visibilità</label><div class="chips"><span class="chip on">Solo con link</span><span class="chip">Contatti</span><span class="chip">Pubblica</span></div>
+      <div class="warn"><b>Uscita privata</b> tra persone, non organizzata dal CAI: nessuna copertura assicurativa CAI, ognuno partecipa sotto la propria responsabilità.</div>
+    </div>
+    <div style="padding:8px 12px"><div class="btn primary">Crea e condividi</div></div>
+  </div>
+  <ul class="notes"><li>Disclaimer obbligatorio prima della creazione.</li><li>Condivisione nativa (WhatsApp) con anteprima: mappa statica e metriche; QR code.</li></ul>
+</section>
+
+<!-- 6. PAGINA INVITO -->
+<section>
+  <p class="caption">6 · Pagina invito (da WhatsApp)</p>
+  <div class="frame">
+    <div class="bar"><span>Cordata</span><span class="muted">senza installare nulla</span></div>
+    <div class="scroll">
+      <p style="margin:0" class="muted">Anna ti invita</p>
+      <b style="font-size:18px">Anello in Val d'Inferno e Cima Nassere</b>
+      <div class="box"><b>Sabato 21 novembre · 07:30</b><br>Ritrovo: Parcheggio Tedon (Scurelle) · <u>apri nelle mappe</u></div>
+      <div class="metrics"><span class="box">7:00 h</span><span class="box"><span class="badge">EE</span></span><span class="box">15,5 km</span><span class="box">↗ 950 m</span></div>
+      <div class="map" style="flex:0 0 110px"><div class="trail" style="left:40px;top:60px;width:200px;transform:rotate(-10deg);border-top-style:solid"></div></div>
+      <div class="box"><b>Meteo previsto</b> · sole, 2 °C in cima, zero termico 2100 m <span class="muted">(aggiornato ogni 3 h)</span></div>
+      <div class="row"><span>5 partecipanti · 3 posti liberi</span><span class="muted">iscrizioni fino a ven 18:00</span></div>
+      <div class="warn">Uscita privata, non organizzata dal CAI. Attrezzatura obbligatoria: ramponcini, frontale.</div>
+    </div>
+    <div style="padding:8px 12px"><div class="btn primary" style="padding:16px;font-size:16px">Partecipo</div><p class="muted" style="text-align:center;margin:6px 0 0">Accesso con link via email o passkey · lista d'attesa automatica</p></div>
+  </div>
+  <ul class="notes"><li>Si carica in fretta e mostra subito data, ritrovo, metriche e meteo.</li><li>Un solo pulsante principale; la lettura non richiede account.</li></ul>
+</section>
+
+</div>
+</body>
+</html>
