@@ -42,7 +42,7 @@ SWISS_COEFFICIENTS: tuple[float, ...] = (
 )
 SWISS_MAX_SLOPE_PCT = 40.0  # oltre, il manuale ASTRA chiede una stima «per esperienza»
 
-DEFAULT_STOPS_FACTOR = 1.15  # tempo con soste: +15% (SPEC §8: +15-20%, configurabile)
+DEFAULT_STOPS_FACTOR = 1.20  # tempo con soste: +20% (SPEC §8: +15-20%; fixture: 5:50 × 1,2 ≈ 7:00)
 
 
 def swiss_minutes_per_km(slope_pct: float) -> float:

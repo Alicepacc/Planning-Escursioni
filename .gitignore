@@ -15,7 +15,7 @@ __pycache__/
 # Node
 node_modules/
 .svelte-kit/
-build/
+/apps/web/build/
 dist/
 .vite/
 *.tsbuildinfo

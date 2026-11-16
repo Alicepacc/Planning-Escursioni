@@ -22,6 +22,29 @@ java -Xmx5g -jar graphhopper-web-11.1.jar server ../../../services/routing/graph
 Il server ascolta su `http://localhost:8989` (`/route`, `/info`, `/health`). L'altimetria usa i
 tile SRTM 1" «skadi» di AWS Open Data, scaricati al primo import in `elevation-cache/`.
 
+## Sul Mac di casa (produzione a costo zero, ADR 0005)
+
+> Non ancora provato: questo ambiente di sviluppo non ha macOS. Da verificare insieme quando
+> servirà il planner (Fase 4).
+
+1. **Java 21**: `brew install openjdk@21` (oppure il pacchetto Temurin 21 per macOS).
+2. **GraphHopper**: stessi passi della sezione precedente in una cartella, ad esempio
+   `~/cordata-routing`, con l'estratto `pilot.osm.pbf` (vedi `services/ingest/README.md`).
+   Il server ascolta solo su `localhost` (porte 8989 per il routing, 8990 per
+   l'amministrazione: quest'ultima non va mai esposta).
+3. **Avvio automatico**: un servizio `launchd` (file `.plist` in `~/Library/LaunchAgents`) che
+   esegue `java -Xmx4g -jar graphhopper-web-11.1.jar server config.yml` e lo riavvia se si
+   ferma. Il Mac non deve andare in stop mentre il planner è in uso.
+4. **Esposizione su Internet con Tailscale Funnel**: serve la variante open source del client
+   Tailscale per macOS (non quella dell'App Store). Si espone solo la porta del routing:
+   `tailscale funnel --bg 8989` → `https://<nome-del-mac>.<tailnet>.ts.net`. Funnel accetta solo
+   HTTPS e ha limiti di banda non configurabili ([documentazione](https://tailscale.com/kb/1223/funnel)).
+5. **Aggiornamento settimanale del grafo**: nuovo estratto, cancellazione di `graph-cache`,
+   riavvio del servizio.
+
+Quando il Mac è spento l'app continua a funzionare: solo il planner «agganciato ai sentieri»
+non risponde e lo dice chiaramente.
+
 ## BRouter (solo per lo spike)
 
 ```bash

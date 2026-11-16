@@ -27,7 +27,8 @@ export default defineConfig({
 			prerender: {
 				entries: ['*', ...trailEntries],
 				// senza i dati generati (es. in CI) le schede non esistono: avvisa e prosegui
-				handleHttpError: 'warn'
+				handleHttpError: 'warn',
+				handleUnseenRoutes: 'warn'
 			}
 		})
 	],

@@ -161,6 +161,11 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   2.232 m). Su quel punto l'endpoint non serve tile oltre z14.
 - **Sorgenti sull'area**: LiDAR della Provincia di Trento (CC BY 2.5), TINITALY 10 m (CC BY
   4.0), Copernicus GLO-30. L'Alto Adige non ha una sorgente LiDAR dedicata.
+- **Uso nella Fase 1**: è il DEM di riferimento per profili e dislivelli (campionamento a z12,
+  13 m per pixel: sui punti chiave della fixture z12, z13 e z14 danno valori identici) e per
+  l'ombreggiatura e le isoipse della mappa, calcolate nel browser dagli stessi tile. Scarto
+  rispetto alle quote OSM dei punti chiave della fixture: entro ±4 m, tranne la cima (−12 m:
+  le vette appuntite si smussano); SRTM 30 m sbaglia la cima di −21 m.
 
 ### DTM provinciali
 - **Bolzano**: WCS `https://geoservices9.civis.bz.it/geoserver/ows`, coverage
@@ -174,8 +179,10 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   cui estrarre l'area pilota. **OpenFreeMap**: TileJSON e stili pronti (usati per gli
   screenshot dello spike); i termini vietano la raccolta automatica di tile salvo download
   offline fino a 3.000 tile o 50 MB.
-- **Non verificato**: l'estrazione con la CLI `pmtiles` (il binario è su GitHub Releases,
-  irraggiungibile da questo ambiente): da provare nella Fase 1.
+- **Uso nella Fase 1**: la mappa usa lo stile OpenFreeMap «liberty» dall'istanza pubblica; i
+  sentieri e i POI di Cordata sono un PMTiles proprio (3,1 MB per l'area pilota, generato con
+  tippecanoe) servito insieme al sito. L'estrazione di un PMTiles della mappa di base serve
+  solo per l'offline (Fase 7) e resta da provare con la CLI `pmtiles`.
 
 ### Open-Meteo
 - **Verificato**: previsione oraria su Cima Nassere con `elevation=2253` e tutte le variabili
