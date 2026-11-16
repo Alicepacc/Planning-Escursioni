@@ -256,6 +256,8 @@ class Place:
     score: float
     similarity: float
     distance_km: float | None
+    variant: str = ""  # la forma del nome che corrisponde meglio alla ricerca
+    exact: bool = False  # nome identico alla ricerca (dopo la normalizzazione)
 
 
 def search(
@@ -283,13 +285,15 @@ def search(
         where.append("g.kind = ANY(%(kinds)s)")
     dist = f"ST_Distance(g.geom::geography, {POINT})/1000" if near else "NULL::float"
     sql = f"""
-        SELECT g.gid, g.name, g.kind, ST_X(g.geom), ST_Y(g.geom), g.ele,
-               max(greatest(word_similarity(%(q)s, n.norm), similarity(%(q)s, n.norm))) AS sim,
-               {dist} AS dkm
-        FROM gazetteer_names n JOIN gazetteer g USING (gid)
-        WHERE {" AND ".join(where)}
-        GROUP BY g.gid
-        ORDER BY sim DESC
+        SELECT * FROM (
+            SELECT DISTINCT ON (g.gid) g.gid, g.name, g.kind, ST_X(g.geom), ST_Y(g.geom), g.ele,
+                   greatest(word_similarity(%(q)s, n.norm), similarity(%(q)s, n.norm)) AS sim,
+                   {dist} AS dkm, n.name AS variant, n.norm = %(q)s AS exact
+            FROM gazetteer_names n JOIN gazetteer g USING (gid)
+            WHERE {" AND ".join(where)}
+            ORDER BY g.gid, sim DESC, exact DESC
+        ) best
+        ORDER BY sim DESC, exact DESC
         LIMIT %(limit)s
     """
     with conn.cursor() as cur:
@@ -300,7 +304,7 @@ def search(
         cur.execute(sql, params)
         rows = cur.fetchall()
     out = []
-    for gid, name, kind, lon, lat, gele, sim, dkm in rows:
+    for gid, name, kind, lon, lat, gele, sim, dkm, variant, exact in rows:
         score = float(sim)
         if near and dkm is not None:
             score -= 0.15 * min(float(dkm) / radius_km, 1.0)
@@ -318,6 +322,8 @@ def search(
                 round(score, 3),
                 round(float(sim), 3),
                 None if dkm is None else round(float(dkm), 2),
+                variant,
+                bool(exact),
             )
         )
     out.sort(key=lambda p: -p.score)
