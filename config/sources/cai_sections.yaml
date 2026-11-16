@@ -1,6 +1,10 @@
 # Sezioni CAI da cui scoprire le attività (SPEC §7.1). Verificato il 13/11/2026 con
 # `python -m cordata_ingest.probes cai_sections`. Nessun dato personale in questo file.
 #
+# `pilot: true` = sezioni scelte dall'utente il 16/11/2026 per il pilota della Fase 2.
+# Nota: la SPEC (§7.6) chiede attività da almeno 4 sezioni; con tre sezioni (e Vipiteno con
+# soli 4 PDF) la scelta va completata prima della Fase 2.
+#
 # site_type:
 #   wordpress_cai  – sottosito di organizzazione.cai.it (WordPress multisite, REST attiva)
 #   wordpress      – sito proprio WordPress con REST attiva
@@ -32,28 +36,28 @@ sections:
     group: CAI Alto Adige
     base_url: https://organizzazione.cai.it/sez-vipiteno-caiaa
     site_type: wordpress_cai
-    pilot: false
+    pilot: true
     notes: Solo 4 PDF al momento della verifica.
   - slug: bressanone
     name: CAI Sezione di Bressanone
     group: CAI Alto Adige
     base_url: https://www.caibressanone.it
     site_type: wordpress
-    pilot: true
+    pilot: false
     notes: Sito proprio WordPress, REST attiva.
   - slug: brunico
     name: CAI Sezione di Brunico
     group: CAI Alto Adige
     base_url: https://www.caibrunico.it
     site_type: wordpress
-    pilot: true
+    pilot: false
     notes: Sito proprio WordPress, REST attiva.
   - slug: mestre
     name: CAI Sezione di Mestre
     group: CAI Veneto
     base_url: https://www.caimestre.it
     site_type: wordpress
-    pilot: true
+    pilot: false
     notes: Sito proprio WordPress, REST attiva, archivio ampio di PDF.
   - slug: merano
     name: CAI Sezione di Merano

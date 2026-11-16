@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from cordata_ingest.config import Area, areas, lonlat_to_mercator, user_agent
+from cordata_ingest.config import PROJECT_URL, Area, areas, lonlat_to_mercator, user_agent
 
 
 def test_areas_are_loaded_from_yaml():
@@ -24,8 +24,8 @@ def test_mercator_conversion_matches_known_values():
     assert area.mercator_bbox == "1269042,5788365,1293532,5806027"
 
 
-def test_user_agent_never_contains_a_contact_unless_configured(monkeypatch):
+def test_user_agent_uses_project_url_unless_overridden(monkeypatch):
     monkeypatch.delenv("CORDATA_CONTACT", raising=False)
-    assert "contatto non ancora configurato" in user_agent()
+    assert user_agent().startswith("Cordata/") and user_agent().endswith(f"+{PROJECT_URL})")
     monkeypatch.setenv("CORDATA_CONTACT", "https://example.org/contatti")
-    assert user_agent().startswith("Cordata/") and "+https://example.org/contatti" in user_agent()
+    assert "+https://example.org/contatti)" in user_agent() and PROJECT_URL not in user_agent()

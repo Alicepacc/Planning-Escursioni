@@ -17,11 +17,12 @@ export const dataSources: DataSource[] = [
 		url: 'https://www.openstreetmap.org/copyright'
 	},
 	{
-		name: 'Club Alpino Italiano – SOSEC / OSM2CAI',
-		use: 'Catasto dei sentieri CAI: difficoltà, tempi ufficiali, percorribilità',
-		license: 'Uso consentito citando i crediti CAI',
-		attribution: 'Dati sentieri: Club Alpino Italiano – SOSEC / OSM2CAI',
-		url: 'https://osm2cai.cai.it'
+		name: 'Club Alpino Italiano – Catasto REI (INFOMONT / OSM2CAI)',
+		use: 'Catasto dei sentieri CAI: difficoltà, tempi ufficiali, stato di percorribilità',
+		license: 'ODbL 1.0',
+		attribution:
+			'Dati sentieri: © Club Alpino Italiano – INFOMONT, derivati da © OpenStreetMap contributors',
+		url: 'https://infomont.cai.it'
 	},
 	{
 		name: 'SAT – Società degli Alpinisti Tridentini',

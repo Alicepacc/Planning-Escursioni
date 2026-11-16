@@ -77,12 +77,14 @@ def areas() -> dict[str, Area]:
     }
 
 
+PROJECT_URL = "https://github.com/Alicepacc/Planning-Escursioni"
+
+
 def user_agent() -> str:
     """User-Agent identificativo richiesto dal §3 della SPEC.
 
-    Il contatto (email o URL del progetto) si imposta con CORDATA_CONTACT: non va mai scritto
-    nel codice. Senza contatto lo User-Agent lo dichiara in modo esplicito.
+    Il contatto predefinito è l'URL pubblico del repository (ADR 0003); `CORDATA_CONTACT` lo
+    sostituisce. Nessun indirizzo email personale va scritto nel codice.
     """
-    contact = os.environ.get("CORDATA_CONTACT", "").strip()
-    suffix = f"+{contact}" if contact else "contatto non ancora configurato"
-    return f"Cordata/{__version__} (PWA escursioni open data; {suffix})"
+    contact = os.environ.get("CORDATA_CONTACT", "").strip() or PROJECT_URL
+    return f"Cordata/{__version__} (PWA escursioni open data; +{contact})"

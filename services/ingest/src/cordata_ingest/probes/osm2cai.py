@@ -7,6 +7,7 @@ from .base import ProbeContext, ProbeResult
 
 PROBE_ID = "osm2cai"
 BASE = "https://osm2cai.cai.it"
+DOCS = "https://catastorei.gitbook.io/documentazione-osm2cai"
 API = f"{BASE}/api/v2"
 FIXTURE_REFS = ("332", "360", "326")
 
@@ -16,10 +17,10 @@ def run(ctx: ProbeContext) -> ProbeResult:
         source_id=PROBE_ID,
         name="OSM2CAI – catasto sentieri CAI (SOSEC)",
         format="JSON (indici {id: updated_at}), GeoJSON (dettaglio, MultiLineString), GPX",
-        license="Uso consentito con citazione dei crediti CAI (conferma scritta all'utente, §3); "
-        "geometrie derivate da OpenStreetMap (ODbL)",
-        license_url=f"{BASE}/api/documentation",
-        update_frequency="Sincronizzazione con OSM; indici con updated_at per l'incrementale",
+        license="ODbL 1.0 (INFOMONT, © Club Alpino Italiano, derivato da © OpenStreetMap "
+        "contributors); confermato dal CAI per email (docs/legal/)",
+        license_url=f"{DOCS}/informazioni-legali/copyright-e-licenza",
+        update_frequency="Sincronizzazione settimanale con OSM (documentazione OSM2CAI)",
     )
     bbox = ctx.lagorai.bbox_str
 

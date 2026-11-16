@@ -95,3 +95,19 @@ completate in sequenza, riusando le risposte che avevano già scaricato.
 
 Vedi il messaggio di checkpoint: nome e dominio, budget, uso commerciale o no, sezioni del
 pilota, contatto per lo User-Agent, conferma scritta del CAI, account da socia.
+
+## 8. Esito del checkpoint (16/11/2026)
+
+| Domanda | Risposta | Dove è registrata |
+|---|---|---|
+| Stack e motore di routing | Confermati (GraphHopper, SvelteKit, Python, PostGIS) | ADR 0001, 0002 |
+| Uso previsto | Non commerciale per ora, forse a pagamento in futuro | ADR 0005 |
+| Budget | Zero: solo servizi gratuiti | ADR 0005 |
+| Autorizzazione CAI | Email del CAI: dati OSM2CAI in ODbL; contenuti delle sezioni solo per sintesi con link | `docs/legal/2026-11-cai-risposta-uso-dati.md` |
+| API delle attività CAI | Non coperta dall'email: non usata; bozza di richiesta pronta | `docs/legal/bozza-richiesta-api-attivita.md` |
+| Estrazione delle locandine | Parser a regole + revisione con Claude Code | ADR 0006 |
+| Hosting del routing | Mac di casa, esposto con Tailscale Funnel | ADR 0005 |
+| Contatto nello User-Agent | URL del repository | ADR 0003 |
+| Sezioni del pilota | Bolzano, Appiano, Vipiteno (da completare: la SPEC ne chiede almeno 4) | `config/sources/cai_sections.yaml` |
+| Nome e dominio | Cordata, sottodominio gratuito `cordata.pages.dev` | ADR 0005 |
+| Account MyCAI | Vede il backend OSM2CAI in sola lettura; non usato dall'app | `docs/data-sources.md` |

@@ -1,6 +1,6 @@
 # ADR 0002 – Motore di routing: GraphHopper
 
-- **Stato**: proposta, da confermare al checkpoint della Fase 0
+- **Stato**: accettata il 16/11/2026 (checkpoint della Fase 0). Hosting: Mac di casa (ADR 0005)
 - **Data**: 13/11/2026
 - **Evidenze**: `reports/phase0/routing-spike/` (script: `services/routing/spike/run_spike.py`)
 

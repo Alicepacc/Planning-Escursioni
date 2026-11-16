@@ -1,6 +1,6 @@
 # ADR 0001 – Stack e struttura del repository
 
-- **Stato**: proposta, da confermare al checkpoint della Fase 0
+- **Stato**: accettata il 16/11/2026 (checkpoint della Fase 0)
 - **Data**: 13/11/2026
 
 ## Decisione
@@ -28,13 +28,13 @@ ripetibili in `reports/`.
   (`cordata_ingest.timing`) e in TypeScript (`apps/web/src/lib/hiking/time.ts`) perché serve
   sia nell'ingestion sia nel planner offline. Entrambe sono testate contro
   `fixtures/golden/val-d-inferno.json`.
-- **PostGIS / Supabase**: confermato come default della SPEC, ma non ancora installato: la
-  Fase 0 non ne ha bisogno. La scelta tra Supabase gestito e PostGIS self-hosted dipende dal
-  budget (domanda aperta per l'utente).
+- **PostGIS**: usato solo nella pipeline di build, perché il budget è zero e non c'è un
+  database pubblico (ADR 0005).
 
 ## Conseguenze e punti aperti
 
-- L'adapter SvelteKit è ancora `adapter-auto`: si fissa quando è deciso l'hosting.
+- Hosting deciso in ADR 0005: Cloudflare Pages, quindi sito prerenderizzato con
+  `adapter-static`.
 - `infra/docker-compose.yml` e `services/routing/Dockerfile` non sono stati eseguiti in
   questo ambiente (nessun demone Docker): vanno provati in locale o in CI.
 - La CI (`.github/workflows/ci.yml`) esegue lint, type-check, test e build; le verifiche

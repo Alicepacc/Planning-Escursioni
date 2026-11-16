@@ -22,8 +22,8 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
 | Fonte (id script) | Cosa fornisce | Licenza letta | Uso nel progetto | Aggiornamento | Stato |
 |---|---|---|---|---|---|
 | **OpenStreetMap, estratto regionale** (`osm_extract`) | Relazioni `route=hiking`, sentieri con `sac_scale`, POI | ODbL 1.0 | Base di tutto: grafo, sentieri, POI, ricostruzione tracce | Giornaliero alla fonte; import settimanale | ok (con cambio di fonte, vedi sotto) |
-| **OSM2CAI** (`osm2cai`) | Catasto sentieri CAI: `cai_scale`, tempi, dislivelli, percorribilità | Crediti CAI (conferma scritta da archiviare) + ODbL per le geometrie | Fonte primaria dei metadati dei sentieri CAI | Indici con `updated_at` per l'incrementale | ok, 3 endpoint secondari rotti |
-| **Sezioni CAI** (`cai_sections`) | PDF di locandine e programmi | Contenuti delle sezioni, uso con crediti CAI | Attività future e archivio (pilota Fase 2) | Irregolare | parziale |
+| **OSM2CAI** (`osm2cai`) | Catasto sentieri CAI: `cai_scale`, tempi, dislivelli, percorribilità | ODbL 1.0 (confermata dal CAI per email) | Fonte primaria dei metadati dei sentieri CAI | Settimanale (sincronizzazione con OSM) | ok, 3 endpoint secondari rotti |
+| **Sezioni CAI** (`cai_sections`) | PDF di locandine e programmi | Contenuti protetti: solo sintesi con data e link alla fonte (indicazione del CAI) | Attività future e archivio (pilota Fase 2) | Irregolare | parziale |
 | **SAT sentieri** (`sat_trails`) | 1.080 tracciati GPX/KML/SHP del Trentino | ODbL 1.0, «© Società degli Alpinisti Tridentini (SAT)» | Confronto e arricchimento in Trentino | Mensile | ok |
 | **Waymarked Trails** (`waymarked_trails`) | Relazioni escursionistiche con geometria ordinata | ODbL 1.0 (dati OSM) | Verifica incrociata dell'ordinamento | Non verificato | ok (API diversa dalla SPEC) |
 | **Overpass API** (`overpass`) | Query puntuali su OSM | ODbL 1.0 | Solo sviluppo e debug | – | parziale (istanza principale irraggiungibile da qui) |
@@ -59,9 +59,25 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   nella regione): il filtro per distanza dalla partenza del §7.4 è indispensabile.
 
 ### OSM2CAI – catasto sentieri CAI
-- **Accesso**: `https://osm2cai.cai.it/api/v2/…`, documentazione OpenAPI su
+- **Licenza**: il catasto (INFOMONT) è distribuito dal CAI con licenza **ODbL**; lo conferma la
+  risposta scritta del CAI (`docs/legal/2026-11-cai-risposta-uso-dati.md`) e la pagina
+  [Copyright e licenza](https://catastorei.gitbook.io/documentazione-osm2cai/informazioni-legali/copyright-e-licenza)
+  della documentazione ufficiale. **Attribuzione richiesta**: «© OpenStreetMap contributors» con
+  link a `https://www.openstreetmap.org/copyright`; indicazione della licenza ODbL; «© Club
+  Alpino Italiano – INFOMONT» con link a `https://infomont.cai.it`. I database derivati vanno
+  condivisi con la stessa licenza.
+- **Documentazione**: `https://catastorei.gitbook.io/documentazione-osm2cai` (ogni pagina è
+  disponibile anche in Markdown aggiungendo `.md`); OpenAPI su
   `https://osm2cai.cai.it/docs?api-docs.json` (30 path). Nessuna chiave. Header
   `X-RateLimit-Limit: 60` (al minuto).
+- **Aggiornamento**: OSM2CAI si sincronizza con OpenStreetMap **una volta alla settimana**
+  (documentazione, pagina «Modello dati»).
+- **Stato di accatastamento (`sda`)**, dalla tabella della documentazione: 0 = non rilevato e
+  senza `cai_scale`; 1 = non rilevato, con `cai_scale`; 2 = rilevato (`source=survey:CAI`),
+  senza `cai_scale`; 3 = rilevato e con `cai_scale`; 4 = importato in INFOMONT (validato dal
+  CAI). Gli stati 0-3 sono assegnati automaticamente dai tag OSM, il 4 a mano dai referenti.
+- **Stato di percorribilità**: percorribile, parzialmente percorribile, non percorribile, non
+  rilevato, con data e descrizione. Il CAI avverte che non è capillare né in tempo reale.
 - **Verificato**: indici `{id: updated_at}`; dettaglio GeoJSON con `cai_scale`, `distance`,
   `ascent`/`descent`, `duration_forward`/`backward`, `ele_*`, `issues_*`, `validation_date`.
   Fixture: 332 → id 12711 (E, 11,9 km, +1428/−958 m, 315/270 min); 360 → id 12692 (E, 7,5 km,
@@ -73,13 +89,11 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   - l'indice per bbox non funziona per semplice intersezione: il 332 (11,9 km) compare nella
     bbox Lagorai ma non in quella stretta della fixture. Per la sincronizzazione si usano gli
     indici per regione;
-  - la legenda `sda` nella documentazione descrive solo 3 («ready to be validated») e 4
-    («validated by CAI expert»): i valori 0-2 **non sono documentati nell'API** (da chiedere
-    al CAI);
   - `/api/v2/itinerary/{id}` risponde 500 e non è documentato (esiste solo
     `/itinerary/list`, 32 itinerari); `/api/v2/ecpois/bb/{bbox}/N` risponde 500;
   - i GPX hanno `<ele>0</ele>`: le quote vanno sempre dal DEM.
-- **Azione per l'utente**: salvare in `docs/legal/` la conferma scritta del CAI.
+- **Backend per i soci**: i soci con profilo MyCAI possono consultarlo in sola lettura. L'app
+  non lo usa; eventuali verifiche manuali non vanno ripubblicate (SPEC §13-bis).
 
 ### Siti delle sezioni CAI
 - **Configurazione**: `config/sources/cai_sections.yaml`.
@@ -101,6 +115,10 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   - CAI Merano non è su `organizzazione.cai.it` e il dominio `caimerano.it` non sembra più
     della sezione: **sito ufficiale da confermare**;
   - la locandina reale della fixture non è stata trovata (ricerca sul sito di Mestre).
+- **Uso consentito** (risposta del CAI): sintesi dei contenuti con data e link alla fonte;
+  niente riproduzione sistematica e integrale. Quindi niente PDF ripubblicati: si mostrano i
+  fatti estratti e una sintesi propria, con il link all'originale.
+- **Pilota**: sezioni scelte il 16/11/2026: Bolzano, Appiano, Vipiteno.
 - **Privacy**: nei file versionati non c'è alcun nome o recapito di persone.
 
 ### SAT – sentieri del Trentino
@@ -194,4 +212,4 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
 - Tutte le chiamate passano da `cordata_ingest.http.PoliteClient` (User-Agent identificativo,
   cache, intervallo minimo per host, backoff su 429/5xx, `robots.txt`). Dettagli e l'unica
   eccezione ammessa in `docs/decisions/0003-rispetto-dei-server.md`.
-- Il contatto dello User-Agent si imposta con la variabile `CORDATA_CONTACT`: non è nel codice.
+- Il contatto dello User-Agent è l'URL del repository; `CORDATA_CONTACT` lo può sostituire.

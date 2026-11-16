@@ -2,16 +2,15 @@
 
 Questa cartella raccoglie le prove delle autorizzazioni d'uso dei dati (SPEC §3).
 
-## Da aggiungere
+## Documenti
 
 | Documento | Chi lo fornisce | Stato |
 |---|---|---|
-| Conferma scritta del CAI sull'uso dei dati con citazione dei crediti (email o lettera, con data, mittente e testo) | Utente | **mancante** |
-| Eventuale autorizzazione all'uso dell'API `cai-activities/v1` di organizzazione.cai.it | CAI, su richiesta dell'utente | non richiesta |
+| Risposta scritta del CAI sull'uso dei dati | Utente | **presente**: `2026-11-cai-risposta-uso-dati.md` (mancano data e mittente dell'email originale) |
+| Autorizzazione all'uso dell'API `cai-activities/v1` di organizzazione.cai.it | CAI, su richiesta dell'utente | non coperta dalla risposta: bozza di richiesta in `bozza-richiesta-api-attivita.md` |
 | Eventuale autorizzazione delle sezioni alla ripubblicazione dei testi delle locandine | Sezioni / CAI Alto Adige | non richiesta |
 
-Quando il documento del CAI viene aggiunto, riportarne gli estremi (data, mittente, oggetto)
-in `docs/data-sources.md`, alla voce OSM2CAI.
+Gli estremi della risposta del CAI sono riportati in `docs/data-sources.md`, alla voce OSM2CAI.
 
 ## Regole
 

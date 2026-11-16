@@ -8,8 +8,9 @@
 Ogni chiamata dell'ingestion passa da `cordata_ingest.http.PoliteClient`, che applica:
 
 1. **User-Agent identificativo** `Cordata/<versione> (PWA escursioni open data; +<contatto>)`.
-   Il contatto arriva dalla variabile d'ambiente `CORDATA_CONTACT` e non è mai nel codice;
-   finché non è impostato lo User-Agent dichiara «contatto non ancora configurato».
+   Il contatto predefinito è l'URL del repository (scelta dell'utente del 16/11/2026: pubblico e
+   senza dati personali); la variabile d'ambiente `CORDATA_CONTACT` lo può sostituire.
+   Nessun indirizzo email personale nel codice.
 2. **Cache su disco** con TTL e richieste condizionali (ETag / If-Modified-Since).
 3. **Intervallo minimo tra richieste allo stesso host** (default 1 s, configurabile).
 4. **Retry con backoff esponenziale** su 429/5xx ed errori di rete, onorando `Retry-After`.
