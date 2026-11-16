@@ -49,12 +49,41 @@ def activities() -> dict[str, dict[str, Any]]:
     return out
 
 
-def tracks_dir() -> Path:
-    return data_dir() / "activities" / "tracks"
+def parsed_activity(activity_id: str, reviewed: dict[str, Any]) -> dict[str, Any]:
+    """Gli stessi campi presi dal solo parser, senza revisione (per misurarne il valore)."""
+    from .evaluate import parse_activity
+
+    p = {k: v["value"] for k, v in parse_activity(activity_id, reviewed).items()}
+    points = [{"nome": x["nome"], "quota_m": x.get("quota_m")} for x in p["punti_chiave"] or []]
+    if p["partenza_nome"]:
+        points.insert(0, {"nome": p["partenza_nome"], "quota_m": p["partenza_quota_m"]})
+    if p["tipo_percorso"] == "anello" and points:
+        points.append(dict(points[0]))
+    elif p["arrivo_nome"] and p["tipo_percorso"] == "traversata":
+        points.append({"nome": p["arrivo_nome"]})
+    return {
+        "tipo_percorso": p["tipo_percorso"],
+        "durata": p["durata"],
+        "distanza_km": p["distanza_km"],
+        "salita_m": p["salita_m"],
+        "discesa_m": p["discesa_m"],
+        "quota_max_m": p["quota_max_m"],
+        "partenza": {"nome": p["partenza_nome"], "quota_m": p["partenza_quota_m"]},
+        "sentieri": p["sentieri"] or [],
+        "punti_chiave": points,
+    }
 
 
-def run_reconstruction(only: list[str] | None = None) -> list[dict[str, Any]]:
-    out = tracks_dir()
+def tracks_dir(source: str = "rivista") -> Path:
+    name = "tracks" if source == "rivista" else "tracks-parser"
+    return data_dir() / "activities" / name
+
+
+def run_reconstruction(
+    only: list[str] | None = None, source: str = "rivista"
+) -> list[dict[str, Any]]:
+    """`source="rivista"`: campi rivisti (flusso scelto); `"parser"`: solo parser a regole."""
+    out = tracks_dir(source)
     out.mkdir(parents=True, exist_ok=True)
     summary = []
     with PoliteClient(timeout=60) as client, connect() as conn:
@@ -62,6 +91,10 @@ def run_reconstruction(only: list[str] | None = None) -> list[dict[str, Any]]:
         for activity_id, activity in activities().items():
             if only and activity_id not in only:
                 continue
+            if source == "parser":
+                if activity_id == FIXTURE_ID:
+                    continue  # la fixture non ha un PDF da cui estrarre
+                activity = parsed_activity(activity_id, activity)
             t0 = time.perf_counter()
             res = result_dict(reconstruct(conn, dem, activity_id, activity))
             res["seconds"] = round(time.perf_counter() - t0, 1)

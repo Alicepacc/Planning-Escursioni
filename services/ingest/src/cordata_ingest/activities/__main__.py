@@ -24,6 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("gazetteer", help="carica in PostGIS i luoghi OSM con nome (geocodifica)")
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
     rec.add_argument("ids", nargs="*", help="solo queste attività (default: tutte)")
+    rec.add_argument("--solo-parser", action="store_true", help="campi del parser, senza revisione")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -57,7 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "reconstruct":
         from .pilot import run_reconstruction
 
-        for row in run_reconstruction(args.ids or None):
+        source = "parser" if args.solo_parser else "rivista"
+        for row in run_reconstruction(args.ids or None, source):
             print(f"{row['status']:12} {row['id'][:48]:48} {row['seconds']:5}s", row["reasons"])
     return 0
 
