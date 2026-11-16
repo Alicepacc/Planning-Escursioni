@@ -41,6 +41,9 @@ pnpm run dev
 
 Routing e spike: vedi [`services/routing/README.md`](services/routing/README.md).
 
+**Demo online** (GitHub Pages, sito statico): https://alicepacc.github.io/Planning-Escursioni/ —
+si aggiorna con `scripts/deploy-gh-pages.sh` dopo aver rigenerato i dati.
+
 ## Regole del progetto
 
 - Solo dati aperti, con attribuzione visibile: [`docs/data-sources.md`](docs/data-sources.md).

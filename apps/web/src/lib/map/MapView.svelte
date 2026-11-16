@@ -8,6 +8,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import type { GeoJSONSource, Map as MlMap, Marker as MlMarker } from 'maplibre-gl';
+	import { resolve } from '$app/paths';
 	import { generatedAsset } from '../data/paths';
 	// MapLibre 6 (ESM) carica il worker relativo a sé stesso: con Vite va dichiarato come asset
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
@@ -124,7 +125,7 @@
 			map.addControl(
 				new lib.AttributionControl({
 					compact: true,
-					customAttribution: '<a href="/fonti">Fonti e licenze</a>'
+					customAttribution: `<a href="${resolve('/fonti')}">Fonti e licenze</a>`
 				}),
 				'bottom-right'
 			);

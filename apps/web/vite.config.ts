@@ -24,6 +24,8 @@ export default defineConfig({
 			// sito statico su Cloudflare Pages (ADR 0005); 404.html fa da fallback per le pagine
 			// non prerenderizzate, che vengono disegnate nel browser
 			adapter: adapter({ fallback: '404.html' }),
+			// sotto-percorso per GitHub Pages (es. BASE_PATH=/Planning-Escursioni); vuoto altrove
+			paths: { base: (process.env.BASE_PATH ?? '') as '' | `/${string}` },
 			prerender: {
 				entries: ['*', ...trailEntries],
 				// senza i dati generati (es. in CI) le schede non esistono: avvisa e prosegui
