@@ -44,7 +44,8 @@ CONTACT_WORDS = re.compile(
 ROLE_LABEL = re.compile(
     r"\b(capo\s?gita|capigita|capogruppo|accompagnator[ei]|accompagnatrice|"
     r"accompagnano|referent[ei]|coordinator[ei]|coordinatrice|direttor[ei] di escursione|"
-    r"organizzator[ei] (?:della gita|tecnic\w+)|responsabil[ei] (?:della gita|gita)|"
+    r"organizzator[ei] (?:della gita|tecnic\w+)|"
+    r"responsabil[ei](?: dell[a'’]\s?| di )?\s?(?:gita|escursione|uscita)|"
     r"tourenleiter\w*|begleit\w*|in collaborazione con gli accompagnatori)\b",
     re.IGNORECASE,
 )
@@ -189,26 +190,69 @@ def _redact_contact_names(line: str) -> tuple[str, int]:
 
 # tabelle dei calendari con una colonna di referenti: "Cognome I." (anche più nomi uniti)
 TABLE_ROLE_HEADER = re.compile(
+    # intestazione di colonna, da sola sulla riga ("Referente", "Categoria Tipologia Referente");
     # "refer\w{0,3}nt" tollera refusi come "Referernte" (calendario SAT Rovereto 2021)
-    r"\b(refer\w{0,3}nt[ei]|capo\s?gita|capigita|accompagnator[ei]|organizzator[ei]|"
-    r"tourenleiter)\b",
-    re.IGNORECASE,
+    r"^\s*(?:(?:categoria|tipologia|data|destinazione|difficolt\S*|dislivello)\s+)*"
+    r"(?:refer\w{0,3}nt[ei]|capo\s?gita|capigita|accompagnator[ei]|tourenleiter)\s*/?\s*$",
+    re.IGNORECASE | re.MULTILINE,
+)
+# "Passo S. Pellegrino", "Monte S. Vigilio": luoghi, non "Cognome I."
+PLACE_WORDS = (
+    "passo|monte|rifugio|malga|lago|val|valle|cima|forcella|chiesa|chiesetta|borgo|ponte|"
+    "colle|croda|sasso|piazza|via|santuario|località|localita|maso|castel|castello|baita|pian"
 )
 SURNAME_INITIAL = re.compile(
-    r"\b[A-ZÀ-Ý][a-zà-ÿ']+(?:[-–][A-ZÀ-Ý][a-zà-ÿ']+)*\s+[A-ZÀ-Ý]\.(?![A-Za-z])"
-    r"(?:\s*(?:-\s*)?[A-ZÀ-Ý][a-zà-ÿ']+(?:\s+[A-ZÀ-Ý]\.(?![A-Za-z]))?)*"
+    rf"\b(?!(?i:{PLACE_WORDS})\b)[A-ZÀ-Ý][a-zà-ÿ']+(?:[-–][A-ZÀ-Ý][a-zà-ÿ']+)*[ \t]+[A-ZÀ-Ý]\."
+    r"(?![A-Za-z])(?:[ \t]*(?:-[ \t]*)?[A-ZÀ-Ý][a-zà-ÿ']+(?:[ \t]+[A-ZÀ-Ý]\.(?![A-Za-z]))?)*"
 )
 SURNAME_CHAIN = re.compile(r"\b[A-ZÀ-Ý][a-zà-ÿ']+(?:-[A-ZÀ-Ý][a-zà-ÿ']+){2,}\b")
 
 
-def sanitize(text: str) -> tuple[str, int]:
-    """Rimuove email, telefoni e nomi dopo le etichette di ruolo. Restituisce (testo, n)."""
+# titoli degli accompagnatori e istruttori CAI: la riga vicina con un nome è una persona
+QUALIFICATION = re.compile(
+    r"^(?:(?:AE|ASE|AAG|ASAG|ASC|ONC|ONCN|ORTAM|INA|IA|ISA|IS|IAL|ISFE|AC|OSM|EAI|EEA|ANE|"
+    r"INSA|ISBA|IAG|ISSI)(?:[\s–/-]+|$))+$"
+)
+
+
+def _is_person_line(line: str) -> bool:
+    words = line.split()
+    return bool(PERSON_LINE.match(line)) and not re.match(
+        rf"(?i:{PLACE_WORDS})\b", words[0] if words else ""
+    )
+
+
+def _redact_rosters(text: str, table: bool) -> tuple[str, int]:
+    """Righe "Nome Cognome" accanto a un titolo (AE, ASC…) o in una tabella di referenti."""
+    lines = text.splitlines()
+    removed = 0
+    for i, line in enumerate(lines):
+        s = line.strip()
+        bare = re.sub(rf"\s+{QUALIFICATION.pattern[1:-1]}$", "", s) if s else s
+        if not s or not _is_person_line(bare):
+            continue
+        near = [lines[j].strip() for j in (i - 1, i + 1) if 0 <= j < len(lines)]
+        if table or bare != s or any(QUALIFICATION.match(n) for n in near if n):
+            lines[i] = "[nome rimosso]"
+            removed += 1
+    return "\n".join(lines), removed
+
+
+def sanitize(text: str, table: bool = False) -> tuple[str, int]:
+    """Rimuove email, telefoni e nomi dopo le etichette di ruolo. Restituisce (testo, n).
+
+    `table=True` per i documenti con una tabella di referenti (anche nelle pagine successive
+    a quella con l'intestazione): lì ogni riga "Nome Cognome" è una persona.
+    """
     out: list[str] = []
     removed = 0
-    if TABLE_ROLE_HEADER.search(text):
+    table = table or bool(TABLE_ROLE_HEADER.search(text))
+    if table:
         text, n1 = SURNAME_INITIAL.subn("[nome rimosso]", text)
         text, n2 = SURNAME_CHAIN.subn("[nome rimosso]", text)
         removed += n1 + n2
+    text, n3 = _redact_rosters(text, table)
+    removed += n3
     redact_next = 0
     for raw in text.splitlines():
         line = raw
@@ -273,6 +317,7 @@ def extract_pdf(path: Path) -> dict[str, Any]:
     doc = pymupdf.open(path)
     pages: list[dict[str, Any]] = []
     removed = 0
+    table = any(TABLE_ROLE_HEADER.search(page.get_text("text")) for page in doc)
     for page in doc:
         text = page.get_text("text")
         blocks = page.get_text("blocks")
@@ -282,7 +327,7 @@ def extract_pdf(path: Path) -> dict[str, Any]:
             text = _ocr(page)
             ocr = True
             blocks = []
-        clean, n = sanitize(text)
+        clean, n = sanitize(text, table)
         removed += n
         pages.append(
             {
@@ -294,7 +339,7 @@ def extract_pdf(path: Path) -> dict[str, Any]:
                 "columns": _columns(blocks, page.rect.width) if blocks else 1,
                 "text": clean,
                 "blocks": [
-                    [*(round(v, 1) for v in b[:4]), sanitize(str(b[4]))[0]]
+                    [*(round(v, 1) for v in b[:4]), sanitize(str(b[4]), table)[0]]
                     for b in blocks
                     if b[6] == 0 and str(b[4]).strip()
                 ],

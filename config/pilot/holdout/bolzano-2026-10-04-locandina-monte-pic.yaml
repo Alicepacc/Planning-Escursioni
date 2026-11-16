@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, partenza_quota_m, sentieri]
+data: 2026-10-04
+difficolta: E
+tipo_percorso: anello
+durata: "5:30"
+distanza_km: null
+salita_m: 930
+discesa_m: 930
+quota_max_m: 2363
+partenza: {nome: Santa Cristina, quota_m: 1420}
+sentieri: ["16", "20", "6", "2", "1A", "1"]

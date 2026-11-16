@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, partenza_quota_m, sentieri]
+data: 2026-08-30
+difficolta: E
+tipo_percorso: andata_ritorno
+durata: "5:30"
+distanza_km: null
+salita_m: 1010
+discesa_m: 1010
+quota_max_m: 3061
+partenza: {nome: Parcheggio Hinter Martell, quota_m: 2050}
+sentieri: ["39"]

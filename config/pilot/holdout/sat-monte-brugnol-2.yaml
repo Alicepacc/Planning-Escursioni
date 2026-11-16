@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, sentieri]
+data: 2020-10-11
+difficolta: EE
+tipo_percorso: traversata
+durata: "7:00"
+distanza_km: null
+salita_m: 1400
+discesa_m: null
+quota_max_m: 2221
+partenza: {nome: Seo}
+sentieri: []

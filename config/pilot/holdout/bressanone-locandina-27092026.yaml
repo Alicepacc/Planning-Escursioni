@@ -1,0 +1,12 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, sentieri]
+data: 2026-09-27
+difficolta: E
+tipo_percorso: anello
+durata: "5:30"
+distanza_km: 11
+salita_m: 750
+discesa_m: 750
+quota_max_m: 1834
+partenza: {nome: Aica di Fiè}
+sentieri: ["7", "7A", "4", "4B"]
+note_revisione: 'data scritta "27 settemre 2026" (refuso); anello non dichiarato ma salita e discesa per sentieri diversi'

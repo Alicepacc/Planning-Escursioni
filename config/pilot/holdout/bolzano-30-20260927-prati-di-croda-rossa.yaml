@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, partenza_quota_m, sentieri]
+data: 2026-09-27
+difficolta: E
+tipo_percorso: anello
+durata: "5:00"
+distanza_km: null
+salita_m: 500
+discesa_m: 500
+quota_max_m: 1950
+partenza: {nome: Passo Monte Croce Comelico, quota_m: 1636}
+sentieri: ["15", "16"]

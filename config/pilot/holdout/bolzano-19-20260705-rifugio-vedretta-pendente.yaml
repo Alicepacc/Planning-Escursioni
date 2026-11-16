@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, durata, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, partenza_quota_m, sentieri]
+data: 2026-07-05
+difficolta: E-EE
+tipo_percorso: andata_ritorno
+durata: "6:30"
+distanza_km: null
+salita_m: 1100
+discesa_m: 1100
+quota_max_m: 2586
+partenza: {nome: Masseria, quota_m: 1431}
+sentieri: ["9"]

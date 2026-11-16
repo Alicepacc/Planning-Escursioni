@@ -1,0 +1,11 @@
+campi_valutati: [data, difficolta, tipo_percorso, distanza_km, salita_m, discesa_m, quota_max_m, partenza_nome, sentieri]
+data: 2026-04-12
+difficolta: null
+tipo_percorso: traversata
+distanza_km: 5
+salita_m: 540
+discesa_m: 540
+quota_max_m: 859
+partenza: {nome: Biacesa di Ledro}
+sentieri: ["429", "422"]
+note_revisione: 'la locandina dice "giro ad anello" ma parte da Biacesa e arriva a Pregasina; difficoltà non nella scala CAI; durata "4,30-5,00" non valutata'
