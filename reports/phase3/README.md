@@ -56,3 +56,13 @@ la mappa si ridimensiona con il layout; la ricerca in linguaggio naturale produc
   andrà diviso per area.
 - La pagina della fixture e le schede delle attività condividono un componente nuovo: la scheda
   dei sentieri del catasto (Fase 1) non ha ancora le azioni Salva / GPX / Condividi.
+
+## 5. Risposte dell'utente (17/11/2026)
+
+1. **Avanti con la Fase 4** (planner).
+2. **Priorità dei prossimi blocchi di ingestion**, tutte e quattro: siti SAT WordPress
+   (Cavalese, Primiero, Ledrense, Care Alto), altre sezioni CAI Alto Adige, sezioni CAI venete
+   (prima la sola scoperta dei metadati), adapter per i 12 siti SAT non WordPress.
+3. **Attività con traccia non verificata**: restano visibili, tratteggiate e con avviso.
+
+La demo è pubblicata su https://alicepacc.github.io/Planning-Escursioni/.
