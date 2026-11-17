@@ -75,5 +75,129 @@ sections:
     site_type: wordpress
     pilot: true
     notes: >-
-      Sede centrale; le gite sono organizzate dalle ~80 sezioni SAT locali, ciascuna con il
-      proprio canale: da mappare nella Fase 2.
+      Sede centrale; le gite sono organizzate dalle 88 sezioni SAT locali. Le loro locandine
+      sul sito centrale si fermano al 2023: i siti delle sezioni sono elencati qui sotto
+      (ricerca del 17/11/2026, `python -m cordata_ingest.activities sat-siti`).
+  - slug: sat-ala
+    name: SAT – Sezione di Ala
+    group: SAT
+    base_url: https://www.satala.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-arco
+    name: SAT – Sezione di Arco
+    group: SAT
+    base_url: https://www.satarco.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-care-alto
+    name: SAT – Sezione di Care Alto
+    group: SAT
+    base_url: https://www.satcarealto.it
+    site_type: wordpress
+    pilot: false
+    notes: "WordPress, 7 PDF pubblici il 17/11/2026"
+  - slug: sat-cavalese
+    name: SAT – Sezione di Cavalese
+    group: SAT
+    base_url: https://www.satcavalese.it
+    site_type: wordpress
+    pilot: false
+    notes: "WordPress, 54 PDF pubblici il 17/11/2026"
+  - slug: sat-cembra
+    name: SAT – Sezione di Cembra
+    group: SAT
+    base_url: https://www.satcembra.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-cles
+    name: SAT – Sezione di Cles
+    group: SAT
+    base_url: https://www.satcles.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-lavis
+    name: SAT – Sezione di Lavis
+    group: SAT
+    base_url: https://www.satlavis.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-ledrense
+    name: SAT – Sezione di Ledrense
+    group: SAT
+    base_url: https://www.satledrense.it
+    site_type: wordpress
+    pilot: false
+    notes: "WordPress, 8 PDF pubblici il 17/11/2026"
+  - slug: sat-mori
+    name: SAT – Sezione di Mori
+    group: SAT
+    base_url: https://www.sat-mori.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-pergine
+    name: SAT – Sezione di Pergine
+    group: SAT
+    base_url: https://www.satpergine.it
+    site_type: wordpress
+    pilot: false
+    notes: "WordPress, 32 PDF pubblici il 17/11/2026"
+  - slug: sat-primiero
+    name: SAT – Sezione di Primiero
+    group: SAT
+    base_url: https://satprimiero.it
+    site_type: wordpress
+    pilot: false
+    notes: "WordPress, 25 PDF pubblici il 17/11/2026"
+  - slug: sat-riva-del-garda
+    name: SAT – Sezione di Riva del Garda
+    group: SAT
+    base_url: https://www.satrivadelgarda.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-rovereto
+    name: SAT – Sezione di Rovereto
+    group: SAT
+    base_url: https://www.satrovereto.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter"
+  - slug: sat-sporminore
+    name: SAT – Sezione di Sporminore
+    group: SAT
+    base_url: https://satsporminore.jimdoweb.com
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-tesero
+    name: SAT – Sezione di Tesero
+    group: SAT
+    base_url: https://www.sat-tesero.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-ton
+    name: SAT – Sezione di Ton
+    group: SAT
+    base_url: https://www.sat-ton.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+  - slug: sat-trento
+    name: SAT – Sezione di Trento
+    group: SAT
+    base_url: https://www.sattrento.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter (crawling limitato delle pagine gite)"
+# Da verificare a mano (17/11/2026): besenello (403), denno (500), mezzocorona (503), pine (410), povo (200), val-di-gresta (403).
+# Le pagine «Just a moment» / «One moment» sono protezioni anti-bot: non vanno aggirate.
+# Non trovati con i domini sat<nome>.it le altre sezioni; satborgo.it (Borgo Valsugana, citato
+# nelle locandine) non ha risposto per un errore di rete: da riprovare.

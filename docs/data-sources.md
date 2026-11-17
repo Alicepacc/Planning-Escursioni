@@ -152,6 +152,24 @@ Le verifiche sono state fatte da un ambiente cloud: alcuni host bloccano quegli 
   sono tutti «Closed». Il valore di questa fonte per le proposte è quindi più basso di quanto
   ipotizzato: da riesaminare nella Fase 3 su un campione più ampio. Webcam: disponibili,
   licenze miste.
+- **Riesame della Fase 3 (17/11/2026)**: 600 record su 8.704 (raggio 120 km dal centro
+  dell'area pilota). I 294 record CC0 (fonte LTS) non hanno traccia; i 306 con traccia sono
+  tutti «Closed» (Provincia di Bolzano via civis.geoserver, SIAT Trento, IDM). **Decisione:** gli
+  itinerari ODH non entrano nell'app (niente tracce aperte); i record CC0 potranno servire
+  come descrizioni da collegare ai sentieri per nome, da valutare.
+
+### Siti delle sezioni SAT
+- **Ricerca del 17/11/2026** (`python -m cordata_ingest.activities sat-siti`): per le 88 sezioni
+  elencate su sat.tn.it, al massimo tre domini plausibili ciascuna (`sat<nome>.it`), una sola
+  richiesta alla home degli host esistenti. Trovati **17 siti**: Ala, Arco, Care Alto, Cavalese,
+  Cembra, Cles, Lavis, Ledrense, Mori, Pergine, Primiero, Riva del Garda, Rovereto,
+  Sporminore, Tesero, Ton, Trento (in `config/sources/cai_sections.yaml`).
+- Cinque sono WordPress con l'API dei media aperta (Cavalese, Pergine, Primiero, Ledrense,
+  Care Alto): la scoperta è la stessa delle sezioni CAI. SAT Pergine pubblica tutte le locandine
+  2026; SAT Ledrense il calendario annuale. Gli altri siti richiedono un adapter (crawling
+  limitato delle pagine delle gite).
+- Sei host da verificare a mano: Besenello, Val di Gresta e Povo hanno protezioni anti-bot
+  (non si aggirano), Denno, Mezzocorona e Pinè rispondono con errori.
 
 ### Mapterhorn
 - **Accesso**: `https://tiles.mapterhorn.com/{z}/{x}/{y}.webp` (TileJSON: Terrarium, 512 px);
