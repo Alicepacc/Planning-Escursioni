@@ -5,6 +5,11 @@
 - **Vincolo** (dall'utente): nessun budget oltre all'abbonamento Claude Pro; tutto deve
   funzionare con servizi gratuiti. Uso oggi non commerciale, in futuro forse a pagamento.
 
+> **Aggiornamento 17/11/2026**: il routing del planner gira nel browser su tasselli statici del
+> grafo dei sentieri ([ADR 0010](0010-routing-nel-browser.md)); il Mac e Tailscale Funnel non
+> servono più all'app (GraphHopper resta nella pipeline delle attività). La demo è pubblicata su
+> GitHub Pages.
+
 ## Decisione: un'app «statica prima di tutto»
 
 Tutto ciò che si può calcolare in anticipo viene calcolato dalla pipeline di ingestion e

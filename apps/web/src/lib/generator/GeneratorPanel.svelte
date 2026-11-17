@@ -120,6 +120,17 @@
 		onPreview(line, bboxOf(line.map(([lon, lat]) => ({ lon, lat }))));
 	}
 
+	/** Porta in vista la prima locandina nel contenitore che scorre (il foglio del planner). */
+	function revealFirst() {
+		const card = panel?.querySelector<HTMLElement>('.locandina');
+		let box = card?.parentElement ?? null;
+		while (box && !/(auto|scroll)/.test(getComputedStyle(box).overflowY)) box = box.parentElement;
+		if (!card || !box) return;
+		const top =
+			card.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 8;
+		box.scrollTo({ top, behavior: 'smooth' });
+	}
+
 	async function run() {
 		if (!start) {
 			status = 'Tocca la mappa per scegliere la partenza.';
@@ -167,7 +178,7 @@
 			if (results.length) {
 				show(0);
 				await tick();
-				panel?.querySelector('.locandina')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+				revealFirst();
 			}
 		} catch (err) {
 			status = err instanceof Error ? err.message : 'Errore nella composizione delle proposte.';

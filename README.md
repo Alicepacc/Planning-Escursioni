@@ -4,9 +4,10 @@ Progressive Web App mobile-first per programmare escursioni in montagna con soli
 proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite di gruppo, meteo
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
-**Stato: Fase 3 (Esplora, archivio attività, fonti SAT) completata.** Pilota della Fase 2
+**Stato: Fase 4 (planner e generatore di proposte) completata.** Pilota della Fase 2
 approvato il 16/11/2026.
-Rapporti: [`reports/phase3/README.md`](reports/phase3/README.md) ·
+Rapporti: [`reports/phase4/README.md`](reports/phase4/README.md) ·
+[`reports/phase3/README.md`](reports/phase3/README.md) ·
 [`reports/pilot-2026-11-16/README.md`](reports/pilot-2026-11-16/README.md) ·
 [`reports/phase1/README.md`](reports/phase1/README.md) ·
 [`reports/phase0/README.md`](reports/phase0/README.md).
@@ -15,7 +16,7 @@ Rapporti: [`reports/phase3/README.md`](reports/phase3/README.md) ·
 
 | Cartella | Contenuto |
 |---|---|
-| `apps/web` | PWA SvelteKit: mappa dei sentieri, schede di sentieri e itinerari con profilo altimetrico, pagina Fonti e licenze |
+| `apps/web` | PWA SvelteKit: Esplora, schede con profilo altimetrico, planner con routing nel browser, generatore di proposte, pagina Fonti e licenze |
 | `services/ingest` | Python: verifiche delle fonti, sincronizzazione OSM2CAI, import OSM in PostGIS, quote e tempi, tile e schede per la PWA ([README](services/ingest/README.md)) |
 | `services/routing` | GraphHopper: configurazione, Dockerfile, spike sulla fixture |
 | `infra` | Docker Compose per lo sviluppo locale |
@@ -40,6 +41,7 @@ cd apps/web
 pnpm install
 pnpm run lint && pnpm run check && pnpm run test && pnpm run build
 pnpm run dev
+pnpm run eval:generatore   # valutazione del generatore sulle gite reali (dati generati)
 ```
 
 Routing e spike: vedi [`services/routing/README.md`](services/routing/README.md).
