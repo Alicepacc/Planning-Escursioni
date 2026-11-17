@@ -22,9 +22,9 @@ from ..db import connect, run_sql_file
 from ..geo.elevation import TerrariumDem
 from ..http import PoliteClient
 from ..osm2cai.sync import Osm2caiStore
-from . import activities, documents, explore, osm2cai_load, tiles
+from . import activities, documents, explore, graph, osm2cai_load, tiles
 
-STEPS = ("load-osm2cai", "derive", "tiles", "trails", "fixture", "activities", "explore")
+STEPS = ("load-osm2cai", "derive", "tiles", "trails", "fixture", "activities", "explore", "graph")
 WEB_STATIC = repo_root() / "apps" / "web" / "static"
 
 
@@ -59,6 +59,8 @@ def main(argv: list[str] | None = None) -> int:
             result = activities.build_activities(conn, dem, WEB_STATIC / "data" / "attivita")
         elif step == "explore":
             result = explore.build_explore(conn, WEB_STATIC)
+        elif step == "graph":
+            result = graph.build_graph(conn, dem, WEB_STATIC / "data" / "grafo")
         else:
             fixture = json.loads(
                 (repo_root() / "fixtures/golden/val-d-inferno.json").read_text("utf-8")
