@@ -79,6 +79,11 @@ tocchi danno un percorso di 2,6 km agganciato al sentiero 332, nessun errore).
 - **Accessibilità della mappa**: punti come pulsanti, Canc per eliminare, «punto al centro»; la
   verifica completa è nella Fase 8.
 
-## 5. Domande per l'utente
+## 5. Risposte dell'utente (17/11/2026)
 
-Vedi il riepilogo di fine fase nella conversazione; le risposte verranno riportate qui.
+1. **Prossimo passo: Fase 5** (uscite di gruppo); all'inizio si verificano i limiti attuali dei
+   backend gratuiti e si sceglie insieme quale usare.
+2. **Verifiche**: l'utente prova planner e generatore sulla demo prima di proseguire; il lavoro
+   riprende dalle sue osservazioni.
+3. **Generatore, quando ci si torna**: prima la **valutazione indipendente** (gite verificate nuove,
+   mai usate per la messa a punto), poi le proposte per **inverno e strade forestali**.
