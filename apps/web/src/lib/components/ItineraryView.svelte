@@ -290,6 +290,37 @@
 		</p>
 	</section>
 
+	{#if doc.proposals?.length || doc.related?.length || (doc.canonical && doc.canonical !== doc.id)}
+		<section>
+			<h2>Stesso itinerario e varianti</h2>
+			{#if doc.canonical && doc.canonical !== doc.id}
+				<p>
+					Questa gita ripete un itinerario già in archivio:
+					<a href={resolve('/attivita/[id]', { id: doc.canonical })}>scheda dell'itinerario</a>.
+				</p>
+			{/if}
+			{#if doc.proposals?.length}
+				<ul>
+					{#each doc.proposals as p (p.id)}
+						<li>
+							<a href={resolve('/attivita/[id]', { id: p.id })}>Proposta da {p.section}</a>, {formatDate(
+								p.date
+							)}
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			{#if doc.related?.length}
+				<p class="nota">Varianti: percorsi che ne ripercorrono buona parte.</p>
+				<ul>
+					{#each doc.related as r (r.id)}
+						<li><a href={resolve('/attivita/[id]', { id: r.id })}>{r.title}</a></li>
+					{/each}
+				</ul>
+			{/if}
+		</section>
+	{/if}
+
 	<section>
 		<h2>Profilo altimetrico</h2>
 		<ElevationProfile

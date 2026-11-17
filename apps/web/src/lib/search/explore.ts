@@ -35,6 +35,9 @@ export interface ExploreItem {
 	sda?: number | null;
 	iss?: string | null;
 	ok?: boolean;
+	/** deduplica (§7.5): altre proposte dello stesso itinerario; membro non canonico */
+	alt?: number;
+	hide?: boolean;
 }
 
 export interface ExploreIndex {
@@ -202,7 +205,7 @@ export function matches(item: ExploreItem, f: Filters): boolean {
 }
 
 export function filterItems(items: ExploreItem[], f: Filters): ExploreItem[] {
-	return items.filter((item) => matches(item, f));
+	return items.filter((item) => !item.hide && matches(item, f));
 }
 
 /** Rilevanza: attività verificate, poi catasto validato (sda 4), poi aderenza al testo. */

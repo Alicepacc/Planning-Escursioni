@@ -214,6 +214,9 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
                 "b": doc["bbox"],
                 "p": mini_profile(doc["profile"]["points"]) if verified else [],
                 "ok": verified,
+                # deduplica (§7.5): altre proposte dello stesso itinerario, membri nascosti
+                **({"alt": len(doc["proposals"]) - 1} if doc.get("proposals") else {}),
+                **({"hide": True} if doc.get("canonical") not in (None, doc["id"]) else {}),
                 "_line": doc["line"],
                 "_names": None if verified else stage_names,
                 "_season_ele": d.get("max_ele_m")

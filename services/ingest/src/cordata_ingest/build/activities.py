@@ -25,6 +25,7 @@ from typing import Any
 import psycopg
 import yaml
 
+from ..activities.dedup import group
 from ..config import data_dir, repo_root
 from ..difficulty import normalize_cai
 from ..geo.profile import compute_profile
@@ -207,12 +208,54 @@ def activity_document(
     }
 
 
+def link_duplicates(docs: list[dict[str, Any]], coords: dict[str, list]) -> dict[str, int]:
+    """Itinerari canonici e varianti (SPEC §7.5), scritti nei documenti."""
+    by_id = {d["id"]: d for d in docs}
+    tracks = {
+        d["id"]: {
+            "coords": coords[d["id"]],
+            "bbox": d["bbox"],
+            "verified": (d.get("verification") or {}).get("status") == "auto_ok",
+            "date": (d.get("activity") or {}).get("date"),
+        }
+        for d in docs
+    }
+    groups, relations = group(tracks)
+    for g in groups:
+        proposals = [
+            {
+                "id": m,
+                "section": ", ".join(by_id[m]["activity"]["organizers"]),
+                "date": by_id[m]["activity"]["date"],
+            }
+            for m in sorted(g.members, key=lambda m: str(by_id[m]["activity"]["date"] or ""))
+        ]
+        for m in g.members:
+            by_id[m]["canonical"] = g.canonical
+        by_id[g.canonical]["proposals"] = proposals
+    for r in relations:
+        if r["relation"] != "variante":
+            continue
+        for a, b in ((r["a"], r["b"]), (r["b"], r["a"])):
+            by_id[a].setdefault("related", []).append(
+                {
+                    "id": b,
+                    "title": by_id[b]["title"],
+                    "relation": "variante",
+                    "hausdorff_m": r["hausdorff_m"],
+                }
+            )
+    return {"gruppi": len(groups), "varianti": sum(r["relation"] == "variante" for r in relations)}
+
+
 def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
     reviewed_dir = repo_root() / "config" / "pilot" / "reviewed"
     tracks = data_dir() / "activities" / "tracks"
     manifest = json.loads((data_dir() / "activities" / "raw" / "manifest.json").read_text("utf-8"))
-    index = []
+    docs: list[dict[str, Any]] = []
+    coords: dict[str, list] = {}
+    statuses: dict[str, str] = {}
     for path in sorted(reviewed_dir.glob("*.yaml")):
         activity_id = path.stem
         act = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -224,6 +267,14 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
             continue
         url = manifest.get(act.get("documento", activity_id), {}).get("url")
         doc = activity_document(activity_id, act, track, url, conn, dem)
+        doc["_section"] = act.get("sezione")
+        docs.append(doc)
+        coords[doc["id"]] = track["coords"]
+        statuses[doc["id"]] = track["status"]
+    dedup = link_duplicates(docs, coords)
+    index = []
+    for doc in docs:
+        section = doc.pop("_section")
         (out_dir / f"{doc['id']}.json").write_text(
             json.dumps(doc, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
         )
@@ -231,12 +282,13 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
             {
                 "id": doc["id"],
                 "title": doc["title"],
-                "section": act.get("sezione"),
+                "section": section,
                 "date": doc["activity"]["date"],
-                "status": track["status"],
+                "status": statuses[doc["id"]],
+                "canonical": doc.get("canonical"),
             }
         )
     (out_dir / "index.json").write_text(
         json.dumps(index, ensure_ascii=False, indent=1), encoding="utf-8"
     )
-    return {"attivita": len(index)}
+    return {"attivita": len(index), **dedup}

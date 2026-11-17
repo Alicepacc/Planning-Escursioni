@@ -57,7 +57,10 @@
 		<MiniProfile values={item.p} />
 		<span class="icona" title={icon.label} aria-label={icon.label}>{icon.glyph}</span>
 	</span>
-	<span class="fonte">{item.src}</span>
+	<span class="fonte"
+		>{item.src}{#if item.alt}
+			· proposto anche altre {item.alt} {item.alt === 1 ? 'volta' : 'volte'}{/if}</span
+	>
 </a>
 
 <style>

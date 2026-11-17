@@ -138,6 +138,10 @@ export interface ItineraryDoc {
 		source_page?: number | null;
 		transport?: string | null;
 	};
+	/** deduplica (§7.5): itinerario canonico, proposte dello stesso itinerario, varianti */
+	canonical?: string;
+	proposals?: { id: string; section: string; date: string | null }[];
+	related?: { id: string; title: string; relation: 'variante'; hausdorff_m: number }[];
 	/** esito della ricostruzione automatica (attività) */
 	verification?: {
 		status: 'auto_ok' | 'da_rivedere' | 'fallita';
