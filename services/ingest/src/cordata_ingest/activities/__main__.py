@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from pathlib import Path
 
 from ..http import PoliteClient
 
@@ -19,7 +20,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="cordata_ingest.activities")
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("discover", help="elenca i PDF delle sezioni pilota (solo metadati)")
-    sub.add_parser("archive", help="scarica i PDF candidati nell'archivio privato")
+    arc = sub.add_parser("archive", help="scarica i PDF candidati nell'archivio privato")
+    arc.add_argument("--candidati", type=Path, help="file YAML dei candidati (default: pilota)")
     sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
     sub.add_parser("gazetteer", help="carica in PostGIS i luoghi OSM con nome (geocodifica)")
     sub.add_parser("sat-siti", help="cerca i siti delle sezioni SAT (solo la home di ciascuno)")
@@ -41,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         from .archive import archive, load_candidates
 
         with PoliteClient(timeout=60) as client:
-            manifest = archive(client, load_candidates())
+            manifest = archive(client, load_candidates(args.candidati))
         errors = {k: v["error"] for k, v in manifest.items() if "error" in v}
         print(f"{len(manifest)} documenti, {len(errors)} errori", errors or "")
     elif args.cmd == "extract":

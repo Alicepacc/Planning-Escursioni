@@ -1,0 +1,22 @@
+sezione: SAT Pergine
+titolo: Cima Vermoi
+data: 2026-08-09
+zona: Alpi Venoste
+tipo_percorso: andata_ritorno
+difficolta: EE
+durata: "5:45"
+distanza_km: null
+salita_m: 1200
+discesa_m: 1200
+quota_max_m: 2929
+partenza: {nome: San Martino in Monte, quota_m: 1740, comune: Laces}
+arrivo: {nome: San Martino in Monte, quota_m: 1740}
+ora_ritrovo: "06:30"
+mezzi: pullman
+quota_eur: 30
+sentieri: ["6", "9"]
+punti_chiave:
+  - {nome: San Martino in Monte, quota_m: 1740}
+  - {nome: Malga San Martino, quota_m: 1940}
+  - {nome: Cima Vermoi, quota_m: 2929}
+note_revisione: 'da Laces con la funivia; durata = 3:15 salita + 2:30 discesa'

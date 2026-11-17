@@ -1,0 +1,27 @@
+sezione: SAT Pergine
+titolo: Giro del Tomazol
+data: 2026-10-14
+zona: Altopiano di Lavarone
+tipo_percorso: anello
+difficolta: E
+durata: "4:00"
+distanza_km: 10
+salita_m: 350
+discesa_m: 350
+quota_max_m: null
+partenza: {nome: Bertoldi, comune: Lavarone}
+arrivo: {nome: Bertoldi}
+ora_ritrovo: "08:00"
+mezzi: null
+quota_eur: 15
+sentieri: ["224", "222"]
+reti: [Sentiero della Pace, Il Respiro degli Alberi]
+punti_chiave:
+  - {nome: Bertoldi}
+  - {nome: Fontana Vecia}
+  - {nome: Stengheli}
+  - {nome: Lanzino}
+  - {nome: Il Respiro degli Alberi}
+  - {nome: Cimitero austriaco}
+  - {nome: Slaghenaufi}
+  - {nome: Bertoldi}

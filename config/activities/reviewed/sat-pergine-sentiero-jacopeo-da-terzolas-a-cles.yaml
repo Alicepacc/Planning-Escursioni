@@ -1,0 +1,24 @@
+sezione: SAT Pergine
+titolo: Sentiero Jacopeo d'Anaunia – da Terzolas a Cles
+data: 2026-11-08
+zona: Val di Non
+tipo_percorso: traversata
+difficolta: E
+durata: "6:00"
+distanza_km: 15.5
+salita_m: 900
+discesa_m: 900
+quota_max_m: null
+partenza: {nome: Terzolas}
+arrivo: {nome: Cles}
+ora_ritrovo: "07:00"
+mezzi: null
+quota_eur: 15
+sentieri: []
+reti: [Cammino Jacopeo d'Anaunia]
+punti_chiave:
+  - {nome: Terzolas}
+  - {nome: Sas dala Guardia}
+  - {nome: Cavizzana}
+  - {nome: Sant'Antonio}
+  - {nome: Cles}

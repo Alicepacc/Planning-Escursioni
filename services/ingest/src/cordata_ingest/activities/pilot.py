@@ -43,9 +43,17 @@ def fixture_activity() -> dict[str, Any]:
     }
 
 
-def activities() -> dict[str, dict[str, Any]]:
+def blocks_dir() -> Path:
+    """Attività rivise dei blocchi di ingestion della Fase 3 (fuori dal pilota)."""
+    return repo_root() / "config" / "activities" / "reviewed"
+
+
+def activities(include_blocks: bool = False) -> dict[str, dict[str, Any]]:
+    """Fixture e 20 attività del pilota; con `include_blocks` anche i blocchi successivi."""
     out = {FIXTURE_ID: fixture_activity()}
     out.update(load_reviewed())
+    if include_blocks and blocks_dir().exists():
+        out.update(load_reviewed(blocks_dir()))
     return out
 
 
@@ -88,7 +96,7 @@ def run_reconstruction(
     summary = []
     with PoliteClient(timeout=60) as client, connect() as conn:
         dem = TerrariumDem(data_dir() / "dem" / "mapterhorn", client, zoom=12)
-        for activity_id, activity in activities().items():
+        for activity_id, activity in activities(include_blocks=True).items():
             if only and activity_id not in only:
                 continue
             if source == "parser":

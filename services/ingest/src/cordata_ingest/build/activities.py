@@ -250,13 +250,16 @@ def link_duplicates(docs: list[dict[str, Any]], coords: dict[str, list]) -> dict
 
 def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    reviewed_dir = repo_root() / "config" / "pilot" / "reviewed"
+    reviewed_dirs = [
+        repo_root() / "config" / "pilot" / "reviewed",
+        repo_root() / "config" / "activities" / "reviewed",  # blocchi della Fase 3
+    ]
     tracks = data_dir() / "activities" / "tracks"
     manifest = json.loads((data_dir() / "activities" / "raw" / "manifest.json").read_text("utf-8"))
     docs: list[dict[str, Any]] = []
     coords: dict[str, list] = {}
     statuses: dict[str, str] = {}
-    for path in sorted(reviewed_dir.glob("*.yaml")):
+    for path in sorted(p for d in reviewed_dirs if d.exists() for p in d.glob("*.yaml")):
         activity_id = path.stem
         act = yaml.safe_load(path.read_text(encoding="utf-8"))
         track_path = tracks / f"{activity_id}.json"

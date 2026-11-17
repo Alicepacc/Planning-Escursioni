@@ -1,0 +1,40 @@
+# Primo blocco di ingestion della Fase 3 (17/11/2026): locandine 2026 di SAT Pergine,
+# trovate con la ricerca dei siti delle sezioni SAT. Solo link pubblici; i PDF restano
+# nell'archivio privato (data/activities/raw).
+candidates:
+  - id: sat-pergine-sentiero-jacopeo-da-terzolas-a-cles
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/11/Sentiero-Jacopeo-da-Terzolas-a-Cles.pdf
+    published: '2026-11-02'
+  - id: sat-pergine-laghi-di-s-giuliano
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/10/Laghi-di-S.-Giuliano.pdf
+    published: '2026-10-10'
+  - id: sat-pergine-giro-del-tomazol
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/10/Giro-del-Tomazol.pdf
+    published: '2026-10-06'
+  - id: sat-pergine-cima-di-s-cassiano
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/09/Cima-di-S.-Cassiano.pdf
+    published: '2026-09-26'
+  - id: sat-pergine-mulaz-e-val-venegia
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/08/Mulaz-e-Val-Venegia.pdf
+    published: '2026-08-29'
+  - id: sat-pergine-cima-vermoi
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/08/Cima-Vermoi.pdf
+    published: '2026-08-02'
+  - id: sat-pergine-odle-di-eores
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/07/Odle-di-Eores.pdf
+    published: '2026-07-03'
+  - id: sat-pergine-monte-altissimo-di-nago
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/05/Monte-Altissimo-di-Nago.pdf
+    published: '2026-05-08'
+  - id: sat-pergine-sat-programma-2026-web
+    section: sat-pergine
+    url: https://www.satpergine.it/wp-content/uploads/2026/02/SAT_Programma-2026-WEB.pdf
+    published: '2026-02-14'

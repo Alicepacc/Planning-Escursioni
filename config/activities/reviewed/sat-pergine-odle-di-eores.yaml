@@ -1,0 +1,23 @@
+sezione: SAT Pergine
+titolo: Odle di Eores – sentiero attrezzato Günther Messner
+data: 2026-07-12
+zona: Val di Funes
+tipo_percorso: anello
+difficolta: EEA
+durata: "6:30"
+distanza_km: null
+salita_m: 1250
+discesa_m: 1250
+quota_max_m: 2653
+partenza: {nome: Rifugio Zannes, quota_m: 1685}
+arrivo: {nome: Rifugio Zannes, quota_m: 1685}
+ora_ritrovo: "06:30"
+mezzi: null
+quota_eur: 20
+sentieri: ["32", "4", "32A"]
+reti: [Sentiero attrezzato Günther Messner]
+punti_chiave:
+  - {nome: Rifugio Zannes, quota_m: 1685}
+  - {nome: Rifugio Genova, quota_m: 2297}
+  - {nome: Monte Tullen, quota_m: 2653}
+  - {nome: Rifugio Zannes, quota_m: 1685}

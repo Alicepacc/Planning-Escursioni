@@ -1,0 +1,30 @@
+sezione: SAT Pergine
+titolo: Monte Mulaz – traversata da Passo Valles a Passo Rolle
+data: 2026-09-06
+zona: Pale di San Martino
+tipo_percorso: traversata
+difficolta: EE
+durata: "7:00"
+distanza_km: null
+salita_m: 1200
+discesa_m: 1250
+quota_max_m: 2906
+partenza: {nome: Passo Valles, quota_m: 2030}
+arrivo: {nome: Passo Rolle, quota_m: 1970}
+ora_ritrovo: "06:30"
+mezzi: null
+quota_eur: 20
+sentieri: ["751", "710"]
+reti: [Alta Via delle Dolomiti n. 2]
+punti_chiave:
+  - {nome: Passo Valles, quota_m: 2030}
+  - {nome: Forcella Venegia}
+  - {nome: Passo di Focobon, quota_m: 2291}
+  - {nome: Rifugio Volpi al Mulaz, quota_m: 2571}
+  - {nome: Passo Mulaz, quota_m: 2619}
+  - {nome: Monte Mulaz, quota_m: 2906}
+  - {nome: Passo Mulaz, quota_m: 2619}
+  - {nome: Baita Segantini, quota_m: 2174}
+  - {nome: Capanna Cervino}
+  - {nome: Passo Rolle, quota_m: 1970}
+note_revisione: 'durata = 4:00 salita + 3:00 discesa; alternativa E dalla Val Venegia'

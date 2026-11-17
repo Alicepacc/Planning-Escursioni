@@ -1,0 +1,28 @@
+sezione: SAT Pergine
+titolo: Cima di San Cassiano
+data: 2026-10-04
+zona: Gruppo dei Sarentini
+tipo_percorso: anello
+difficolta: EE
+durata: "6:30"
+distanza_km: null
+salita_m: 1150
+discesa_m: 1150
+quota_max_m: 2581
+partenza: {nome: Parcheggio Kuhhof, quota_m: 1570, comune: Lazfons}
+arrivo: {nome: Parcheggio Kuhhof, quota_m: 1570}
+ora_ritrovo: "06:30"
+mezzi: null
+quota_eur: 15
+sentieri: ["1", "9"]
+punti_chiave:
+  - {nome: Parcheggio Kuhhof, quota_m: 1570}
+  - {nome: Rifugio Chiusa, quota_m: 1923}
+  - {nome: Rifugio Santa Croce di Lazfons, quota_m: 2305}
+  - {nome: Cima Ritzlar, quota_m: 2528}
+  - {nome: Cima di San Cassiano, quota_m: 2581}
+  - {nome: Samspitze, quota_m: 2563}
+  - {nome: Lago di San Cassiano, quota_m: 2469}
+  - {nome: Rifugio Santa Croce di Lazfons, quota_m: 2305}
+  - {nome: Parcheggio Kuhhof, quota_m: 1570}
+note_revisione: 'giro in cresta sulle tre cime con tratto comune fino al rifugio; durata = 4:00 salita + 2:30 discesa; alternativa E solo al rifugio'

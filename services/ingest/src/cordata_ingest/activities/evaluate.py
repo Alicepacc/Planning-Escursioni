@@ -128,7 +128,11 @@ def compare(field: str, value: Any, truth: Any) -> tuple[bool, float | None]:
     if value is None or truth is None:
         return value is None and truth is None, None
     if field == "titolo":
-        return _jaccard(str(value), str(truth)) >= 0.5, None
+        # basta il nome principale (prima del « – »): i sottotitoli sono una scelta di stile
+        main = normalize(str(truth).split(" – ")[0])
+        return _jaccard(str(value), str(truth)) >= 0.5 or (
+            bool(main) and main in normalize(str(value))
+        ), None
     if field in {"partenza_nome", "arrivo_nome"}:
         return _same_place(str(value), str(truth)), None
     if field == "durata":

@@ -1,0 +1,27 @@
+sezione: SAT Pergine
+titolo: Laghi di San Giuliano
+data: 2026-10-18
+zona: Gruppo dell'Adamello
+tipo_percorso: anello
+difficolta: E
+durata: "4:15"
+distanza_km: 11
+salita_m: 650
+discesa_m: 650
+quota_max_m: 2184
+partenza: {nome: Malga Campo, quota_m: 1661, comune: Caderzone Terme}
+arrivo: {nome: Malga Campo, quota_m: 1661}
+ora_ritrovo: "07:00"
+mezzi: null
+quota_eur: 25
+sentieri: ["221", "230"]
+punti_chiave:
+  - {nome: Malga Campo, quota_m: 1661}
+  - {nome: Malga Campostril, quota_m: 1830}
+  - {nome: Lago Vacarsa}
+  - {nome: Bocchetta dell'Acqua Fredda, quota_m: 2184}
+  - {nome: Lago di Garzonè}
+  - {nome: Rifugio San Giuliano, quota_m: 1960}
+  - {nome: Malga San Giuliano, quota_m: 1970}
+  - {nome: Malga Campo, quota_m: 1661}
+note_revisione: 'dal paese di Caderzone a Malga Campo con pulmini (compresi nella quota)'

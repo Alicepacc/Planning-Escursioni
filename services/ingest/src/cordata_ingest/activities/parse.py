@@ -181,10 +181,19 @@ def parse_duration(doc: Doc) -> Field:
     if hit:
         m, page, line = hit
         return Field(_hm(_hours(m.group(1)) + _hours(m.group(2))), 0.85, _cite(line), page)
-    hit = doc.find(rf"totale\s*{num}\s*(?:h|ore)\b")
-    if hit:
-        m, page, line = hit
-        return Field(_hm(_hours(m.group(1))), 0.9, _cite(line), page)
+    # formati SAT: «Tempi: salita ore 4:00 - discesa ore 3:00», «Tempi: totale ore 6:30».
+    # Vince il primo nel testo: l'eventuale alternativa escursionistica viene dopo.
+    sum_rx = re.compile(
+        rf"salita\s*(?:ore|h)\s*{num}\D{{0,15}}discesa\s*(?:ore|h)\s*{num}", re.IGNORECASE
+    )
+    tot_rx = re.compile(rf"totale\s*(?:{num}\s*(?:h|ore)\b|(?:ore|h)\s*{num})", re.IGNORECASE)
+    for page, line in doc.lines:
+        m = sum_rx.search(line)
+        if m:
+            return Field(_hm(_hours(m.group(1)) + _hours(m.group(2))), 0.85, _cite(line), page)
+        m = tot_rx.search(line)
+        if m:
+            return Field(_hm(_hours(m.group(1) or m.group(2))), 0.9, _cite(line), page)
     hit = doc.find(r"(?:andata e ritorno|a/r)[^\d]{0,15}h\s*:?\s*(\d{1,2})\s*e\s*(\d{2})")
     if hit:
         m, page, line = hit
@@ -238,7 +247,8 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
     m_ = r"(?:m\.?|mt\.?|metri)"
     v = r"(\d{1,2}\.\d{3}|\d{2,4})"
     both = [
-        rf"(?:in )?salita e (?:in )?discesa\s*:?\s*(?:in salita e in discesa\s*)?{m_}?\s*{v}",
+        r"(?:in\s+)?salita\s+e\s+(?:in\s+)?discesa\s*:?\s*(?:in salita e in discesa\s*)?"
+        rf"{m_}?\s*{v}",
         rf"{v}\s*{m_}?\s*sia in salita che in discesa",
         rf"circa\s*{v}\s*{m_}\s*sia",
         rf"\+\s*-\s*{v}\s*m",
@@ -326,9 +336,11 @@ def parse_max_elevation(doc: Doc) -> Field:
 QUOTA = r"\((?:m\.?\s*|mt\.?\s*)?(\d{1,2}\.\d{3}|\d{3,4})\s*(?:m|mt|m\.s\.l\.m\.?|metri)?\)"
 # quota anche senza parentesi: "(m 1792)", "2557 m", "m 2.414", "(2036M)"
 QUOTA_ANY = r"(?:\(?\s*(?:m\.?|mt\.?)\s*(\d\.\d{3}|\d{4})\b|\b(\d\.\d{3}|\d{4})\s*(?:m|mt|M)\b\.?)"
+# nome proprio: parole con l'iniziale maiuscola, anche abbreviate («Rif. Zannes», «P.so Rolle»)
 NAME = (
-    r"((?:[A-ZÀ-Ý][\w'’-]+|S\.)(?:\s+(?:[A-ZÀ-Ý][\w'’-]+|S\.|di|de|da|al|alla|del|dei|delle|"
-    r"della|dal|dalla))*)"
+    r"((?:[A-ZÀ-Ý][\w'’-]*\.(?=\s+[A-ZÀ-Ý])|[A-ZÀ-Ý][\w'’-]+|S\.)"
+    r"(?:\s+(?:[A-ZÀ-Ý][\w'’-]*\.(?=\s+[A-ZÀ-Ý])|[A-ZÀ-Ý][\w'’-]+|S\.|di|de|da|al|alla|del|"
+    r"dei|delle|della|dal|dalla))*)"
 )
 
 
@@ -356,6 +368,12 @@ def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
     phrases = [
         rf"(?i:raggiung\w+|parcheggio de\w*)\s+(?:{art}\s*)?{NAME}\s*{QUOTA},?\s*"
         r"(?i:punto di partenza)",
+        rf"(?i:parcheggio)\s+(?i:in\s+)?(?i:localit\S+|loc\.)\s+{NAME}",
+        r"(?i:si sale|si raggiunge|saliamo)\s+(?i:al|alla|a)\s+(?:\w+\s+)?(?i:villaggio|paese|"
+        rf"abitato|borgo)\s+(?i:di)\s+{NAME}\s*{QUOTA}",
+        r"(?i:ini?zia|parte)\s+(?i:dal|dalla|da|presso)\s+(?:(?i:parcheggio)\s+"
+        rf"(?:(?i:presso|del|della|di)\s+)?(?:(?i:il|la)\s+)?)?{NAME}\s*{QUOTA}",
+        rf"^(?i:da)\s+{NAME}\s*{QUOTA}",
         rf"{NAME}\s*{QUOTA}\s*(?i:dove si lasciano le (?:macchine|auto))",
         r"(?i:iniziamo l.escursione|il percorso inizia|si parte|partenza)\s+"
         r"(?i:da|a|dal|dall.|dalla)\s*(?i:l.?\s*)?(?i:abitato di|paese di|centro di|localit\S+)?"
@@ -400,6 +418,7 @@ def parse_route_type(doc: Doc, start: Field, end: Field, title: str = "") -> Fie
             r"andata\s*=\s*ritorno",
             r"stess[oi] (?:percors|sentier)",
             r"via dell.andata",
+            r"(?:lungo|per) (?:l.itinerario|il percorso|la via|lo stesso itinerario) di salita",
             r"a ritroso",
             r"\ba/r\b",
             r"andata e ritorno",
@@ -445,7 +464,7 @@ def parse_meeting_time(doc: Doc) -> Field:
         return Field(f"{int(m.group(1)):02d}:30", 0.7, _cite(line), page)
     for pattern, conf in (
         (r"ritrovo[^\n]{0,70}?(?:ore|h)\s*:?\s*(\d{1,2})(?:[:.,](\d{2}))?", 0.85),
-        (r"partenza[^\n]{0,30}?(?:ore|h)\s*:?\s*(\d{1,2})(?:[:.,](\d{2}))?", 0.85),
+        (r"partenza[^\n]{0,90}?\b(?:ore|h)\s*:?\s*(\d{1,2})(?:[:.,](\d{2}))?", 0.85),
     ):
         hit = doc.find(pattern)
         if hit:
@@ -485,13 +504,13 @@ def parse_fee(doc: Doc) -> Field:
     return Field(None, 0.0)
 
 
-REF = r"(?:SI|[EO]?\d{1,3}[A-Za-z]?)"
+REF = r"(?:SI|[EO]?\d{1,3}(?:/?[A-Za-z])?)"
 
 
 def _refs(text: str) -> list[str]:
     out: list[str] = []
     for tok in re.findall(rf"(?<![\w.]){REF}(?![\w])", text):
-        tok = tok.upper()
+        tok = tok.upper().replace("/", "")
         if tok not in out:
             out.append(tok)
     return out
@@ -517,7 +536,8 @@ def parse_trails(doc: Doc) -> Field:
     first: tuple[int, str] | None = None
     rx = re.compile(
         r"(?:sentier[oi]|segnavia|marcatura)\s*(?:SAT\s*)?(?:n\.?|nr\.?|n°|numero)?\s*:?\s*"
-        r"([EO]?\d{1,3}[A-Za-z]?(?:\s*(?:,|e poi|e|-)\s*[EO]?\d{1,3}[A-Za-z]?)*)"
+        # anche «32/A»
+        r"([EO]?\d{1,3}(?:/?[A-Za-z])?(?:\s*(?:,|e poi|e|-)\s*[EO]?\d{1,3}(?:/?[A-Za-z])?)*)"
         r"(?![\w])",
         re.IGNORECASE,
     )
@@ -550,7 +570,18 @@ def _uppercase(line: str) -> bool:
     return len(letters) >= 8 and sum(c.isupper() for c in letters) / len(letters) >= 0.7
 
 
+PROPOSE = re.compile(
+    r"^(?:.*?\b)?propone\s+(?:una\s+|un['’]?\s*)?(?:escursione|gita|uscita|ciaspolata|camminata)"
+    r"(?:\s+facile)?,?\s*(?:sulle|sulla|sullo|sui|sul|alle|alla|allo|agli|ai|al|ad|a|nella|nel|"
+    r"lungo il|il|la|lo|le|gli|i)?\s*",
+    re.IGNORECASE,
+)
+
+
 def _join_title(lines: list[str]) -> str:
+    first = PROPOSE.sub("", lines[0]).strip()
+    # «propone una escursione sulla» / «CIMA VERMOI …»: il titolo è sulla riga dopo
+    lines = [first, *lines[1:]] if len(first) > 3 else (lines[1:] or lines)
     title = lines[0]
     for nxt in lines[1:]:
         # continua se la riga finisce con una preposizione ("… Abbazia di" / "Monte Maria")
@@ -659,6 +690,16 @@ def parse(
         date = parse_date(doc, hint)
         title = parse_title(doc, date)
     start_name, start_ele, end_name = parse_start(doc)
+    sub = doc.find(
+        r"\((?i:traversata|escursione)\s+(?i:da|dalla|dal)\s+([^()]+?)\s+(?i:a|al|alla|fino a)\s+"
+        r"([^()–-]+)"
+    )
+    if sub:
+        m, page, line = sub
+        if start_name.value is None:
+            start_name = Field(m.group(1).strip(), 0.6, _cite(line), page)
+        if end_name.value is None:
+            end_name = Field(m.group(2).strip(" .)"), 0.6, _cite(line), page)
     route_type = parse_route_type(doc, start_name, end_name, title.value or "")
     if entry_date and start_name.value is None and title.value:
         # nei calendari la prima località del titolo è di solito la partenza

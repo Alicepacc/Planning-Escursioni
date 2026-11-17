@@ -120,6 +120,7 @@ EXPECTED_KINDS: list[tuple[str, set[str]]] = [
     (r"cascata|cascate|wasserfall", {"cascata"}),
     (r"ponte|brücke", {"ponte"}),
     (r"maso|hof", {"maso", "albergo", "ristoro"}),
+    (r"san|santa|santo|sankt|st|s", {"paese", "frazione", "chiesa", "localita", "maso"}),
     (r"parcheggio|parkplatz", {"parcheggio"}),
     (r"stazione|funivia|bergstation", {"funivia", "stazione"}),
 ]
@@ -267,16 +268,36 @@ def search_radius_km(activity: dict[str, Any]) -> float:
     return max(2.0, float(km) + 1.0)
 
 
+MUNICIPALITY_RADIUS_KM = 15.0
+
+
+def municipality_anchor(conn: Any, comune: str | None) -> tuple[float, float] | None:
+    """Il comune della partenza («Laces», «Scurelle (TN)») come àncora per i nomi comuni."""
+    if not comune:
+        return None
+    name = re.sub(r"\s*\([A-Z]{2}\)\s*$", "", comune).strip()
+    for place in search(conn, name, kinds=("paese", "frazione"), limit=3, min_similarity=0.6):
+        if place.exact or place.similarity >= 0.9:
+            return (place.lon, place.lat)
+    return None
+
+
 def geocode(
-    conn: Any, dem: Any, points: list[Point], refs: list[str], radius_km: float = POINT_RADIUS_KM
+    conn: Any,
+    dem: Any,
+    points: list[Point],
+    refs: list[str],
+    radius_km: float = POINT_RADIUS_KM,
+    anchor_hint: tuple[float, float] | None = None,
 ) -> list[Point]:
-    """Partenza scelta sull'insieme (nome, quota, sentieri vicini, punto successivo); poi in
-    sequenza, ciascun punto vicino al precedente."""
+    """Partenza scelta sull'insieme (nome, quota, sentieri vicini, punto successivo), vicino al
+    comune se noto; poi in sequenza, ciascun punto vicino al precedente."""
     if not points:
         return points
     first, rest = points[0], points[1:]
     best: tuple[float, Place, float | None, str] | None = None
-    for score, place, dem_ele, how in _candidates(conn, first, dem, None, 0)[:8]:
+    start_radius = MUNICIPALITY_RADIUS_KM if anchor_hint else 0
+    for score, place, dem_ele, how in _candidates(conn, first, dem, anchor_hint, start_radius)[:8]:
         bonus = 0.25 if _near_trails(conn, place.lon, place.lat, refs) else 0.0
         if rest:
             nxt = _candidates(conn, rest[0], dem, (place.lon, place.lat), POINT_RADIUS_KM)
@@ -559,7 +580,10 @@ def reconstruct(conn: Any, dem: Any, activity_id: str, activity: dict[str, Any])
         "quota_max_m": activity.get("quota_max_m"),
         "durata": activity.get("durata"),
     }
-    points = geocode(conn, dem, _points_from(activity), refs, search_radius_km(activity))
+    anchor_hint = municipality_anchor(conn, (activity.get("partenza") or {}).get("comune"))
+    points = geocode(
+        conn, dem, _points_from(activity), refs, search_radius_km(activity), anchor_hint
+    )
     res.points = [
         {
             "nome": p.query,

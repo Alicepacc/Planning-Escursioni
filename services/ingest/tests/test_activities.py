@@ -62,3 +62,44 @@ def test_kind_of():
     assert kind_of({"tourism": "alpine_hut"}) == "rifugio"
     assert kind_of({"historic": "castle"}) == "castello"
     assert kind_of({"place": "hamlet"}) == "frazione"
+
+
+def _parse(text: str) -> dict:
+    from cordata_ingest.activities.parse import parse
+
+    return {k: v["value"] for k, v in parse([(1, text)]).items()}
+
+
+def test_parser_formati_sat_pergine():
+    text = (
+        "C.A.I. – S.A.T. Sezione di Pergine Valsugana\n"
+        "Domenica 12 Luglio 2026\n"
+        "propone una escursione sulla\n"
+        "CIMA VERMOI (Vermoi Spitze) - m. 2929\n"
+        "L'escursione inizia dal parcheggio presso il Rif. Zannes (m. 1685) oltre S. Maddalena.\n"
+        "Con il segnavia n. 32/A si rientra al parcheggio.\n"
+        "Difficoltà: EE\n"
+        "Dislivello: salita e  discesa m. 1250\n"
+        "Tempi: totale ore 6:30\n"
+        "Alternativa escursionistica: Tempi: salita h 2:00 - discesa h 2:00\n"
+        "Partenza:        da piazza Gavazzi (Bar Alba)  ad ore 6:30\n"
+    )
+    p = _parse(text)
+    assert p["titolo"].startswith("CIMA VERMOI")
+    assert p["durata"] == "6:30"  # non quella dell'alternativa
+    assert p["salita_m"] == 1250 and p["discesa_m"] == 1250
+    assert p["ora_ritrovo"] == "06:30"
+    assert p["partenza_nome"] == "Rif. Zannes" and p["partenza_quota_m"] == 1685
+    assert "32A" in p["sentieri"]
+
+
+def test_parser_salita_e_discesa_separate_e_traversata():
+    p = _parse(
+        "Domenica 6 Settembre 2026\n"
+        "propone una escursione al MONTE MULAZ - m. 2906\n"
+        "(Traversata da P.so Valles al P.so Rolle)\n"
+        "Tempi: salita ore 4:00 - discesa ore 3:00\n"
+    )
+    assert p["durata"] == "7:00"
+    assert p["tipo_percorso"] == "traversata"
+    assert (p["partenza_nome"], p["arrivo_nome"]) == ("P.so Valles", "P.so Rolle")

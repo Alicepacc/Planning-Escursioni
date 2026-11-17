@@ -1,0 +1,27 @@
+sezione: SAT Pergine
+titolo: Monte Altissimo di Nago e Rifugio Damiano Chiesa
+data: 2026-05-17
+zona: Monte Baldo
+tipo_percorso: traversata
+difficolta: E
+durata: "5:00"
+distanza_km: 12
+salita_m: 800
+discesa_m: 915
+quota_max_m: 2079
+partenza: {nome: Passo San Valentino, quota_m: 1315}
+arrivo: {nome: San Giacomo, quota_m: 1180}
+ora_ritrovo: "07:30"
+mezzi: null
+quota_eur: 15
+sentieri: ["650", "633", "622"]
+punti_chiave:
+  - {nome: Passo San Valentino, quota_m: 1315}
+  - {nome: Malga Bes, quota_m: 1510}
+  - {nome: Rifugio Graziani, quota_m: 1615}
+  - {nome: Rifugio Damiano Chiesa, quota_m: 2059}
+  - {nome: Monte Altissimo di Nago, quota_m: 2079}
+  - {nome: Bocca Paltrane}
+  - {nome: Malga Campo, quota_m: 1635}
+  - {nome: San Giacomo, quota_m: 1180}
+note_revisione: 'durata = 3:00 salita + 2:00 discesa'
