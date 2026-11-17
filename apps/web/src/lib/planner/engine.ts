@@ -8,9 +8,9 @@ import {
 	snap,
 	type BBox,
 	type GraphIndex,
-	type Poi,
 	type RawTile
 } from '../routing/graph';
+import { poisAlong, type PoiAlong } from '../routing/pois';
 import { routeBetween, type Leg, type RoutePoint } from '../routing/router';
 import type { LegMode, Plan, PlanPoint } from './plan';
 
@@ -145,38 +145,8 @@ export class PlannerEngine {
 	}
 
 	/** Luoghi del grafo (cime, laghi, rifugi…) entro `maxM` metri dal percorso. */
-	poisAlong(points: RoutePoint[], maxM = 120): { poi: Poi; at: number }[] {
-		const g = this.graph;
-		if (!g || points.length < 2) return [];
-		const box = bboxOf(points.map(([lon, lat]) => ({ lon, lat })));
-		const pad = 0.003;
-		const out: { poi: Poi; at: number }[] = [];
-		for (const poi of g.pois) {
-			if (poi.lon < box[0] - pad || poi.lon > box[2] + pad) continue;
-			if (poi.lat < box[1] - pad || poi.lat > box[3] + pad) continue;
-			let best = Infinity;
-			let at = 0;
-			let along = 0;
-			for (let i = 0; i < points.length; i++) {
-				if (i) along += haversineM(points[i - 1][0], points[i - 1][1], points[i][0], points[i][1]);
-				const d = haversineM(poi.lon, poi.lat, points[i][0], points[i][1]);
-				if (d < best) {
-					best = d;
-					at = along;
-				}
-			}
-			if (best <= maxM) out.push({ poi, at });
-		}
-		// lo stesso luogo può comparire in più tasselli
-		const seen = new Set<string>();
-		return out
-			.filter(({ poi }) => {
-				const k = `${poi.kind}|${poi.name}|${poi.lon.toFixed(4)}|${poi.lat.toFixed(4)}`;
-				if (seen.has(k)) return false;
-				seen.add(k);
-				return true;
-			})
-			.sort((x, y) => x.at - y.at);
+	poisAlong(points: RoutePoint[], maxM = 120): PoiAlong[] {
+		return this.graph ? poisAlong(this.graph, points, maxM) : [];
 	}
 
 	private async routed(a: PlanPoint, b: PlanPoint, maxDiff: number): Promise<PlannedLeg> {

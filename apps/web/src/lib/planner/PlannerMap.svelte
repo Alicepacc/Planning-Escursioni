@@ -19,6 +19,10 @@
 		onMove: (i: number, lon: number, lat: number, metersPerPixel: number) => void;
 		onSelect: (i: number | null) => void;
 		onRemove: (i: number) => void;
+		/** anteprima di una proposta del generatore */
+		preview?: [number, number][] | null;
+		/** segnaposti non trascinabili (partenza e arrivo del generatore) */
+		marks?: { lon: number; lat: number; label: string; title: string }[];
 	}
 
 	let {
@@ -31,7 +35,9 @@
 		onInsert,
 		onMove,
 		onSelect,
-		onRemove
+		onRemove,
+		preview = null,
+		marks = []
 	}: Props = $props();
 
 	const ROUTE = '#174ea6';
@@ -41,6 +47,8 @@
 	let map = $state<MlMap | undefined>();
 	let lib: typeof import('maplibre-gl') | undefined;
 	let markers: MlMarker[] = [];
+	let markMarkers: MlMarker[] = [];
+	const PREVIEW = '#7b2cbf';
 
 	/** metri per pixel allo zoom e alla latitudine dati (tasselli da 512 px) */
 	function metersPerPixel(m: MlMap, lat: number): number {
@@ -69,6 +77,21 @@
 						}
 					}))
 			)
+		};
+	}
+
+	function previewGeoJSON(line: [number, number][] | null) {
+		return {
+			type: 'FeatureCollection' as const,
+			features: line?.length
+				? [
+						{
+							type: 'Feature' as const,
+							properties: {},
+							geometry: { type: 'LineString' as const, coordinates: line }
+						}
+					]
+				: []
 		};
 	}
 
@@ -106,6 +129,27 @@
 				// estremità piatte: con quelle arrotondate il tratteggio sparirebbe
 				layout: { 'line-cap': 'butt', 'line-join': 'round' },
 				paint: { 'line-color': FREE, 'line-width': 4.5, 'line-dasharray': [2, 1.4] }
+			},
+			before
+		);
+		m.addSource('anteprima', { type: 'geojson', data: previewGeoJSON(preview) });
+		m.addLayer(
+			{
+				id: 'anteprima-alone',
+				type: 'line',
+				source: 'anteprima',
+				layout: { 'line-cap': 'round', 'line-join': 'round' },
+				paint: { 'line-color': '#ffffff', 'line-width': 8, 'line-opacity': 0.85 }
+			},
+			before
+		);
+		m.addLayer(
+			{
+				id: 'anteprima',
+				type: 'line',
+				source: 'anteprima',
+				layout: { 'line-cap': 'round', 'line-join': 'round' },
+				paint: { 'line-color': PREVIEW, 'line-width': 4.5 }
 			},
 			before
 		);
@@ -185,8 +229,32 @@
 		});
 	});
 
+	// anteprima della proposta
+	$effect(() => {
+		const data = previewGeoJSON(preview);
+		if (map) (map.getSource('anteprima') as GeoJSONSource | undefined)?.setData(data);
+	});
+
+	// segnaposti del generatore
+	$effect(() => {
+		const m = map;
+		const list = marks;
+		if (!m || !lib) return;
+		const ml = lib;
+		for (const mk of markMarkers) mk.remove();
+		markMarkers = list.map((p) => {
+			const el = document.createElement('div');
+			el.className = 'segnaposto';
+			el.textContent = p.label;
+			el.title = p.title;
+			el.setAttribute('role', 'img');
+			el.setAttribute('aria-label', p.title);
+			return new ml.Marker({ element: el, anchor: 'bottom' }).setLngLat([p.lon, p.lat]).addTo(m);
+		});
+	});
+
 	onDestroy(() => {
-		for (const mk of markers) mk.remove();
+		for (const mk of [...markers, ...markMarkers]) mk.remove();
 	});
 </script>
 
@@ -223,6 +291,21 @@
 	:global(.wp.sel) {
 		outline: 3px solid #f2b705;
 		outline-offset: 1px;
+	}
+	:global(.segnaposto) {
+		min-width: 26px;
+		height: 26px;
+		padding: 0 6px;
+		box-sizing: border-box;
+		border-radius: 13px 13px 13px 2px;
+		background: #7b2cbf;
+		color: #ffffff;
+		border: 2px solid #ffffff;
+		font:
+			700 12px/22px system-ui,
+			sans-serif;
+		text-align: center;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 	}
 	:global(.wp:focus-visible) {
 		outline: 3px solid #f2b705;

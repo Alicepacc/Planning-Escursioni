@@ -1,0 +1,359 @@
+{
+  "summary": {
+    "activities": 13,
+    "withProposals": 13,
+    "match1": 2,
+    "match3": 5,
+    "match5": 5,
+    "destination5": 8,
+    "meanBestCoverage": 0.5789757841191661,
+    "meanMs": 420.4490533846153
+  },
+  "rows": [
+    {
+      "id": "2020-07-19-val-orsera-forcella-segura-val-campelle-sat-borgo-valsugana",
+      "title": "Val Orsera – Forcella Segura – Val Campelle",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 296,
+        "maxMinutes": 444,
+        "minUp": 947.25,
+        "maxUp": 1578.75,
+        "maxDiff": 3,
+        "wishes": [
+          "rifugio"
+        ],
+        "month": 7,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Rifugio Malga Caldenave \"Claudio e Renzo\"",
+      "proposals": 3,
+      "tried": 7,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.3851132686084142,
+      "destinationHit": true,
+      "ms": 228.82806800000003
+    },
+    {
+      "id": "2020-07-26-malga-pra-dal-giovo-cima-bedole-sat-spormaggiore",
+      "title": "Malga Prà dal Giovo – Cima Bedolè",
+      "type": "andata_ritorno",
+      "inputs": {
+        "type": "andata_ritorno",
+        "minMinutes": 249.60000000000002,
+        "maxMinutes": 374.4,
+        "minUp": 729.75,
+        "maxUp": 1216.25,
+        "maxDiff": 2,
+        "wishes": [],
+        "month": 7,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": null,
+      "proposals": 2,
+      "tried": 10,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.16828478964401294,
+      "destinationHit": false,
+      "ms": 352.91978399999994
+    },
+    {
+      "id": "2021-10-14-lago-di-tovel-malga-flavona-sat-rovereto",
+      "title": "Lago di Tovel – Malga Flavona",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 225.60000000000002,
+        "maxMinutes": 338.4,
+        "minUp": 504,
+        "maxUp": 840,
+        "maxDiff": 1,
+        "wishes": [
+          "rifugio"
+        ],
+        "month": 10,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Malga Flavona",
+      "proposals": 1,
+      "tried": 5,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.04953560371517028,
+      "destinationHit": true,
+      "ms": 77.5387760000001
+    },
+    {
+      "id": "2026-03-08-ciaspolata-al-rifugio-vallaccia-bolzano",
+      "title": "Ciaspolata al Rifugio Vallaccia",
+      "type": "andata_ritorno",
+      "inputs": {
+        "type": "andata_ritorno",
+        "minMinutes": 210.4,
+        "maxMinutes": 315.59999999999997,
+        "minUp": 624.75,
+        "maxUp": 1041.25,
+        "maxDiff": 1,
+        "wishes": [
+          "rifugio"
+        ],
+        "month": 3,
+        "snowshoes": true,
+        "limit": 5
+      },
+      "destination": "Rifugio Vallaccia",
+      "proposals": 5,
+      "tried": 8,
+      "reason": null,
+      "matchRank": 1,
+      "bestCoverage": 0.9653679653679653,
+      "destinationHit": true,
+      "ms": 81.44523600000002
+    },
+    {
+      "id": "2026-04-12-sentiero-rogge-di-sluderno-con-visita-al-castel-coira-e-abba-bolzano",
+      "title": "Sentiero rogge di Sluderno con visita al Castel Coira e Abbazia di Monte Maria",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 54.400000000000006,
+        "maxMinutes": 81.6,
+        "minUp": 152.25,
+        "maxUp": 253.75,
+        "maxDiff": 1,
+        "wishes": [],
+        "month": 4,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": null,
+      "proposals": 3,
+      "tried": 12,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.4057971014492754,
+      "destinationHit": false,
+      "ms": 395.35771499999987
+    },
+    {
+      "id": "2026-05-17-monte-altissimo-di-nago-e-rifugio-damiano-chiesa-sat-pergine",
+      "title": "Monte Altissimo di Nago e Rifugio Damiano Chiesa",
+      "type": "traversata",
+      "inputs": {
+        "type": "traversata",
+        "minMinutes": 212,
+        "maxMinutes": 318,
+        "minUp": 585,
+        "maxUp": 975,
+        "maxDiff": 1,
+        "wishes": [
+          "cima"
+        ],
+        "month": 5,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Monte Altissimo di Nago",
+      "proposals": 2,
+      "tried": 11,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.14847161572052403,
+      "destinationHit": false,
+      "ms": 476.92384300000003
+    },
+    {
+      "id": "2026-07-12-odle-di-eores-sentiero-attrezzato-g-nther-messner-sat-pergine",
+      "title": "Odle di Eores – sentiero attrezzato Günther Messner",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 352,
+        "maxMinutes": 528,
+        "minUp": 988.5,
+        "maxUp": 1647.5,
+        "maxDiff": 3,
+        "wishes": [
+          "cima"
+        ],
+        "month": 7,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Monte Tullen",
+      "proposals": 4,
+      "tried": 35,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.6476964769647696,
+      "destinationHit": true,
+      "ms": 942.1435970000002
+    },
+    {
+      "id": "2026-07-26-anello-waldnersee-bolzano",
+      "title": "Anello Waldnersee",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 208,
+        "maxMinutes": 312,
+        "minUp": 611.25,
+        "maxUp": 1018.75,
+        "maxDiff": 1,
+        "wishes": [],
+        "month": 7,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": null,
+      "proposals": 3,
+      "tried": 25,
+      "reason": null,
+      "matchRank": 1,
+      "bestCoverage": 1,
+      "destinationHit": false,
+      "ms": 563.3338229999995
+    },
+    {
+      "id": "2026-08-09-cima-vermoi-sat-pergine",
+      "title": "Cima Vermoi",
+      "type": "andata_ritorno",
+      "inputs": {
+        "type": "andata_ritorno",
+        "minMinutes": 220,
+        "maxMinutes": 330,
+        "minUp": 862.5,
+        "maxUp": 1437.5,
+        "maxDiff": 2,
+        "wishes": [
+          "cima"
+        ],
+        "month": 8,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Punta Vermoi",
+      "proposals": 2,
+      "tried": 3,
+      "reason": null,
+      "matchRank": 2,
+      "bestCoverage": 1,
+      "destinationHit": true,
+      "ms": 359.39001800000005
+    },
+    {
+      "id": "2026-08-09-escursione-rifugio-pio-xi-palla-bianca-bressanone",
+      "title": "Escursione Rifugio Pio XI – Palla Bianca",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 178.4,
+        "maxMinutes": 267.59999999999997,
+        "minUp": 485.25,
+        "maxUp": 808.75,
+        "maxDiff": 2,
+        "wishes": [
+          "rifugio"
+        ],
+        "month": 8,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Rifugio Pio XI alla Palla Bianca",
+      "proposals": 2,
+      "tried": 3,
+      "reason": null,
+      "matchRank": 2,
+      "bestCoverage": 0.7012987012987013,
+      "destinationHit": true,
+      "ms": 69.47379099999944
+    },
+    {
+      "id": "2026-09-06-monte-mulaz-traversata-da-passo-valles-a-passo-rolle-sat-pergine",
+      "title": "Monte Mulaz – traversata da Passo Valles a Passo Rolle",
+      "type": "traversata",
+      "inputs": {
+        "type": "traversata",
+        "minMinutes": 336.8,
+        "maxMinutes": 505.2,
+        "minUp": 990,
+        "maxUp": 1650,
+        "maxDiff": 2,
+        "wishes": [
+          "cima"
+        ],
+        "month": 9,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Monte Mulaz",
+      "proposals": 5,
+      "tried": 11,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.6676557863501483,
+      "destinationHit": true,
+      "ms": 528.0788700000003
+    },
+    {
+      "id": "2026-10-04-cima-di-san-cassiano-sat-pergine",
+      "title": "Cima di San Cassiano",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 273.6,
+        "maxMinutes": 410.4,
+        "minUp": 776.25,
+        "maxUp": 1293.75,
+        "maxDiff": 2,
+        "wishes": [
+          "cima"
+        ],
+        "month": 10,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Cima San Cassiano",
+      "proposals": 5,
+      "tried": 35,
+      "reason": null,
+      "matchRank": null,
+      "bestCoverage": 0.5646067415730337,
+      "destinationHit": true,
+      "ms": 648.5552509999998
+    },
+    {
+      "id": "val-d-inferno",
+      "title": "Anello in Val d'Inferno e Cima Nassere (2253 m)",
+      "type": "anello",
+      "inputs": {
+        "type": "anello",
+        "minMinutes": 280,
+        "maxMinutes": 420,
+        "minUp": 777.75,
+        "maxUp": 1296.25,
+        "maxDiff": 2,
+        "wishes": [
+          "cima"
+        ],
+        "month": 11,
+        "snowshoes": false,
+        "limit": 5
+      },
+      "destination": "Cima Nassere",
+      "proposals": 5,
+      "tried": 35,
+      "reason": null,
+      "matchRank": 2,
+      "bestCoverage": 0.8228571428571428,
+      "destinationHit": false,
+      "ms": 741.8489220000001
+    }
+  ]
+}

@@ -13,6 +13,7 @@
 	import { download, fileName, toGpx } from '#lib/export/gpx.ts';
 	import { formatDuration, formatKm, formatMeters } from '#lib/hiking/format.ts';
 	import { elevations } from '#lib/map/dem.ts';
+	import GeneratorPanel from '#lib/generator/GeneratorPanel.svelte';
 	import PlannerMap from '#lib/planner/PlannerMap.svelte';
 	import { PlannerEngine, bboxOf, type PlannedLeg } from '#lib/planner/engine.ts';
 	import {
@@ -133,6 +134,21 @@
 	let mapRef = $state<{ center: () => { lon: number; lat: number; mpp: number } | null }>();
 	let restored = $state(false);
 
+	// generatore di proposte
+	let genOpen = $state(false);
+	let genStart = $state<PlanPoint | null>(null);
+	let genEnd = $state<PlanPoint | null>(null);
+	let genPicking = $state<'start' | 'end' | null>(null);
+	let preview = $state<[number, number][] | null>(null);
+	const genMarks = $derived(
+		genOpen
+			? [
+					...(genStart ? [{ ...genStart, label: 'P', title: 'Partenza della proposta' }] : []),
+					...(genEnd ? [{ ...genEnd, label: 'A', title: 'Arrivo della proposta' }] : [])
+				]
+			: []
+	);
+
 	// --- valori derivati ---
 	const legsReady = $derived(legs.length === plan.modes.length);
 	const fullLegs = $derived(plan.ar ? [...legs, ...[...legs].reverse().map(reverseLeg)] : legs);
@@ -142,6 +158,7 @@
 	const minutes = $derived(stats.minutes * pace.fitness * pace.stops * pace.group);
 	const paceChanged = $derived(pace.fitness !== 1 || pace.stops !== 1 || pace.group !== 1);
 	const loop = $derived(isLoop(plan));
+	const empty = $derived(plan.points.length < 2);
 	const noEle = $derived(legs.some((l) => l.noEle));
 	const fallbacks = $derived(
 		legs.flatMap((l, i) => (l.fallback ? [{ leg: i, why: l.fallback }] : []))
@@ -232,6 +249,18 @@
 
 	function addAt(lon: number, lat: number, mpp: number) {
 		selected = null;
+		if (genOpen) {
+			// con il generatore aperto il tocco sceglie partenza (o arrivo), non modifica il piano
+			const which = genPicking ?? 'start';
+			genPicking = null;
+			void engine.snapPoint({ lon, lat }, plan.maxDiff, snapRadius(mpp)).then((s) => {
+				const p = s ? { lon: s.lon, lat: s.lat } : { lon, lat };
+				if (which === 'start') genStart = p;
+				else genEnd = p;
+				if (!s) say('Nessun sentiero ammesso vicino a quel punto: sceglilo su un sentiero.');
+			});
+			return;
+		}
 		enqueue(async () => {
 			if (freeMode) return commit(addPoint(plan, { lon, lat }, 'f'));
 			const radius = snapRadius(mpp);
@@ -250,6 +279,25 @@
 			);
 			return commit(addPoint(plan, { lon, lat }, 'f'));
 		});
+	}
+
+	function openGenerator() {
+		selected = null;
+		genOpen = true;
+		genStart = genStart ?? plan.points[0] ?? null;
+		genPicking = genStart ? null : 'start';
+	}
+
+	function closeGenerator() {
+		genOpen = false;
+		genPicking = null;
+		preview = null;
+	}
+
+	function openProposal(next: Plan) {
+		closeGenerator();
+		focus = bboxOf(next.points);
+		act(() => next);
 	}
 
 	function addAtCenter() {
@@ -453,10 +501,13 @@
 >
 	<section class="stats" aria-label="Statistiche del percorso" aria-live="polite">
 		<div class="stat">
-			<b>{formatKm(stats.km)}</b><span>distanza</span>
+			<b>{empty ? '–' : formatKm(stats.km)}</b><span>distanza</span>
 		</div>
 		<div class="stat">
-			<b>↗ {noEle ? '–' : formatMeters(stats.up)} ↘ {noEle ? '–' : formatMeters(stats.down)}</b
+			<b
+				>↗ {noEle || empty ? '–' : formatMeters(stats.up)} ↘ {noEle || empty
+					? '–'
+					: formatMeters(stats.down)}</b
 			><span>dislivello</span>
 		</div>
 		<button
@@ -466,7 +517,7 @@
 			aria-controls="passo"
 			onclick={() => (paceOpen = !paceOpen)}
 		>
-			<b>{formatDuration(minutes)}</b><span
+			<b>{empty ? '–' : formatDuration(minutes)}</b><span
 				>{paceChanged ? 'col tuo passo ▾' : 'tempo netto ▾'}</span
 			>
 		</button>
@@ -551,8 +602,16 @@
 			onMove={moveTo}
 			onSelect={(i) => (selected = i)}
 			onRemove={remove}
+			{preview}
+			marks={genMarks}
 		/>
-		{#if !plan.points.length}
+		{#if genOpen && (genPicking || !genStart)}
+			<p class="suggerimento">
+				Tocca la mappa per {genPicking === 'end' ? 'l’arrivo' : 'la partenza'} della proposta.
+			</p>
+		{:else if genOpen}
+			<!-- nessun suggerimento: la mappa mostra l'anteprima -->
+		{:else if !plan.points.length}
 			<p class="suggerimento">
 				Avvicina la mappa e <strong>tocca un sentiero</strong> per la partenza, poi i punti successivi:
 				il percorso segue i sentieri.
@@ -574,205 +633,232 @@
 			</p>
 		{/if}
 
-		<div class="strumenti" role="toolbar" aria-label="Modifica del percorso">
-			<button type="button" onclick={undo} disabled={depth === 0} title="Annulla (Ctrl+Z)"
-				>↶ <span>Annulla</span></button
-			>
-			<button
-				type="button"
-				onclick={redo}
-				disabled={depth >= maxDepth}
-				title="Ripeti (Ctrl+Maiusc+Z)">↷ <span>Ripeti</span></button
-			>
-			<button
-				type="button"
-				onclick={() => act((p) => (loop ? openLoop(p) : closeLoop(p, freeMode ? 'f' : 'r')))}
-				disabled={plan.points.length < 2}
-				aria-pressed={loop}>⟲ {loop ? 'Riapri anello' : 'Chiudi ad anello'}</button
-			>
-			<button type="button" onclick={() => act(reversePlan)} disabled={plan.points.length < 2}
-				>⇄ Inverti</button
-			>
-			<button
-				type="button"
-				onclick={() => act((p) => setAr(p, !p.ar))}
-				disabled={plan.points.length < 2 || loop}
-				aria-pressed={plan.ar}>⇆ Andata e ritorno</button
-			>
-			<button type="button" onclick={() => (freeMode = !freeMode)} aria-pressed={freeMode}
-				>✋ A mano libera</button
-			>
-			<button type="button" onclick={addAtCenter} title="Aggiunge un punto al centro della mappa"
-				>＋ Punto al centro</button
-			>
-		</div>
-
-		{#if selected != null && plan.points[selected]}
-			{@const i = selected}
-			<div class="punto" aria-label="Punto selezionato">
-				<p>
-					<strong>Punto {i + 1}</strong>
-					{#if nearestPoi(plan.points[i], 300)}· vicino a {nearestPoi(plan.points[i], 300)
-							?.name}{/if}
-				</p>
-				<div class="azioni">
-					{#if i > 0}
-						<button
-							type="button"
-							aria-pressed={plan.modes[i - 1] === 'f'}
-							onclick={() => act((p) => setMode(p, i - 1, p.modes[i - 1] === 'f' ? 'r' : 'f'))}
-							>{plan.modes[i - 1] === 'f'
-								? 'Tratto precedente sui sentieri'
-								: 'Tratto precedente a mano libera'}</button
-						>
-					{/if}
-					<button type="button" class="elimina" onclick={() => remove(i)}>Elimina punto</button>
-					<button type="button" class="link" onclick={() => (selected = null)}>Chiudi</button>
-				</div>
+		{#if genOpen}
+			<GeneratorPanel
+				{engine}
+				start={genStart}
+				end={genEnd}
+				bind:picking={genPicking}
+				maxDiff={plan.maxDiff}
+				placeName={(p) => nearestPoi(p, 700)?.name ?? null}
+				onPreview={(line, box) => {
+					preview = line;
+					if (box) focus = box;
+				}}
+				onOpen={openProposal}
+				onClose={closeGenerator}
+			/>
+		{:else}
+			<div class="strumenti" role="toolbar" aria-label="Modifica del percorso">
+				<button type="button" onclick={undo} disabled={depth === 0} title="Annulla (Ctrl+Z)"
+					>↶ <span>Annulla</span></button
+				>
+				<button
+					type="button"
+					onclick={redo}
+					disabled={depth >= maxDepth}
+					title="Ripeti (Ctrl+Maiusc+Z)">↷ <span>Ripeti</span></button
+				>
+				<button
+					type="button"
+					onclick={() => act((p) => (loop ? openLoop(p) : closeLoop(p, freeMode ? 'f' : 'r')))}
+					disabled={plan.points.length < 2}
+					aria-pressed={loop}>⟲ {loop ? 'Riapri anello' : 'Chiudi ad anello'}</button
+				>
+				<button type="button" onclick={() => act(reversePlan)} disabled={plan.points.length < 2}
+					>⇄ Inverti</button
+				>
+				<button
+					type="button"
+					onclick={() => act((p) => setAr(p, !p.ar))}
+					disabled={plan.points.length < 2 || loop}
+					aria-pressed={plan.ar}>⇆ Andata e ritorno</button
+				>
+				<button type="button" onclick={() => (freeMode = !freeMode)} aria-pressed={freeMode}
+					>✋ A mano libera</button
+				>
+				<button type="button" onclick={addAtCenter} title="Aggiunge un punto al centro della mappa"
+					>＋ Punto al centro</button
+				>
+				<button type="button" class="proponi" onclick={openGenerator}>✨ Proponi un giro</button>
 			</div>
-		{/if}
-
-		{#if importing}
-			<div class="import" role="dialog" aria-label="Importa traccia GPX">
-				<p>
-					<strong>{importing.track.name || 'Traccia importata'}</strong>: {importing.track.points
-						.length}
-					punti, circa {formatKm(importing.km)}.
-				</p>
-				<div class="azioni">
-					<button type="button" class="primario" onclick={() => importTrack(true)}
-						>Aggancia ai sentieri</button
+			{#if !plan.points.length}
+				<p class="invito">
+					Non sai dove andare?
+					<button type="button" class="link" onclick={openGenerator}
+						>Fatti proporre un giro ad anello, andata e ritorno o traversata</button
 					>
-					<button type="button" onclick={() => importTrack(false)}>Mantieni la traccia</button>
-					<button type="button" class="link" onclick={() => (importing = null)}>Annulla</button>
-				</div>
-				<p class="piccolo">
-					Agganciando, dove i sentieri si allontanano dalla traccia resta la traccia originale. La
-					traccia resta nel tuo browser.
 				</p>
-			</div>
-		{/if}
-
-		{#if plan.points.length}
-			<label class="nome">
-				<span>Nome</span>
-				<input
-					type="text"
-					value={plan.name}
-					placeholder={autoName}
-					maxlength="120"
-					onchange={(e) => {
-						const name = e.currentTarget.value.trim();
-						act((p) => setName(p, name));
-					}}
-				/>
-			</label>
-
-			{#if warnings.length || fallbacks.length || noEle || huts.length}
-				<ul class="avvisi" aria-label="Avvisi">
-					{#each fallbacks as f (f.leg)}
-						<li class="forte">
-							Tratto {f.leg + 1}–{f.leg + 2}: {f.why === 'nessun_percorso'
-								? `nessun percorso sui sentieri fino a ${DIFF_LABELS[plan.maxDiff]}, disegnato a mano libera.`
-								: f.why === 'lontano'
-									? `un punto è lontano dai sentieri ammessi (${DIFF_LABELS[plan.maxDiff]}), disegnato a mano libera.`
-									: 'dati dei sentieri non disponibili, disegnato a mano libera.'}
-							{#if f.why !== 'grafo' && plan.maxDiff < 3}
-								<button
-									type="button"
-									class="link"
-									onclick={() => act((p) => setMaxDiff(p, p.maxDiff + 1))}
-									>Ammetti {DIFF_LABELS[plan.maxDiff + 1]}</button
-								>
-							{/if}
-						</li>
-					{/each}
-					{#each warnings as w (w.kind)}
-						<li class={w.kind === 'segnalazione' || w.kind === 'oltre_difficolta' ? 'forte' : ''}>
-							{w.text}.
-						</li>
-					{/each}
-					{#if noEle}
-						<li>
-							Quote non disponibili per alcuni tratti: dislivello e quota massima non calcolati.
-						</li>
-					{/if}
-					{#each huts as h (h.poi.name + h.at)}
-						<li>
-							{hutName(h.poi)} (km {(h.at / 1000).toFixed(1).replace('.', ',')}): apertura da
-							verificare sul sito del rifugio o della sezione.
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			<p class="piccolo">
-				Zero termico previsto e apertura dei rifugi lungo il percorso arriveranno con i dati meteo.
-			</p>
-
-			{#if profile.length > 1}
-				<ElevationProfile points={profile} bind:index={profileIndex} height={150} />
 			{/if}
 
-			{#if highlights.length}
-				<div class="luoghi">
-					<h2>Lungo il percorso</h2>
-					<ul>
-						{#each highlights as h (h.poi.kind + h.poi.name + h.at)}
-							<li>
-								<span class="km">{lengthText(h.at / 1000)}</span>
-								{h.poi.name}
-								<span class="tipo"
-									>{POI_NAMES[h.poi.kind]}{h.poi.ele != null
-										? ` · ${formatMeters(h.poi.ele)}`
-										: ''}</span
-								>
+			{#if selected != null && plan.points[selected]}
+				{@const i = selected}
+				<div class="punto" aria-label="Punto selezionato">
+					<p>
+						<strong>Punto {i + 1}</strong>
+						{#if nearestPoi(plan.points[i], 300)}· vicino a {nearestPoi(plan.points[i], 300)
+								?.name}{/if}
+					</p>
+					<div class="azioni">
+						{#if i > 0}
+							<button
+								type="button"
+								aria-pressed={plan.modes[i - 1] === 'f'}
+								onclick={() => act((p) => setMode(p, i - 1, p.modes[i - 1] === 'f' ? 'r' : 'f'))}
+								>{plan.modes[i - 1] === 'f'
+									? 'Tratto precedente sui sentieri'
+									: 'Tratto precedente a mano libera'}</button
+							>
+						{/if}
+						<button type="button" class="elimina" onclick={() => remove(i)}>Elimina punto</button>
+						<button type="button" class="link" onclick={() => (selected = null)}>Chiudi</button>
+					</div>
+				</div>
+			{/if}
+
+			{#if importing}
+				<div class="import" role="dialog" aria-label="Importa traccia GPX">
+					<p>
+						<strong>{importing.track.name || 'Traccia importata'}</strong>: {importing.track.points
+							.length}
+						punti, circa {formatKm(importing.km)}.
+					</p>
+					<div class="azioni">
+						<button type="button" class="primario" onclick={() => importTrack(true)}
+							>Aggancia ai sentieri</button
+						>
+						<button type="button" onclick={() => importTrack(false)}>Mantieni la traccia</button>
+						<button type="button" class="link" onclick={() => (importing = null)}>Annulla</button>
+					</div>
+					<p class="piccolo">
+						Agganciando, dove i sentieri si allontanano dalla traccia resta la traccia originale. La
+						traccia resta nel tuo browser.
+					</p>
+				</div>
+			{/if}
+
+			{#if plan.points.length}
+				<label class="nome">
+					<span>Nome</span>
+					<input
+						type="text"
+						value={plan.name}
+						placeholder={autoName}
+						maxlength="120"
+						onchange={(e) => {
+							const name = e.currentTarget.value.trim();
+							act((p) => setName(p, name));
+						}}
+					/>
+				</label>
+
+				{#if warnings.length || fallbacks.length || noEle || huts.length}
+					<ul class="avvisi" aria-label="Avvisi">
+						{#each fallbacks as f (f.leg)}
+							<li class="forte">
+								Tratto {f.leg + 1}–{f.leg + 2}: {f.why === 'nessun_percorso'
+									? `nessun percorso sui sentieri fino a ${DIFF_LABELS[plan.maxDiff]}, disegnato a mano libera.`
+									: f.why === 'lontano'
+										? `un punto è lontano dai sentieri ammessi (${DIFF_LABELS[plan.maxDiff]}), disegnato a mano libera.`
+										: 'dati dei sentieri non disponibili, disegnato a mano libera.'}
+								{#if f.why !== 'grafo' && plan.maxDiff < 3}
+									<button
+										type="button"
+										class="link"
+										onclick={() => act((p) => setMaxDiff(p, p.maxDiff + 1))}
+										>Ammetti {DIFF_LABELS[plan.maxDiff + 1]}</button
+									>
+								{/if}
 							</li>
+						{/each}
+						{#each warnings as w (w.kind)}
+							<li class={w.kind === 'segnalazione' || w.kind === 'oltre_difficolta' ? 'forte' : ''}>
+								{w.text}.
+							</li>
+						{/each}
+						{#if noEle}
+							<li>
+								Quote non disponibili per alcuni tratti: dislivello e quota massima non calcolati.
+							</li>
+						{/if}
+						{#each huts as h (h.poi.name + h.at)}
+							<li>
+								{hutName(h.poi)} (km {(h.at / 1000).toFixed(1).replace('.', ',')}): apertura da
+								verificare sul sito del rifugio o della sezione.
+							</li>
+						{/each}
+					</ul>
+				{/if}
+				<p class="piccolo">
+					Zero termico previsto e apertura dei rifugi lungo il percorso arriveranno con i dati
+					meteo.
+				</p>
+
+				{#if profile.length > 1}
+					<ElevationProfile points={profile} bind:index={profileIndex} height={150} />
+				{/if}
+
+				{#if highlights.length}
+					<div class="luoghi">
+						<h2>Lungo il percorso</h2>
+						<ul>
+							{#each highlights as h (h.poi.kind + h.poi.name + h.at)}
+								<li>
+									<span class="km">{lengthText(h.at / 1000)}</span>
+									{h.poi.name}
+									<span class="tipo"
+										>{POI_NAMES[h.poi.kind]}{h.poi.ele != null
+											? ` · ${formatMeters(h.poi.ele)}`
+											: ''}</span
+									>
+								</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+			{/if}
+
+			<div class="file">
+				<button type="button" onclick={() => fileInput?.click()}>⬆ Importa GPX</button>
+				<input
+					bind:this={fileInput}
+					type="file"
+					accept=".gpx,application/gpx+xml"
+					hidden
+					onchange={onFile}
+				/>
+				{#if plan.points.length > 1}
+					<button type="button" onclick={exportGpx} disabled={!legsReady}>⬇ GPX</button>
+					<button type="button" onclick={share}>Condividi</button>
+					<button type="button" onclick={toggleSave} aria-pressed={saved}
+						>{saved ? '★ Salvato' : '☆ Salva'}</button
+					>
+				{/if}
+				{#if plan.points.length}
+					<button type="button" class="link" onclick={() => act(() => emptyPlan(plan.maxDiff))}
+						>Nuovo percorso</button
+					>
+				{/if}
+			</div>
+
+			{#if !plan.points.length && savedPlans.length}
+				<div class="salvati">
+					<h2>Percorsi salvati in questo browser</h2>
+					<ul>
+						{#each savedPlans as s (s.key)}
+							<!-- eslint-disable svelte/no-navigation-without-resolve -- href salvato da location -->
+							<li><a href={s.href}>{s.title}</a></li>
+							<!-- eslint-enable svelte/no-navigation-without-resolve -->
 						{/each}
 					</ul>
 				</div>
 			{/if}
+
+			<p class="piccolo">
+				Percorso calcolato nel browser sul grafo dei sentieri (© OpenStreetMap, ODbL; scala CAI dal
+				catasto OSM2CAI); tratti a mano libera tratteggiati. Indietro annulla l'ultima modifica.
+			</p>
 		{/if}
-
-		<div class="file">
-			<button type="button" onclick={() => fileInput?.click()}>⬆ Importa GPX</button>
-			<input
-				bind:this={fileInput}
-				type="file"
-				accept=".gpx,application/gpx+xml"
-				hidden
-				onchange={onFile}
-			/>
-			{#if plan.points.length > 1}
-				<button type="button" onclick={exportGpx} disabled={!legsReady}>⬇ GPX</button>
-				<button type="button" onclick={share}>Condividi</button>
-				<button type="button" onclick={toggleSave} aria-pressed={saved}
-					>{saved ? '★ Salvato' : '☆ Salva'}</button
-				>
-			{/if}
-			{#if plan.points.length}
-				<button type="button" class="link" onclick={() => act(() => emptyPlan(plan.maxDiff))}
-					>Nuovo percorso</button
-				>
-			{/if}
-		</div>
-
-		{#if !plan.points.length && savedPlans.length}
-			<div class="salvati">
-				<h2>Percorsi salvati in questo browser</h2>
-				<ul>
-					{#each savedPlans as s (s.key)}
-						<!-- eslint-disable svelte/no-navigation-without-resolve -- href salvato da location -->
-						<li><a href={s.href}>{s.title}</a></li>
-						<!-- eslint-enable svelte/no-navigation-without-resolve -->
-					{/each}
-				</ul>
-			</div>
-		{/if}
-
-		<p class="piccolo">
-			Percorso calcolato nel browser sul grafo dei sentieri (© OpenStreetMap, ODbL; scala CAI dal
-			catasto OSM2CAI); tratti a mano libera tratteggiati. Indietro annulla l'ultima modifica.
-		</p>
 		<SafetyNote />
 	</section>
 </div>
@@ -1022,6 +1108,14 @@
 		margin: 0;
 		font-size: 0.82rem;
 		color: var(--muted);
+	}
+	button.proponi {
+		border-color: #7b2cbf;
+		color: #7b2cbf;
+		font-weight: 600;
+	}
+	.invito {
+		margin: 0;
 	}
 	.luoghi h2,
 	.salvati h2 {

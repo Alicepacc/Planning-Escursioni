@@ -16,6 +16,8 @@ import {
 export interface RouteOptions {
 	/** 0 T, 1 E, 2 EE, 3 EEA */
 	maxDiff: number;
+	/** moltiplicatore del costo per arco (es. archi già usati: il generatore cerca vie diverse) */
+	penalty?: Map<number, number>;
 }
 
 /** Punto del percorso: [lon, lat, quota] */
@@ -29,6 +31,8 @@ export interface Part {
 	flags: number;
 	ref: string;
 	freehand: boolean;
+	/** arco del grafo percorso (per tutto o in parte); assente a mano libera */
+	edge?: number;
 }
 
 export interface Leg {
@@ -48,18 +52,23 @@ export function edgeMinutes(len: number, up: number, down: number): number {
 	return swissSegmentMinutes(lu, up) + swissSegmentMinutes(len - lu, -down);
 }
 
-/** Costo di un arco nella direzione data (a→b se forward): tempo × preferenze. */
-export function edgeCost(edge: GEdge, forward: boolean, len = edge.len, share = 1): number {
+/** Tempo netto (minuti) di un arco, o di una sua parte, nella direzione data (a→b se forward). */
+export function edgeTime(edge: GEdge, forward: boolean, len = edge.len, share = 1): number {
 	const up = (forward ? edge.up : edge.down) * share;
 	const down = (forward ? edge.down : edge.up) * share;
+	return edgeMinutes(len, up, down);
+}
+
+/** Costo di un arco nella direzione data (a→b se forward): tempo × preferenze. */
+export function edgeCost(edge: GEdge, forward: boolean, len = edge.len, share = 1): number {
 	let factor = CLASS_FACTOR[edge.cls] ?? 1.3;
 	if (edge.cls === 0 && !(edge.flags & F_MARKED)) factor *= 1.12;
 	if (edge.flags & F_LOW_VIS) factor *= 1.3;
 	if (edge.flags & F_ISSUE) factor *= 2;
-	return edgeMinutes(len, up, down) * factor;
+	return edgeTime(edge, forward, len, share) * factor;
 }
 
-class Heap {
+export class Heap {
 	private items: [number, number][] = [];
 	get size(): number {
 		return this.items.length;
@@ -139,7 +148,15 @@ export function slice(graph: TrailGraph, edge: GEdge, from: number, to: number):
 }
 
 function partOf(edge: GEdge, len: number): Part {
-	return { len, diff: edge.diff, cls: edge.cls, flags: edge.flags, ref: edge.ref, freehand: false };
+	return {
+		len,
+		diff: edge.diff,
+		cls: edge.cls,
+		flags: edge.flags,
+		ref: edge.ref,
+		freehand: false,
+		edge: edge.id
+	};
 }
 
 /** Percorso tra due punti agganciati; null se non esiste entro i limiti. */
@@ -149,6 +166,7 @@ export function routeBetween(
 	to: Snap,
 	opts: RouteOptions
 ): Leg | null {
+	const pen = (id: number) => opts.penalty?.get(id) ?? 1;
 	const g = new Map<number, number>([[START, 0]]);
 	const prev = new Map<number, Step>();
 	const open = new Heap();
@@ -189,7 +207,7 @@ export function routeBetween(
 				const nn = graph.nodes.get(n)!;
 				relax(
 					n,
-					edgeCost(e1, forward, len, share),
+					edgeCost(e1, forward, len, share) * pen(e1.id),
 					{ from: START, edge: e1.id, forward },
 					nn.lon,
 					nn.lat
@@ -200,7 +218,7 @@ export function routeBetween(
 				const len = Math.abs(to.pos - from.pos);
 				relax(
 					END,
-					edgeCost(e1, forward, len, e1.len > 0 ? len / e1.len : 0),
+					edgeCost(e1, forward, len, e1.len > 0 ? len / e1.len : 0) * pen(e1.id),
 					{ from: START, edge: -1, forward },
 					to.lon,
 					to.lat
@@ -213,7 +231,7 @@ export function routeBetween(
 			const [len, forward] = toEnd;
 			relax(
 				END,
-				edgeCost(e2, forward, len, e2.len > 0 ? len / e2.len : 0),
+				edgeCost(e2, forward, len, e2.len > 0 ? len / e2.len : 0) * pen(e2.id),
 				{ from: node, edge: e2.id, forward },
 				to.lon,
 				to.lat
@@ -226,7 +244,13 @@ export function routeBetween(
 			const next = forward ? edge.b : edge.a;
 			const nn = graph.nodes.get(next);
 			if (!nn) continue;
-			relax(next, edgeCost(edge, forward), { from: node, edge: id, forward }, nn.lon, nn.lat);
+			relax(
+				next,
+				edgeCost(edge, forward) * pen(id),
+				{ from: node, edge: id, forward },
+				nn.lon,
+				nn.lat
+			);
 		}
 	}
 	if (!prev.has(END)) return null;
