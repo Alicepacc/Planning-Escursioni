@@ -57,11 +57,13 @@ def activity_slug(activity_id: str, act: dict[str, Any]) -> str:
     return f"{when}-{slug(act.get('titolo', activity_id))}-{section}"[:90].strip("-")
 
 
-def summary(act: dict[str, Any], computed: dict[str, Any]) -> str:
-    """Una frase composta dai soli dati: tipo, lunghezza, dislivello, partenza, punti chiave."""
+def summary(act: dict[str, Any], computed: dict[str, Any], verified: bool = True) -> str:
+    """Una frase composta dai soli dati: tipo, lunghezza, dislivello, partenza, punti chiave.
+    Con una traccia non verificata, solo i valori dichiarati (i calcolati potrebbero essere
+    falsi)."""
     kind = KIND_LABEL.get(act.get("tipo_percorso") or "", "Itinerario")
-    km = act.get("distanza_km") or computed["distance_km"]
-    up = act.get("salita_m") or computed["ascent_m"]
+    km = act.get("distanza_km") or (computed["distance_km"] if verified else None)
+    up = act.get("salita_m") or (computed["ascent_m"] if verified else None)
     start = (act.get("partenza") or {}).get("nome")
     points = [
         p["nome"] + (f" ({p['quota_m']} m)" if p.get("quota_m") else "")
@@ -72,10 +74,14 @@ def summary(act: dict[str, Any], computed: dict[str, Any]) -> str:
     for p in points:
         if p not in seen:
             seen.append(p)
-    parts = [f"{kind} di circa {round(float(km))} km e {round(float(up))} m di dislivello"]
+    measures = [
+        f"circa {round(float(km))} km" if km else "",
+        f"{round(float(up))} m di dislivello" if up else "",
+    ]
+    measures = [m for m in measures if m]
+    text = kind + (" di " + " e ".join(measures) if measures else "")
     if start:
-        parts.append(f"con partenza da {start}")
-    text = " ".join(parts)
+        text += f" con partenza da {start}"
     if seen:
         text += ": " + ", ".join(seen[:6]) + ("…" if len(seen) > 6 else "")
     return text + "."
@@ -173,7 +179,7 @@ def activity_document(
         "equipment": equipment(act, computed["max_ele_m"]),
         "notes": [],
         "map_reference": "",
-        "summary": summary(act, computed),
+        "summary": summary(act, computed, track["status"] == "auto_ok"),
         "activity": {
             "date": when,
             "future": future,

@@ -4,8 +4,10 @@ Progressive Web App mobile-first per programmare escursioni in montagna con soli
 proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite di gruppo, meteo
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
-**Stato: Fase 2 (pilota di 20 attività CAI) completata, in attesa del checkpoint bloccante.**
-Rapporti: [`reports/pilot-2026-11-16/README.md`](reports/pilot-2026-11-16/README.md) ·
+**Stato: Fase 3 (Esplora, archivio attività, fonti SAT) completata.** Pilota della Fase 2
+approvato il 16/11/2026.
+Rapporti: [`reports/phase3/README.md`](reports/phase3/README.md) ·
+[`reports/pilot-2026-11-16/README.md`](reports/pilot-2026-11-16/README.md) ·
 [`reports/phase1/README.md`](reports/phase1/README.md) ·
 [`reports/phase0/README.md`](reports/phase0/README.md).
 
