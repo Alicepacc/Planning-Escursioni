@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import MapView from '../map/MapView.svelte';
 	import ElevationProfile from './ElevationProfile.svelte';
+	import { planFromLine, planToParams } from '../planner/plan';
 	import MetricsHeader from './MetricsHeader.svelte';
 	import DifficultyBadge from './DifficultyBadge.svelte';
 	import SafetyNote from './SafetyNote.svelte';
@@ -154,6 +155,23 @@
 			shareNote = 'Impossibile salvare in questo browser.';
 		}
 	}
+	// planner: la traccia campionata ogni 800 m, agganciata ai sentieri, con la difficoltà della
+	// scheda (EE ammessa se la gita è EE)
+	const plannerHref = $derived.by(() => {
+		const grade = (doc.difficulty.cai ?? doc.difficulty.raw ?? '').toUpperCase();
+		const maxDiff = grade.startsWith('EEA')
+			? 3
+			: grade.startsWith('EE')
+				? 2
+				: grade.startsWith('T')
+					? 0
+					: 1;
+		const plan = planFromLine(
+			doc.line.map(([lon, lat]) => ({ lon, lat })),
+			{ maxDiff, name: doc.title }
+		);
+		return `${resolve('/pianifica')}?${planToParams(plan)}`;
+	});
 	const trackPoints = $derived<TrackPoint[]>(doc.profile.points.map((p) => [p[2], p[3], p[1]]));
 	const sourceText = $derived(`${doc.attribution.join(' · ')} · generato da Cordata`);
 	function exportGpx() {
@@ -467,7 +485,8 @@
 		<button type="button" onclick={exportGpx}>Esporta GPX</button>
 		<button type="button" onclick={exportKml}>Esporta KML</button>
 		<button type="button" onclick={share}>Condividi</button>
-		<a class="bottone" href={resolve('/pianifica')}>Modifica nel planner</a>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- il percorso viene da resolve() -->
+		<a class="bottone" href={plannerHref}>Modifica nel planner</a>
 		<a class="bottone" href={resolve('/uscite')}>Organizza uscita</a>
 		{#if shareNote}<span class="nota" role="status">{shareNote}</span>{/if}
 	</section>

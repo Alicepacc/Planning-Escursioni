@@ -13,7 +13,8 @@
 	// MapLibre 6 (ESM) carica il worker relativo a sé stesso: con Vite va dichiarato come asset
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 	import type { MapPoint, TrailWayProps } from '../data/types';
-	import { BASEMAP_STYLE_URL, TERRAIN_MAXZOOM, TERRAIN_TILES, withCordataLayers } from './style';
+	import { demSource } from './dem';
+	import { BASEMAP_STYLE_URL, withCordataLayers } from './style';
 
 	interface StageMarker {
 		n: number;
@@ -40,6 +41,8 @@
 		onMoveEnd?: (bbox: [number, number, number, number], byUser: boolean) => void;
 		/** riquadro da inquadrare quando cambia */
 		focus?: [number, number, number, number] | null;
+		/** mappa pronta: chi la usa può aggiungere sorgenti, layer e gestori (planner) */
+		onReady?: (map: MlMap, lib: typeof import('maplibre-gl')) => void;
 	}
 
 	let {
@@ -55,7 +58,8 @@
 		selected = null,
 		onPointClick,
 		onMoveEnd,
-		focus = null
+		focus = null,
+		onReady
 	}: Props = $props();
 
 	let container: HTMLDivElement;
@@ -70,28 +74,19 @@
 	const PILOT_BOUNDS: [number, number, number, number] = [10.38, 45.67, 12.75, 47.1];
 
 	async function setupProtocols(ml: typeof import('maplibre-gl')): Promise<string | undefined> {
-		// pmtiles:// per i sentieri; isoipse calcolate nel browser dal DEM (maplibre-contour)
+		// pmtiles:// per i sentieri; isoipse calcolate nel browser dal DEM (maplibre-contour), con
+		// la stessa sorgente che il planner usa per le quote
 		const { Protocol } = await import('pmtiles');
 		ml.addProtocol('pmtiles', new Protocol().tile);
-		try {
-			const mlcontour = (await import('maplibre-contour')).default;
-			const dem = new mlcontour.DemSource({
-				url: TERRAIN_TILES,
-				encoding: 'terrarium',
-				maxzoom: TERRAIN_MAXZOOM,
-				worker: true
-			});
-			dem.setupMaplibre(ml);
-			return dem.contourProtocolUrl({
-				thresholds: { 11: [100, 500], 12: [50, 250], 13: [25, 100], 14: [20, 100], 15: [10, 50] },
-				contourLayer: 'contours',
-				elevationKey: 'ele',
-				levelKey: 'level'
-			});
-		} catch (err) {
-			console.warn('isoipse non disponibili', err);
-			return undefined;
-		}
+		const dem = await demSource();
+		if (!dem) return undefined;
+		dem.setupMaplibre(ml);
+		return dem.contourProtocolUrl({
+			thresholds: { 11: [100, 500], 12: [50, 250], 13: [25, 100], 14: [20, 100], 15: [10, 50] },
+			contourLayer: 'contours',
+			elevationKey: 'ele',
+			levelKey: 'level'
+		});
 	}
 
 	function pointsGeoJSON(list: MapPoint[], sel: string | null) {
@@ -212,6 +207,15 @@
 				map.on('mouseleave', 'proposte', () => map && (map.getCanvas().style.cursor = ''));
 				ready = true;
 				container.dataset.ready = 'true';
+				// attribuzioni compatte: visibili all'apertura, poi si chiudono (restano sul pulsante i)
+				// al primo tocco o dopo qualche secondo, per non coprire la mappa sui telefoni
+				const collapse = () =>
+					container
+						.querySelector('.maplibregl-compact.maplibregl-compact-show')
+						?.classList.remove('maplibregl-compact-show');
+				map.once('click', collapse);
+				setTimeout(collapse, 6000);
+				if (onReady && lib) onReady(map, lib);
 			});
 			map.on('moveend', (e) => {
 				if (!map || !onMoveEnd) return;

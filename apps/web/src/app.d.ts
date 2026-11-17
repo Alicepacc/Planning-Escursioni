@@ -5,7 +5,10 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
-		// interface PageState {}
+		interface PageState {
+			/** numero di modifiche del planner dall'apertura (annulla/ripeti con la cronologia) */
+			depth?: number;
+		}
 		// interface Platform {}
 	}
 }
