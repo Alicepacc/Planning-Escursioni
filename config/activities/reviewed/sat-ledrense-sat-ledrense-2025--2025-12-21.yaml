@@ -1,0 +1,23 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-sat-ledrense-2025
+pagina: 29
+titolo: Camminata d'oro a Pietralba
+data: 2025-12-21
+zona: Bassa Atesina
+tipo_percorso: traversata
+difficolta: null
+durata: "3:30"
+distanza_km: null
+salita_m: 1250
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Laives, quota_m: 255}
+arrivo: {nome: Maria Weissenstein - Madonna di Pietralba}
+ora_ritrovo: "08:00"
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Laives}
+  - {nome: Maria Weissenstein - Madonna di Pietralba}
+note_revisione: 'itinerario da Laives (sentiero impegnativo); alternativa facile da Aldino (2 ore e mezza, 300 m); Pietralba col nome bilingue della cartografia'

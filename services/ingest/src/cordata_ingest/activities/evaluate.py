@@ -167,7 +167,8 @@ def parse_activity(activity_id: str, gt: dict[str, Any]) -> dict[str, Any]:
     if gt.get("documento"):  # voce di un calendario o libretto
         pages = calendar_entry(pages, str(gt["data"]))
         return parse(pages, entry_date=str(gt["data"]))
-    return parse(pages, hint=text["url"].rsplit("/", 1)[-1])
+    # «2025/05/Locandina.pdf»: nome del file e cartella di caricamento (anno delle date senza anno)
+    return parse(pages, hint="/".join(text["url"].rsplit("/", 3)[-3:]))
 
 
 def evaluate_all(out: Path | None = None, directory: Path | None = None) -> dict[str, Any]:

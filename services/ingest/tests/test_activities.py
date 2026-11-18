@@ -150,3 +150,115 @@ def test_parser_salita_e_discesa_separate_e_traversata():
     assert p["durata"] == "7:00"
     assert p["tipo_percorso"] == "traversata"
     assert (p["partenza_nome"], p["arrivo_nome"]) == ("P.so Valles", "P.so Rolle")
+
+
+def test_parser_programma_con_date_senza_anno_e_titoli_accoppiati():
+    from cordata_ingest.activities.parse import calendar_entry, parse
+
+    pagina = (
+        "12:00\n"
+        "Partenza da Prè, seguendo le indicazioni per Leano\n"
+        "segnavia 421 si raggiunge la Cappella. Rientro per la forestale e arrivo a Prè.\n"
+        "PASTA DAL FRANCO\nMANUTENZIONE SENTIERI\n12/04\n19/04\n"
+        "Leano\n700 md+ E\n"
+    )
+    altra = (
+        "GITA SOCIALE - GIRO DEI LAGHI\nDEL CEVEDALE\n13/09\nTrekking ad anello.\n15 km\n6 ore\nEE"
+    )
+    riassunto = (
+        "12/01/2026\n18/01/2026\n12/04/2026\nQuest'anno in collaborazione con la Sat di Arco"
+    )
+    pages = [(16, pagina), (27, altra), (31, riassunto)]
+    voce = calendar_entry(pages, "2026-04-12")
+    assert voce and voce[0][0] == 16  # non l'elenco di date complete della pagina 31
+    p = parse(voce, entry_date="2026-04-12")
+    assert p["titolo"]["value"] == "Pasta dal Franco"
+    assert p["difficolta"]["value"] == "E"
+    assert p["salita_m"]["value"] == 700
+    assert p["sentieri"]["value"] == ["421"]  # non «SENTIERI 12/04» né «12:00»
+    assert p["tipo_percorso"]["value"] == "anello"  # «arrivo a Prè»
+    q = parse(calendar_entry(pages, "2026-09-13"), entry_date="2026-09-13")
+    assert q["titolo"]["value"] == "Gita Sociale - Giro dei Laghi del Cevedale"
+    assert (q["distanza_km"]["value"], q["durata"]["value"]) == (15, "6:00")
+    assert q["partenza_nome"]["value"] is None  # «Gita sociale» non è un luogo
+
+
+def test_parser_misure_dei_programmi_e_delle_locandine():
+    p = _parse(
+        "DOMENICA 15 maggio 2022\n"
+        "ESCURSIONE Livello EE           DISL. m. 900 ca\n"
+        "DURATA ESCURSIONE ore 6.00 ca\n"
+        "PARTENZA: ore 6.45 con automobili private (1h.30min di viaggio)\n"
+        "ITINERARIO: partenza da Pregasina; scendendo torniamo a Pregasina.\n"
+    )
+    assert p["difficolta"] == "EE"
+    assert p["salita_m"] == 900
+    assert p["durata"] == "6:00"  # non «1h.30min di viaggio»
+    assert p["mezzi"] == "mezzi propri"
+    assert p["tipo_percorso"] == "anello"
+    q = _parse("Si scende a Riva con l'autobus di linea\nD+ 2400m\n25-30km\nGIRO\n12 ore")
+    assert q["mezzi"] == "mezzi pubblici"
+    assert q["salita_m"] == 2400 and q["quota_max_m"] is None  # D+ non è una quota
+    assert q["distanza_km"] is None  # un intervallo non è una distanza
+    assert q["durata"] == "12:00"
+    r = _parse("Dislivello: +- 900 m – 11 km - 5 h circa\n892 md+\n921 md-")
+    assert r["distanza_km"] == 11
+
+
+def test_parser_date_lettera_e_anno_dalla_cartella():
+    from cordata_ingest.activities.parse import parse
+
+    lettera = parse([(1, "Cavalese, 3 maggio 2018\nVISITA ALLA GOLA\n27 maggio 2018\n")])
+    assert lettera["data"]["value"] == "2018-05-27"
+    volantino = "Venerdì 16 maggio\nIncontro con le rifugiste\nSabato 17 maggio\nEscursione a tappe"
+    p = parse([(1, volantino)], hint="2025/05/Donne-e-Montagna.pdf")
+    assert p["data"]["value"] == "2025-05-17"
+
+
+def test_sentieri_citati_omonimi_lontani_esclusi():
+    from cordata_ingest.activities.reconstruct import _drop_far_homonyms
+
+    rows = [
+        {"relation_id": 1, "ref": "105", "reg_ref": None, "near_m": 300.0},
+        {"relation_id": 2, "ref": "105", "reg_ref": None, "near_m": 14000.0},  # omonimo lontano
+        {"relation_id": 3, "ref": "325", "reg_ref": "E325", "near_m": 9000.0},  # unico: resta
+        {"relation_id": 4, "ref": "325", "reg_ref": "O325", "near_m": 800.0},
+    ]
+    kept = _drop_far_homonyms(rows, {"E325"})
+    assert sorted(r["relation_id"] for r in kept) == [1, 3, 4]
+    assert all("near_m" not in r for r in kept)
+
+
+def test_andata_e_ritorno_con_il_ritorno_tra_i_punti_chiave():
+    from cordata_ingest.activities.reconstruct import outbound_only
+
+    pts = [(10.679, 46.357), (10.672, 46.378), (10.633, 46.402), (10.6791, 46.3571)]
+    kinds = ["fermata", "malga", "cima", "fermata"]
+    assert outbound_only(pts, kinds, "andata_ritorno") == (pts[:-1], kinds[:-1])
+    assert outbound_only(pts, kinds, "anello") == (pts, kinds)
+    assert outbound_only(pts[:2], kinds[:2], "andata_ritorno") == (pts[:2], kinds[:2])
+
+
+def test_ricostruzione_incompatibile_con_la_locandina_non_mostrata():
+    from cordata_ingest.activities.reconstruct import verdict
+
+    ok = {"scarto": 0.05, "ok": True}
+    # Sentiero dei Fiori: 68 km e +5700 m per 15 km e +500 m (zona fuori dai dati)
+    assert (
+        verdict(
+            {"distanza": {"scarto": 3.6, "ok": False}, "salita": {"scarto": 10.4, "ok": False}},
+            0,
+            7,
+        )[0]
+        == "fallita"
+    )
+    # Vioz: distanza dichiarata solo per l'andata, dislivello giusto → da rivedere, non fallita
+    assert (
+        verdict(
+            {"distanza": {"scarto": 1.5, "ok": False}, "salita": {"scarto": 0.12, "ok": True}}, 0, 4
+        )[0]
+        == "da_rivedere"
+    )
+    assert verdict({"distanza": ok, "salita": ok}, 1, 4) == ("auto_ok", None)
+    assert verdict({"distanza": ok, "salita": ok}, 2, 4)[0] == "da_rivedere"
+    assert verdict({"anello_chiuso": {"distanza_m": 0, "ok": True}}, 0, 3)[0] == "da_rivedere"

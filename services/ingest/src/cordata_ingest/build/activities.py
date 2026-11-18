@@ -272,7 +272,7 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
         if not track_path.exists():
             continue
         track = json.loads(track_path.read_text(encoding="utf-8"))
-        if len(track.get("coords") or []) < 2:
+        if track.get("status") == "fallita" or len(track.get("coords") or []) < 2:
             continue
         url = manifest.get(act.get("documento", activity_id), {}).get("url")
         doc = activity_document(activity_id, act, track, url, conn, dem)
@@ -300,4 +300,9 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
     (out_dir / "index.json").write_text(
         json.dumps(index, ensure_ascii=False, indent=1), encoding="utf-8"
     )
-    return {"attivita": len(index), **dedup}
+    # schede di attività non più costruite (ricostruzione diventata fallita, id cambiato)
+    keep = {f"{d['id']}.json" for d in docs} | {"index.json"}
+    stale = [p for p in out_dir.glob("*.json") if p.name not in keep]
+    for p in stale:
+        p.unlink()
+    return {"attivita": len(index), "rimosse": len(stale), **dedup}

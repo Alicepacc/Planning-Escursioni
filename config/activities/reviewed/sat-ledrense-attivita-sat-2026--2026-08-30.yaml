@@ -1,0 +1,28 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 26
+titolo: Ferrata Bolver Lugli a Cima Vezzana
+data: 2026-08-30
+zona: Pale di San Martino
+tipo_percorso: anello
+difficolta: EEA
+durata: "8:00"
+distanza_km: null
+salita_m: 1400
+discesa_m: null
+quota_max_m: 3192
+partenza: {nome: Col Verde, quota_m: 1950}
+arrivo: {nome: Col Verde, quota_m: 1950}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["706", "716"]
+punti_chiave:
+  - {nome: Col Verde, quota_m: 1950}
+  - {nome: Bivacco Fiamme Gialle, quota_m: 3005}
+  - {nome: Passo del Travignolo, quota_m: 2925}
+  - {nome: Cima della Vezzana, quota_m: 3192}
+  - {nome: Passo Bettega, quota_m: 2667}
+  - {nome: Rifugio Rosetta, quota_m: 2575}
+  - {nome: Col Verde, quota_m: 1950}
+note_revisione: 'da San Martino di Castrozza con la funivia fino a Col Verde; durata dichiarata 8-9 ore'

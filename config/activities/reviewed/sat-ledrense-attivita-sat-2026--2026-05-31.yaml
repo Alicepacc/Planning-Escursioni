@@ -1,0 +1,31 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 20
+titolo: Giro dei 5 laghi
+data: 2026-05-31
+zona: Madonna di Campiglio
+tipo_percorso: anello
+difficolta: E
+durata: null
+distanza_km: 14.8
+salita_m: 892
+discesa_m: 921
+quota_max_m: null
+partenza: {nome: Patascoss}
+arrivo: {nome: Patascoss}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["232", "217", "266"]
+punti_chiave:
+  - {nome: Patascoss}
+  - {nome: Rifugio Pancugolo}
+  - {nome: Lago Ritorto}
+  - {nome: Passo di Ritorto}
+  - {nome: Lago Lambin}
+  - {nome: Lago Serodoli}
+  - {nome: Lago Gelato}
+  - {nome: Lago Nero}
+  - {nome: Lago Nambino}
+  - {nome: Patascoss}
+note_revisione: 'dislivello dichiarato 892 m in salita e 921 m in discesa'

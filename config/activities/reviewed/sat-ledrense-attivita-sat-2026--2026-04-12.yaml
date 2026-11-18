@@ -1,0 +1,26 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 16
+titolo: Pasta dal Franco
+data: 2026-04-12
+zona: Val di Ledro
+tipo_percorso: anello
+difficolta: E
+durata: null
+distanza_km: null
+salita_m: 700
+discesa_m: 700
+quota_max_m: null
+partenza: {nome: Prè}
+arrivo: {nome: Prè}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["421"]
+punti_chiave:
+  - {nome: Prè di Ledro}
+  - {nome: Madonna del Cinale}
+  - {nome: Bocca dei Fortini}
+  - {nome: Leano}
+  - {nome: Prè di Ledro}
+note_revisione: 'voce del programma annuale; pranzo a Leano alle 12; rientro per la strada forestale; punti chiave con i nomi della cartografia (Cadrione, Baita Segala e Passo/Malga Vil non trovati)'

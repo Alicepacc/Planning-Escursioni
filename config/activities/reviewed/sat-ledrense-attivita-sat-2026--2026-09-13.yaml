@@ -1,0 +1,29 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 27
+titolo: Giro dei laghi del Cevedale
+data: 2026-09-13
+zona: Val di Sole
+tipo_percorso: anello
+difficolta: EE
+durata: "6:00"
+distanza_km: 15
+salita_m: 950
+discesa_m: 950
+quota_max_m: null
+partenza: {nome: Malga Mare}
+arrivo: {nome: Malga Mare}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Malga Mare}
+  - {nome: Rifugio Larcher al Cevedale}
+  - {nome: Lago delle Marmotte}
+  - {nome: Lago Lungo}
+  - {nome: Lago Nero}
+  - {nome: Lago del Careser}
+  - {nome: Lago delle Lame}
+  - {nome: Malga Mare}
+note_revisione: 'gita sociale; partenza poco sotto Malga Mare'

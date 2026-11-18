@@ -1,0 +1,26 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 24
+titolo: Monte Vioz da Peio
+data: 2026-08-02
+zona: Val di Sole
+tipo_percorso: andata_ritorno
+difficolta: EE
+durata: "9:30"
+distanza_km: 11
+salita_m: 2100
+discesa_m: 2100
+quota_max_m: null
+partenza: {nome: Peio Fonti}
+arrivo: {nome: Peio Fonti}
+ora_ritrovo: "05:30"
+mezzi: null
+quota_eur: null
+sentieri: ["105"]
+punti_chiave:
+  - {nome: Peio Fonti}
+  - {nome: Malga Saline, quota_m: 2080}
+  - {nome: Rifugio Mantova al Vioz, quota_m: 3535}
+  - {nome: Monte Vioz}
+  - {nome: Peio Fonti}
+note_revisione: 'in collaborazione con la SAT di Storo; 11 km probabilmente solo l''andata; ultimo tratto su neve e roccia, quota della vetta non indicata'

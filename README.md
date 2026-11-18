@@ -5,8 +5,9 @@ proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite d
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
 **Stato: Fase 4 (planner e generatore di proposte) completata.** Pilota della Fase 2
-approvato il 16/11/2026.
-Rapporti: [`reports/phase4/README.md`](reports/phase4/README.md) ·
+approvato il 16/11/2026. In corso i blocchi di ingestion delle locandine (42 escursioni in app).
+Rapporti: [`reports/ingestion/README.md`](reports/ingestion/README.md) ·
+[`reports/phase4/README.md`](reports/phase4/README.md) ·
 [`reports/phase3/README.md`](reports/phase3/README.md) ·
 [`reports/pilot-2026-11-16/README.md`](reports/pilot-2026-11-16/README.md) ·
 [`reports/phase1/README.md`](reports/phase1/README.md) ·

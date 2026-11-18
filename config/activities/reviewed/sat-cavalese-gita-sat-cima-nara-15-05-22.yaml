@@ -1,0 +1,26 @@
+sezione: SAT Cavalese
+titolo: Cima Nara
+data: 2022-05-15
+zona: Alpi di Ledro
+tipo_percorso: anello
+difficolta: EE
+durata: "6:00"
+distanza_km: null
+salita_m: 900
+discesa_m: 900
+quota_max_m: 1379
+partenza: {nome: Pregasina}
+arrivo: {nome: Pregasina}
+ora_ritrovo: "06:30"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["422", "429", "430", "422B"]
+punti_chiave:
+  - {nome: Pregasina}
+  - {nome: Cima Nodice, quota_m: 857}
+  - {nome: Cima al Bal, quota_m: 1291}
+  - {nome: Cima Nara, quota_m: 1379}
+  - {nome: Passo Rocchetta}
+  - {nome: Malga Palaer}
+  - {nome: Pregasina}
+note_revisione: 'trincee e gallerie della Grande Guerra; ritrovo a Cavalese, auto private ("automobili private"); Passo Chiz non trovato nella cartografia'

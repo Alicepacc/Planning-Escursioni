@@ -1,0 +1,28 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-sat-ledrense-2025
+pagina: 23
+titolo: Sentiero dei Fiori
+data: 2025-08-31
+zona: Passo del Tonale
+tipo_percorso: traversata
+difficolta: EEA
+durata: "7:30"
+distanza_km: 15
+salita_m: 500
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Passo Paradiso, quota_m: 2585}
+arrivo: {nome: Capanna Presena}
+ora_ritrovo: "05:30"
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Passo Paradiso, quota_m: 2585}
+  - {nome: Passo del Castellaccio, quota_m: 2963}
+  - {nome: Passo di Lagoscuro, quota_m: 2970}
+  - {nome: Cima Payer, quota_m: 3056}
+  - {nome: Rifugio Mandrone}
+  - {nome: Passo di Maroccaro}
+  - {nome: Capanna Presena}
+note_revisione: 'con le funivie dal Passo del Tonale al Passo Paradiso e da Capanna Presena; casco, imbrago e kit da ferrata; in parte in Lombardia, fuori dall''estratto OSM'

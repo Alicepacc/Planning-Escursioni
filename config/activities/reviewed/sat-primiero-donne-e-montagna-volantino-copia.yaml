@@ -1,0 +1,23 @@
+sezione: SAT Primiero
+titolo: Donne e montagna – da Valpiana al Rifugio Vederne
+data: 2025-05-17
+zona: Primiero
+tipo_percorso: traversata
+difficolta: null
+durata: null
+distanza_km: null
+salita_m: null
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Valpiana}
+arrivo: {nome: Rifugio Vederne}
+ora_ritrovo: "08:00"
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Valpiana}
+  - {nome: Val de Stua}
+  - {nome: Vederne}
+  - {nome: Rifugio Vederne}
+note_revisione: 'escursione/conversazione a tappe sul Primiero Slow Tour, dalla Casina Forestale di Valpiana; arrivo al rifugio alle 13'

@@ -1,0 +1,23 @@
+sezione: SAT Primiero
+titolo: Donne e montagna – da Rinez all'Agritur Le Vale
+data: 2024-05-12
+zona: Primiero
+tipo_percorso: traversata
+difficolta: null
+durata: null
+distanza_km: null
+salita_m: null
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Rinez}
+arrivo: {nome: Le Vale}
+ora_ritrovo: "08:00"
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Rinez}
+  - {nome: Cristo dei Falassorni}
+  - {nome: Chiesa di San Giovanni}
+  - {nome: Le Vale}
+note_revisione: 'escursione/conversazione con letture di montagna; ritrovo in sede a Fiera, partenza alle 9:30 da Rinez; Le Vale col nome della cartografia'

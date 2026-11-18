@@ -1,0 +1,29 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 18
+titolo: Da Riva al Rifugio Pernici
+data: 2026-05-03
+zona: Alto Garda e Ledro
+tipo_percorso: traversata
+difficolta: EE
+durata: null
+distanza_km: 18.3
+salita_m: 2300
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Riva del Garda}
+arrivo: {nome: Rifugio Pernici}
+ora_ritrovo: null
+mezzi: mezzi pubblici
+quota_eur: null
+sentieri: ["405"]
+punti_chiave:
+  - {nome: Riva del Garda}
+  - {nome: Santa Barbara}
+  - {nome: Cima Rocca}
+  - {nome: Bocca Giumella}
+  - {nome: Cima Valdes}
+  - {nome: Cima Parì}
+  - {nome: Saval}
+  - {nome: Rifugio Pernici}
+note_revisione: 'percorso lungo (EE, 18,3 km, 2300 m); quello corto parte da Pieve per Cima Cocca (E, 10 km, 1300 m); discesa a Riva con l''autobus di linea; cena al rifugio'

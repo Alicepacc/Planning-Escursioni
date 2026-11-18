@@ -1,0 +1,22 @@
+sezione: SAT Cavalese
+titolo: Gola e cascata di Stanghe e Castel Tasso
+data: 2018-05-27
+zona: Alta Valle Isarco
+tipo_percorso: andata_ritorno
+difficolta: null
+durata: "1:45"
+distanza_km: 2.5
+salita_m: 220
+discesa_m: 220
+quota_max_m: null
+partenza: {nome: Stanghe, comune: Racines}
+arrivo: {nome: Stanghe, comune: Racines}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Stanghe}
+  - {nome: Gilfenklamm - Cascata di Stanghe}
+  - {nome: Stanghe}
+note_revisione: 'durata = 1 ora salita + 45 minuti ritorno; nel pomeriggio visita a Castel Tasso (non a piedi); difficoltà non indicata; gola col nome bilingue della cartografia'

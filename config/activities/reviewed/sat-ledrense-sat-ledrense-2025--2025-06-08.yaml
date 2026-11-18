@@ -1,0 +1,28 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-sat-ledrense-2025
+pagina: 18
+titolo: Giro delle cime
+data: 2025-06-08
+zona: Val Concei
+tipo_percorso: anello
+difficolta: EE
+durata: "12:00"
+distanza_km: null
+salita_m: 2400
+discesa_m: 2400
+quota_max_m: null
+partenza: {nome: Lenzumo}
+arrivo: {nome: Lenzumo}
+ora_ritrovo: "06:30"
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Lenzumo}
+  - {nome: Malga Vies}
+  - {nome: Bocca dell'Ussol}
+  - {nome: Dosso della Torta}
+  - {nome: Mazza di Pichea}
+  - {nome: Bocca di Trat}
+  - {nome: Lenzumo}
+note_revisione: 'distanza dichiarata 25-30 km; ritrovo al parco giochi di Lenzumo; mezzo giro da Bocca d''Ùsol per Malga Gui; punti chiave con i nomi della cartografia (Bocca di Vies → Malga Vies)'

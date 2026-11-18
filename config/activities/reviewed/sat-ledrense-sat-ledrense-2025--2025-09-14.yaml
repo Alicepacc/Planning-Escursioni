@@ -1,0 +1,26 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-sat-ledrense-2025
+pagina: 24
+titolo: Gita giovanile – Monte Altissimo
+data: 2025-09-14
+zona: Monte Baldo
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "5:00"
+distanza_km: 9.2
+salita_m: 866
+discesa_m: 866
+quota_max_m: null
+partenza: {nome: San Giacomo, comune: Brentonico}
+arrivo: {nome: San Giacomo, comune: Brentonico}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["622"]
+punti_chiave:
+  - {nome: San Giacomo}
+  - {nome: Malga Campo}
+  - {nome: Monte Altissimo di Nago}
+  - {nome: Rifugio Damiano Chiesa}
+  - {nome: San Giacomo}
+note_revisione: 'ritorno per la stessa via o con un giro ad anello'

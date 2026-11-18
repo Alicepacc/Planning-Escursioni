@@ -1,0 +1,24 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-attivita-sat-2026
+pagina: 28
+titolo: Spiedo in Nota
+data: 2026-10-04
+zona: Val di Ledro
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: null
+distanza_km: null
+salita_m: 600
+discesa_m: 600
+quota_max_m: null
+partenza: {nome: Pur}
+arrivo: {nome: Pur}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: ["421"]
+punti_chiave:
+  - {nome: Pur}
+  - {nome: Rifugio Passo Nota}
+  - {nome: Pur}
+note_revisione: 'pranzo al Rifugio degli Alpini al Passo Nota alle 12; rientro in alternativa per il sentiero 457B'

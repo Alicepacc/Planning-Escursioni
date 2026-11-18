@@ -1,0 +1,27 @@
+sezione: SAT Ledrense
+documento: sat-ledrense-sat-ledrense-2025
+pagina: 25
+titolo: Gita sociale – Carega
+data: 2025-09-28
+zona: Gruppo del Carega
+tipo_percorso: traversata
+difficolta: EE
+durata: "7:00"
+distanza_km: 15
+salita_m: 950
+discesa_m: null
+quota_max_m: 2259
+partenza: {nome: Passo di Campogrosso}
+arrivo: {nome: Ossario del Pasubio}
+ora_ritrovo: null
+mezzi: pullman
+quota_eur: null
+sentieri: ["157"]
+punti_chiave:
+  - {nome: Passo di Campogrosso}
+  - {nome: Bocchetta dei Fondi}
+  - {nome: Rifugio Fraccaroli, quota_m: 2230}
+  - {nome: Cima Carega, quota_m: 2259}
+  - {nome: Rifugio Campogrosso}
+  - {nome: Ossario del Pasubio}
+note_revisione: 'percorso A (EE, 15 km, 950 m); percorso B dal Pian delle Fugazze al Rifugio Campogrosso (4 ore, 550 m, 9 km); rientro per la Strada del Re e il ponte tibetano fino all''Ossario'

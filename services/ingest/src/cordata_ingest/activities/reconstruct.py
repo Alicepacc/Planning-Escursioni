@@ -29,11 +29,13 @@ from .gazetteer import Place, normalize, search
 
 GH_URL = "http://localhost:8989"
 TRAIL_RADIUS_KM = 25.0
+CITED_NEAR_POINTS_KM = 2.0  # un sentiero citato deve passare vicino ai punti della gita
 POINT_RADIUS_KM = 12.0
 CITED_BUFFER_M = 35.0
 OFF_CITED_FACTOR = "0.25"  # priorità fuori dai sentieri citati
 TOL_DISTANCE = 0.10
 TOL_ASCENT = 0.15
+GROSS_MISMATCH = 1.0  # scarto oltre il quale la ricostruzione non è una traccia plausibile
 TOL_MAX_ELE_M = 50.0
 LOOP_CLOSE_M = 200.0
 
@@ -392,21 +394,49 @@ def _ref_lists(refs: list[str]) -> tuple[list[str], list[str]]:
     return plain, reg
 
 
-def cited_trails(conn: Any, refs: list[str], center: tuple[float, float]) -> list[dict[str, Any]]:
+def cited_trails(
+    conn: Any,
+    refs: list[str],
+    center: tuple[float, float],
+    near: list[tuple[float, float]] | None = None,
+) -> list[dict[str, Any]]:
+    """Sentieri citati nella locandina. I numeri si ripetono (SAT e CAI, zone diverse): se per
+    un numero alcuni sentieri passano entro 2 km dai punti della gita (`near`), si tengono solo
+    quelli, perché un omonimo lontano tirerebbe il percorso fuori strada."""
     if not refs:
         return []
     plain, reg = _ref_lists(refs)
+    pts = near or [center]
+    multipoint = "MULTIPOINT(" + ",".join(f"{x} {y}" for x, y in pts) + ")"
     with conn.cursor() as cur:
         cur.execute(
-            """SELECT relation_id, osm2cai_id, ref, reg_ref, name, sda
+            """SELECT relation_id, osm2cai_id, ref, reg_ref, name, sda,
+                      ST_Distance(geom::geography,
+                                  ST_GeomFromText(%s, 4326)::geography) AS near_m
                FROM trails
                WHERE (upper(ref) = ANY(%s) OR upper(reg_ref) = ANY(%s))
                  AND ST_DWithin(geom::geography,
                                 ST_SetSRID(ST_MakePoint(%s,%s),4326)::geography, %s)""",
-            (plain, reg, center[0], center[1], TRAIL_RADIUS_KM * 1000),
+            (multipoint, plain, reg, center[0], center[1], TRAIL_RADIUS_KM * 1000),
         )
         cols = [d.name for d in cur.description]
-        return [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
+        rows = [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
+    return _drop_far_homonyms(rows, set(reg))
+
+
+def _drop_far_homonyms(rows: list[dict[str, Any]], reg: set[str]) -> list[dict[str, Any]]:
+    by_ref: dict[str, list[dict[str, Any]]] = {}
+    for r in rows:
+        reg_ref = (r.get("reg_ref") or "").upper()
+        key = reg_ref if reg_ref in reg else (r.get("ref") or "").upper()
+        by_ref.setdefault(key, []).append(r)
+    out: list[dict[str, Any]] = []
+    for group in by_ref.values():
+        close = [r for r in group if (r.get("near_m") or 0) <= CITED_NEAR_POINTS_KM * 1000]
+        out += close or group
+    for r in out:
+        r.pop("near_m", None)
+    return out
 
 
 def named_routes(conn: Any, names: list[str], center: tuple[float, float]) -> list[dict[str, Any]]:
@@ -498,6 +528,24 @@ def route(points: list[tuple[float, float]], area: dict[str, Any] | None) -> dic
     if resp.status_code != 200 or "paths" not in data:
         return {"ok": False, "error": str(data.get("message", resp.text[:300])), "ms": ms}
     return {"ok": True, "coords": data["paths"][0]["points"]["coordinates"], "ms": ms}
+
+
+SAME_START_M = 200.0
+
+
+def outbound_only(
+    waypoints: list[tuple[float, float]], kinds: list[str | None], kind: str | None
+) -> tuple[list[tuple[float, float]], list[str | None]]:
+    """Un andata e ritorno si ricostruisce dall'andata, ripercorsa all'indietro: se i punti
+    chiave tornano alla partenza («Peio Fonti … Monte Vioz, Peio Fonti»), il ritorno si toglie,
+    altrimenti verrebbe contato due volte."""
+    if (
+        kind == "andata_ritorno"
+        and len(waypoints) > 2
+        and haversine_m(waypoints[0], waypoints[-1]) <= SAME_START_M
+    ):
+        return waypoints[:-1], kinds[:-1]
+    return waypoints, kinds
 
 
 # solo i punti "incerti" (cartelli, località, vie con nome) possono essere spostati: rifugi,
@@ -614,12 +662,13 @@ def reconstruct(conn: Any, dem: Any, activity_id: str, activity: dict[str, Any])
         if haversine_m(waypoints[-1], pt) > 30:
             waypoints.append(pt)
             kinds.append(p.place.kind)
+    waypoints, kinds = outbound_only(waypoints, kinds, kind)
     if len(waypoints) < 2:
         res.reasons.append("meno di due punti distinti: percorso non ricostruibile")
         res.seconds = round(time.perf_counter() - t0, 1)
         return res
 
-    trails = cited_trails(conn, refs, resolved[0])
+    trails = cited_trails(conn, refs, resolved[0], near=waypoints)
     found_refs = sorted({(t["reg_ref"] or t["ref"] or "").upper() for t in trails} - {""})
     res.cited_found = found_refs
     missing_refs = [
@@ -704,18 +753,27 @@ def reconstruct(conn: Any, dem: Any, activity_id: str, activity: dict[str, Any])
                 res.reasons.append(f"quota massima fuori tolleranza ({c['scarto_m']:+d} m)")
             else:
                 res.reasons.append(f"l'anello non si chiude ({c['distanza_m']} m)")
-    numeric = [k for k in checks if k in {"distanza", "salita"}]
-    all_ok = all(c["ok"] for c in checks.values())
-    geocoded_share = 1 - len(missing) / len(points)
-    if not numeric:
+    if not any(k in checks for k in ("distanza", "salita")):
         res.reasons.append("nessuna distanza o dislivello dichiarati utilizzabili per il confronto")
-    # tollerato un solo punto intermedio non trovato, se i numeri tornano
-    if all_ok and numeric and (geocoded_share >= 0.75 or len(missing) <= 1):
-        res.status = "auto_ok"
-    else:
-        res.status = "da_rivedere"
+    res.status, why = verdict(checks, len(missing), len(points))
+    if why:
+        res.reasons.append(why)
     res.seconds = round(time.perf_counter() - t0, 1)
     return res
+
+
+def verdict(checks: dict[str, Any], n_missing: int, n_points: int) -> tuple[str, str | None]:
+    """Esito della ricostruzione dai confronti con la locandina."""
+    numeric = [k for k in checks if k in {"distanza", "salita"}]
+    if numeric and all(checks[k]["scarto"] > GROSS_MISMATCH for k in numeric):
+        # più del doppio su tutto ciò che si può confrontare: la linea passa altrove (zona
+        # fuori dai dati, luogo sbagliato) e sulla mappa ingannerebbe
+        return "fallita", "traccia incompatibile con la locandina: non mostrata"
+    all_ok = all(c["ok"] for c in checks.values())
+    # tollerato un solo punto intermedio non trovato, se i numeri tornano
+    if all_ok and numeric and (1 - n_missing / n_points >= 0.75 or n_missing <= 1):
+        return "auto_ok", None
+    return "da_rivedere", None
 
 
 def result_dict(res: Result) -> dict[str, Any]:

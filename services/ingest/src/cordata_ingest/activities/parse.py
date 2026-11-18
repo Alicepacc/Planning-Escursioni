@@ -11,6 +11,7 @@ Copre i modelli visti nel pilota: locandine CAI Bolzano (campi etichettati), CAI
 
 from __future__ import annotations
 
+import itertools
 import re
 import unicodedata
 from dataclasses import asdict, dataclass
@@ -107,13 +108,43 @@ class Doc:
 # ------------------------------------------------------------------ campi
 
 
+# data di una lettera («Cavalese, 3 maggio 2018»): non è la data della gita
+LETTER_DATE = re.compile(r"^[a-z][\w' ]{2,30},\s*\d{1,2}\s+\w+\s+20\d{2}\s*$")
+
+
 def parse_date(doc: Doc, hint: str = "") -> Field:
     rx = rf"(?:{WEEKDAYS}\s*,?\s*)?(\d{{1,2}})\s+({'|'.join(MONTHS)})\s*(20\d{{2}})"
+    letter: Field | None = None
     for page, line in doc.lines[:40]:
         m = re.search(rx, _fold(line))
         if m:
             day, month, year = int(m.group(1)), MONTHS[m.group(2)], int(m.group(3))
-            return Field(f"{year:04d}-{month:02d}-{day:02d}", 0.9, _cite(line), page)
+            found = Field(f"{year:04d}-{month:02d}-{day:02d}", 0.9, _cite(line), page)
+            if LETTER_DATE.match(_fold(line)):
+                letter = letter or Field(found.value, 0.5, found.source, page)
+                continue
+            return found
+    if letter:
+        return letter
+    # giorno senza anno («Sabato 17 maggio»): anno dalla cartella di caricamento del PDF
+    # (…/uploads/2025/05/…); tra più giorni vale quello dell'escursione
+    up = re.search(r"(20\d{2})/(\d{2})/", hint)
+    if up:
+        no_year = re.compile(rf"{WEEKDAYS}\s+(\d{{1,2}})\s+({'|'.join(MONTHS)})\b(?!\s*20\d{{2}})")
+        days: list[tuple[int, Field]] = []
+        for i, (page, line) in enumerate(doc.lines[:40]):
+            m = no_year.search(_fold(line))
+            if m:
+                year = int(up.group(1)) + (1 if MONTHS[m.group(2)] < int(up.group(2)) - 2 else 0)
+                value = f"{year:04d}-{MONTHS[m.group(2)]:02d}-{int(m.group(1)):02d}"
+                days.append((i, Field(value, 0.6, _cite(line), page)))
+        for i, f in days:
+            near = " ".join(t for _, t in doc.lines[i : i + 3])
+            if re.search(r"escursion|camminat|gita", near, re.IGNORECASE):
+                return f
+        if days:
+            return days[0][1]
+    hint = hint.rsplit("/", 1)[-1]
     m = re.search(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})", hint) or None
     if m:
         return Field(f"{m.group(1)}-{m.group(2)}-{m.group(3)}", 0.6, f"nome del file: {hint}")
@@ -141,6 +172,8 @@ def parse_difficulty(doc: Doc) -> Field:
             0.95,
         ),
         (r"(?i:escursione)\s*:\s*(EAI|EEA|EE|E|T)\b", 0.95),
+        (r"(?i:livello)\s*:?\s*(EAI|EEA|EE|E|T)\b", 0.9),
+        (r"(?i:md\+)\s*(EAI|EEA|EE|E|T)\b", 0.7),
         (r"\((EEA|EE|EAI|E|T)\)", 0.7),
         (r"^(EAI(?:-F)?|EEA|EE(?:\s*-\s*E)?|E|T)$", 0.6),
     ]
@@ -204,9 +237,13 @@ def parse_duration(doc: Doc) -> Field:
         rf"ore di cammino\s*:?\s*{num}",
         rf"tempo di percorrenza\s*:?\s*(?:circa)?\s*{num}\s*(?:h|ore)",
         rf"durata(?:\s*a/r)?\s*:?\s*{num}\s*(?:h|ore)",
+        rf"durata[^\n\d]{{0,25}}?\bore\s*{num}",
         rf"(?:percorso|cammino|tempi?)\s*:?\s*(?:ore|h)\s*{num}",
         rf"\(ore\s*{num}\)",
-        rf"(?<![\d:.])\b{num}\s*h(?:\s*circa)?\b",
+        # nei programmi il tempo sta su una riga da solo: «6 ore», «A: 7 ore», «8/9 ore», «h 9:30»
+        rf"^(?:[A-Z]\s*:\s*)?{num}(?:\s*/\s*\d{{1,2}})?\s*ore$",
+        rf"^h\s*{num}$",
+        rf"(?<![\d:.])\b{num}\s*h(?:\s*circa)?\b(?![^\n]*viaggio)",
     ]
     for i, pattern in enumerate(patterns):
         hit = doc.find(pattern)
@@ -216,17 +253,22 @@ def parse_duration(doc: Doc) -> Field:
             tail = re.match(r"\s*h\s*(\d{2})", line[m.end(1) :])
             hours = _hours(m.group(1)) + (int(tail.group(1)) / 60 if tail else 0)
             if 0.5 <= hours <= 14:
-                return Field(_hm(hours), 0.9 if i < 4 else 0.6, _cite(line), page)
+                return Field(_hm(hours), 0.9 if i < 5 else 0.6, _cite(line), page)
     return Field(None, 0.0)
 
 
 def parse_distance(doc: Doc) -> Field:
     patterns = [
-        (r"(?:sviluppo|distanza|lunghezza)[^\d\n]{0,40}?(\d{1,2}(?:[.,]\d{1,2})?)\s*km", 0.9),
+        (
+            r"(?:sviluppo|distanza|lunghezza|lungezza)[^\d\n]{0,40}?(\d{1,2}(?:[.,]\d{1,2})?)\s*km",
+            0.9,
+        ),
         (r"(?:sviluppo|distanza)\s*:?\s*(?:km\.?\s*)(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"^km\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"^sviluppo$", 0.0),
-        (r"[-–]\s*(\d{1,2}(?:[.,]\d)?)\s*km\b", 0.6),
+        # su una riga da sola, anche «A: 15 km» (non gli intervalli «25-30km»)
+        (r"^(?:[A-Z]\s*:\s*)?(\d{1,2}(?:[.,]\d{1,2})?)\s*km$", 0.6),
+        (r"(?<!\d)(?<!\d\s)[-–]\s*(\d{1,2}(?:[.,]\d)?)\s*km\b", 0.6),
     ]
     for pattern, conf in patterns:
         if conf == 0.0:
@@ -261,6 +303,20 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
             val = _num(m.group(1))
             return Field(val, 0.9, _cite(line), page), Field(val, 0.9, _cite(line), page)
     up = down = None
+    # nei programmi: «700 md+», «921 md-», «D+ 2400m», «DISL. m. 900 ca»
+    md_up = (
+        doc.find(rf"\+?\s*{v}\s*md\+")
+        or doc.find(rf"\bD\+\s*{v}\s*m\b")
+        or doc.find(rf"(?i:disl\.)\s*(?:m\.?\s*)?{v}")
+    )
+    if md_up:
+        m, page, line = md_up
+        up = Field(_num(m.group(1)), 0.75, _cite(line), page)
+        md_down = doc.find(rf"{v}\s*md-")
+        if md_down:
+            m, page, line = md_down
+            down = Field(_num(m.group(1)), 0.75, _cite(line), page)
+        return up, down or Field(None, 0.0)
     hit = doc.find(rf"\+\s*{v}\s*/\s*-\s*{v}")
     if hit:
         m, page, line = hit
@@ -289,7 +345,9 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
             down = Field(_num(m.group(1)), 0.85, _cite(line), page)
             break
     if up is None:
-        hit = doc.find(rf"dislivell[oi][^\d\n]{{0,25}}?(?:\+\s*)?{m_}?\s*{v}\s*{m_}?")
+        hit = doc.find(rf"dislivell[oi][^\d\n]{{0,25}}?(?:\+\s*)?{m_}?\s*{v}\s*{m_}?") or doc.find(
+            rf"{v}\s*{m_}\s*(?:di\s+)?dislivell[oi]"
+        )
         if hit:
             m, page, line = hit
             up = Field(_num(m.group(1)), 0.7, _cite(line), page)
@@ -318,8 +376,8 @@ def parse_max_elevation(doc: Doc) -> Field:
     best: tuple[float, int, str] | None = None
     for page, line in doc.lines:
         if re.search(
-            r"dislivell|sviluppo|lunghezza|(?:salita|discesa)\s*:?\s*(?:di\s*)?(?:circa\s*)?"
-            r"(?:m\.?|mt\.?)?\s*\d",
+            r"dislivell|sviluppo|lunghezza|\bD\+|md[+-]|(?:salita|discesa)\s*:?\s*(?:di\s*)?"
+            r"(?:circa\s*)?(?:m\.?|mt\.?)?\s*\d",
             line,
             re.IGNORECASE,
         ):
@@ -385,6 +443,9 @@ def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
         rf"(?i:ci dirigiamo|ci portiamo)\s+(?i:al|alla|a|ad)\s+{NAME}\s*{QUOTA}",
         rf"(?i:dal|da)\s+(?i:paese|abitato)\s+(?i:di)\s+{NAME}\s*(?:{QUOTA})?",
         rf"^(?i:dal|dalla|dall.)\s*{NAME}\s+(?i:si sale|si parte|si prende|si segue)",
+        rf"(?i:partendo)\s+(?i:da|dal|dalla|dall.)\s*(?i:localit\S+\s+)?{NAME}",
+        r"(?i:partire|parte|partenza|si parte)\s+(?i:dalla|dal|da)\s+(?i:piana|localit\S+|frazione)"
+        rf"\s+(?i:di)\s+{NAME}",
         rf"(?i:ritrovo|parcheggio)(?![^\n]*(?i:sede))[^.\n]{{0,80}}?\b(?i:di|a)\s+{NAME}(?=[.,;]|\s*$)",
         rf"^{NAME}\s*(?:\([^)]*\))?\s*,?\s*(?i:all.entrata|è il punto di partenza)",
     ]
@@ -424,7 +485,12 @@ def parse_route_type(doc: Doc, start: Field, end: Field, title: str = "") -> Fie
             r"andata e ritorno",
             r"ritorno (?:avverr?a|avviene) lungo lo stesso",
         ],
-        "anello": [r"\banello\b", r"circolare", r"chiude(?:re|ndo|remo)? (?:il nostro )?anello"],
+        "anello": [
+            r"\banello\b",
+            r"circolare",
+            r"chiude(?:re|ndo|remo)? (?:il nostro )?anello",
+            r"(?:si )?ritorna(?:re)? al punto di partenza",
+        ],
         "traversata": [
             r"traversata",
             r"\bdove termina\b",
@@ -433,6 +499,7 @@ def parse_route_type(doc: Doc, start: Field, end: Field, title: str = "") -> Fie
     }
     scores: dict[str, int] = {}
     sources: dict[str, str] = {}
+    f = re.sub(r"\s+", " ", f)  # le frasi vanno spesso a capo
     for kind, patterns in cues.items():
         for p in patterns:
             m = re.search(p, f, re.MULTILINE)
@@ -443,6 +510,15 @@ def parse_route_type(doc: Doc, start: Field, end: Field, title: str = "") -> Fie
     if re.search(r"\bda [a-z][\w' ]{2,30} (?:a|al|alla|fino a) [a-z]", _fold(title)):
         scores["traversata"] = scores.get("traversata", 0) + 1
         sources.setdefault("traversata", title)
+    if start.value and not end.value:
+        # «torniamo a Pregasina», «arrivo a Prè»: si torna alla partenza
+        back = re.search(
+            rf"(?:torn\w*|rientr\w*|ritorn\w*|arrivo)\s+(?:a|al|alla|ad|in)\s+{re.escape(_fold(start.value))}\b",
+            f,
+        )
+        if back:
+            scores["anello"] = scores.get("anello", 0) + 1
+            sources.setdefault("anello", f[max(0, back.start() - 30) : back.end() + 10])
     if start.value and end.value:
         same = _fold(start.value).strip() == _fold(end.value).strip()
         scores["anello" if same else "traversata"] = (
@@ -477,6 +553,18 @@ def parse_meeting_time(doc: Doc) -> Field:
 
 def parse_transport(doc: Doc) -> Field:
     f = doc.folded
+    public = re.search(
+        r"autobus di linea|mezzi pubblici|corriera di linea|in treno|\bil treno\b", f
+    )
+    if public:
+        return Field(
+            "mezzi pubblici", 0.7, _cite(f[max(0, public.start() - 40) : public.end() + 20])
+        )
+    private = re.search(r"(?:automobili|auto|macchine) private|mezzi privati", f)
+    if private:
+        return Field(
+            "mezzi propri", 0.8, _cite(f[max(0, private.start() - 40) : private.end() + 20])
+        )
     bus = re.search(r"pullman|\bin bus\b|autobus|\bil bus\b", f)
     own = re.search(r"mezzi propri|nostre macchine|le macchine|posti macchina", f)
     if bus and own and re.search(r"pullman o mezzi propri", f):
@@ -538,7 +626,7 @@ def parse_trails(doc: Doc) -> Field:
         r"(?:sentier[oi]|segnavia|marcatura)\s*(?:SAT\s*)?(?:n\.?|nr\.?|n°|numero)?\s*:?\s*"
         # anche «32/A»
         r"([EO]?\d{1,3}(?:/?[A-Za-z])?(?:\s*(?:,|e poi|e|-)\s*[EO]?\d{1,3}(?:/?[A-Za-z])?)*)"
-        r"(?![\w])",
+        r"(?![\w])(?![/:.]\d)",
         re.IGNORECASE,
     )
     # anche a cavallo di due righe ("sul sentiero / n.30")
@@ -654,11 +742,121 @@ def calendar_entry(pages: list[tuple[int, str]], date: str) -> list[tuple[int, s
                 header = _fold(text[:200])
                 months = [MONTHS[k] for k in MONTHS if re.search(rf"^{k}\b", header, re.M)]
                 starts.append((i, (year, months[0] if months else month, int(m.group(1)))))
+        consecutive = sum(1 for a, b in itertools.pairwise(starts) if b[0] - a[0] == 1)
+        if consecutive >= 2:
+            continue  # «12/01/2026», «18/01/2026», … uno sotto l'altro: non sono voci
         for k, (i, ymd) in enumerate(starts):
             if ymd == (year, month, day):
                 end = starts[k + 1][0] if k + 1 < len(starts) else len(lines)
                 out.append((n, "\n".join(lines[i:end])))
+    # un elenco di sole date (es. il calendario dell'alpinismo giovanile) non è la voce
+    content = sum(len(re.sub(r"[\d/\s|-]", "", t)) for _, t in out)
+    if not out or content < 40:
+        return _short_date_entry(pages, month, day) or out
     return out
+
+
+TITLE_CONTINUES = re.compile(
+    r"\b(?:DI|DA|DEL|DELLA|DEI|DELLE|DAL|DALLA|AL|ALLA|AI|A|E|IN|CON|PER|SUL|SULLA|MONTE|CIMA|"
+    r"PASSO|LAGO|LAGHI|RIFUGIO|VAL|PUNTA|CORNO|PIZ|[-–])$"
+)
+TITLE_GOES_ON = re.compile(r"^(?:DI|DEL|DELLA|DEI|DELLE|AL|ALLA|AI|E|[-–])\b")
+GENERIC_TITLE = re.compile(
+    r"^(?:gita|giro|sentiero|spiedo|pasta|festa|camminata|escursione|trekking|ciaspolata|"
+    r"ferrata|traversata|anello|uscita|cena|settimana|manutenzione|pulizia)\b"
+)
+SHORT_DATE = re.compile(r"^(\d{1,2})(?:-\d{1,2})?/(\d{1,2})(?:-\d{1,2})?\s*(-)?\s*$")
+NOT_TITLE = re.compile(
+    r"calendario|programma|collaborazione|termine iscrizioni|indice|legenda|scala delle", re.I
+)
+MINOR = {
+    "di",
+    "da",
+    "del",
+    "della",
+    "dei",
+    "delle",
+    "dal",
+    "dalla",
+    "al",
+    "alla",
+    "a",
+    "e",
+    "in",
+    "con",
+    "per",
+    "sul",
+    "sulla",
+    "il",
+    "la",
+    "lo",
+    "le",
+    "gli",
+    "i",
+}
+
+
+def _title_case(text: str) -> str:
+    words = re.sub(r"\s+", " ", text).strip().lower().split(" ")
+    return " ".join(w if (k and w in MINOR) else w[:1].upper() + w[1:] for k, w in enumerate(words))
+
+
+def _page_titles(lines: list[str]) -> list[str]:
+    """Titoli in maiuscolo di una pagina, nell'ordine e senza ripetizioni.
+
+    Due righe maiuscole sono lo stesso titolo solo se la prima resta in sospeso («… GIRO DEI
+    LAGHI» / «DEL CEVEDALE») o la seconda comincia con una preposizione.
+    """
+    titles: list[str] = []
+    block: list[str] = []
+    for t in [*lines, ""]:
+        is_title = (
+            bool(t) and _uppercase(t) and not NOT_TITLE.search(t) and not re.search(r"\d{2,}", t)
+        )
+        if is_title and block and (TITLE_CONTINUES.search(block[-1]) or TITLE_GOES_ON.match(t)):
+            block.append(t)
+            continue
+        if block:
+            title = re.sub(r"\s+", " ", " ".join(block))
+            if _fold(title) not in {_fold(x) for x in titles}:
+                titles.append(title)
+        block = [t] if is_title else []
+    return titles
+
+
+def _short_date_entry(pages: list[tuple[int, str]], month: int, day: int) -> list[tuple[int, str]]:
+    """Programmi con le date «gg/mm» senza anno, una o due gite per pagina (es. SAT Ledrense).
+
+    La voce è la pagina intera; il titolo è la riga in maiuscolo nella stessa posizione della
+    data tra quelle della pagina (date e titoli sono nello stesso ordine) e viene messo in testa.
+    """
+    found: list[tuple[bool, int, str, list[tuple[int, int]], list[str]]] = []
+    for n, text in pages:
+        lines = [t.strip() for t in text.splitlines()]
+        dates: list[tuple[int, int]] = []
+        ranges: set[tuple[int, int]] = set()
+        skip_next = False
+        for t in lines:
+            m = SHORT_DATE.match(t)
+            if not m:
+                continue
+            if skip_next:  # «16/09-» seguito da «30/09»: fine dell'intervallo
+                skip_next = False
+                continue
+            dates.append((int(m.group(1)), int(m.group(2))))
+            if m.group(3):
+                ranges.add(dates[-1])
+            skip_next = bool(m.group(3))
+        if (day, month) in dates:
+            # un giorno singolo vale più dell'inizio di un intervallo («03/05-10/05»)
+            found.append(((day, month) in ranges, n, text, dates, lines))
+    for _, n, text, dates, lines in sorted(found, key=lambda x: x[0]):
+        titles = _page_titles(lines)
+        k = dates.index((day, month))
+        title = titles[k] if k < len(titles) else (titles[0] if titles else "")
+        head = f"{day:02d}/{month:02d} {_title_case(title)}" if title else ""
+        return [(n, f"{head}\n{text}" if head else text)]
+    return []
 
 
 # ------------------------------------------------------------------ insieme
@@ -668,7 +866,7 @@ def _calendar_title(doc: Doc) -> Field:
     """Prima riga della voce senza data e giorno: "09 sabato ANELLO DA TISO …"."""
     for page, line in doc.lines[:4]:
         t = re.sub(
-            rf"^\d{{1,2}}(?:/\d{{1,2}}/\d{{4}})?\s*(?:{WEEKDAYS}|gio|dom|sab|ven|mer|mar|lun)?\b\.?",
+            rf"^\d{{1,2}}(?:/\d{{1,2}}(?:/\d{{4}})?)?\s*(?:{WEEKDAYS}|gio|dom|sab|ven|mer|mar|lun)?\b\.?",
             "",
             line,
             flags=re.IGNORECASE,
@@ -702,9 +900,11 @@ def parse(
             end_name = Field(m.group(2).strip(" .)"), 0.6, _cite(line), page)
     route_type = parse_route_type(doc, start_name, end_name, title.value or "")
     if entry_date and start_name.value is None and title.value:
-        # nei calendari la prima località del titolo è di solito la partenza
+        # nei calendari la prima località del titolo è di solito la partenza (non «Gita sociale»,
+        # «Giro delle cime», «Spiedo in Nota»: nomi della gita, non luoghi)
         first = re.split(r"\s+[-–]\s*|\s*[-–]\s+", title.value)[0].strip()
-        start_name = Field(first.title(), 0.4, title.source, title.page)
+        if not GENERIC_TITLE.match(_fold(first)):
+            start_name = Field(first.title(), 0.4, title.source, title.page)
     up, down = parse_elevation_gain(doc)
     if (
         down.value is None

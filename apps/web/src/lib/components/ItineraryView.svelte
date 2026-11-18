@@ -303,8 +303,9 @@
 		<p class="link">
 			{#if doc.activity.source_url}
 				<a href={doc.activity.source_url} rel="external noopener" target="_blank"
-					>Locandina originale{#if doc.activity.source_page}
-						(pagina {doc.activity.source_page}){/if}</a
+					>{doc.activity.source_page
+						? `Locandina originale (pagina ${doc.activity.source_page})`
+						: 'Locandina originale'}</a
 				>
 				{#if doc.activity.future}
 					· <a href={doc.activity.source_url} rel="external noopener" target="_blank"
