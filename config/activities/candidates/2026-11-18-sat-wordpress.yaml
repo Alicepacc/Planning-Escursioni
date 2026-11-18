@@ -1,0 +1,56 @@
+# Secondo blocco di ingestion (18/11/2026): siti WordPress delle sezioni SAT di Cavalese,
+# Primiero e Ledro (Care Alto non pubblica locandine di gite). Locandine singole e programmi
+# annuali; solo link pubblici, i PDF restano nell'archivio privato (data/activities/raw).
+candidates:
+  - id: sat-cavalese-mappa-val-martello-09ago2026
+    section: sat-cavalese
+    url: https://www.satcavalese.it/wp-content/uploads/2026/01/mappa_val_martello_09Ago2026.pdf
+    published: '2026-08-03'
+  - id: sat-cavalese-gita-sat-cima-nara-15-05-22
+    section: sat-cavalese
+    url: https://www.satcavalese.it/wp-content/uploads/2022/03/gita-SAT-cima-Nara-15.05.22.pdf
+    published: '2022-05-08'
+  - id: sat-cavalese-cascata-di-stanghe-e-castel-tasso
+    section: sat-cavalese
+    url: https://www.satcavalese.it/wp-content/uploads/2018/01/Cascata-di-Stanghe-e-castel-Tasso.pdf
+    published: '2018-05-03'
+  - id: sat-cavalese-libretto-sat-2018-mod3
+    section: sat-cavalese
+    url: https://www.satcavalese.it/wp-content/uploads/2018/05/libretto-sat-2018-MOD3.pdf
+    published: '2018-05-03'
+  - id: sat-cavalese-libretto-sat-2017
+    section: sat-cavalese
+    url: https://www.satcavalese.it/wp-content/uploads/2017/11/libretto-SAT-2017.pdf
+    published: '2017-11-02'
+  - id: sat-primiero-donne-e-montagna-volantino-copia
+    section: sat-primiero
+    url: https://satprimiero.it/wp-content/uploads/2025/05/Donne-e-Montagna-Volantino-copia.pdf
+    published: '2025-05-07'
+  - id: sat-primiero-locandina-donne-e-montagna
+    section: sat-primiero
+    url: https://satprimiero.it/wp-content/uploads/2024/05/locandina-donne-e-montagna.pdf
+    published: '2024-05-02'
+  - id: sat-primiero-2023-24
+    section: sat-primiero
+    url: https://satprimiero.it/wp-content/uploads/2023/11/2023-24.pdf
+    published: '2023-11-02'
+  - id: sat-primiero-libretto-sat-taglioabbondanze
+    section: sat-primiero
+    url: https://satprimiero.it/wp-content/uploads/2022/07/Libretto_Sat_TaglioAbbondanze.pdf
+    published: '2022-07-15'
+  - id: sat-primiero-peter-moser-in-tour
+    section: sat-primiero
+    url: https://satprimiero.it/wp-content/uploads/2022/07/peter-moser-in-tour.pdf
+    published: '2022-07-14'
+  - id: sat-ledrense-locandina-sett-montagna-v2-1
+    section: sat-ledrense
+    url: https://www.satledrense.it/wp-content/uploads/2026/03/Locandina-sett.Montagna_v2-1-1.pdf
+    published: '2026-03-20'
+  - id: sat-ledrense-sat-ledrense-2025
+    section: sat-ledrense
+    url: https://www.satledrense.it/wp-content/uploads/2026/02/SAT-Ledrense-2025.pdf
+    published: '2026-02-07'
+  - id: sat-ledrense-attivita-sat-2026
+    section: sat-ledrense
+    url: https://www.satledrense.it/wp-content/uploads/2026/02/Attivita-SAT-2026.pdf
+    published: '2026-02-06'

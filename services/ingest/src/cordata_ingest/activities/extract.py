@@ -34,6 +34,9 @@ EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 # cellulari: 3xx + 7 cifre (separatori singoli ammessi); così "332 360 326" (sentieri) non è
 # un telefono. Fissi e numeri con prefisso solo nelle righe con parole di contatto.
 MOBILE = re.compile(r"(?<![\d])(?:\+39[\s.]?)?3\d{2}(?:[\s./-]?\d){7}(?![\d])")
+# cellulari vecchi con 6 cifre dopo il prefisso: solo nelle righe di contatto, perché «332 360 326»
+# può essere un elenco di sentieri
+MOBILE6 = re.compile(r"(?<![\d])(?:\+39[\s.]?)?3\d{2}(?:[\s./-]?\d){6}(?![\d])")
 ANY_PHONE = re.compile(r"(?<![\d])(?:\+39[\s.]?)?0\d{1,3}(?:[\s./-]?\d){5,8}(?![\d])")
 DATE_LIKE = re.compile(r"^\d{1,2}[./]\d{1,2}[./]\d{2,4}$")
 CONTACT_WORDS = re.compile(
@@ -50,6 +53,92 @@ ROLE_LABEL = re.compile(
     re.IGNORECASE,
 )
 PERSON_LINE = re.compile(r"^(?:[A-ZÀ-Ý][a-zà-ÿ']+\.?\s+){1,3}[A-ZÀ-Ý][a-zà-ÿ']+\.?$")
+# incarichi della sezione (direttivo) e crediti fotografici: «PRESIDENTE: Cognome Nome»,
+# «CONSIGLIERI: …» anche su più righe, «Foto: Nome Cognome, …»
+ORG_ROLE = re.compile(
+    r"\b(?:vice\s?presidente|presidente|segretari[oa]|cassier[ea]|tesorier[ea]|"
+    r"consiglier[ei]|revisor[ei]|responsabil[ei]|collaborator[ei]|ispettor[ei]|delegat[oi]|"
+    r"foto(?:grafie)?)\b[^:\n]{0,60}?\s*(?::|\s[-–]\s)",
+    re.IGNORECASE,
+)
+ORG_WORDS = (
+    r"vice\s?presidente|presidente|segretari[oa]|cassier[ea]|tesorier[ea]|consiglier[ei]|"
+    r"revisor[ei]|responsabil[ei]|collaborator[ei]|ispettor[ei]|delegat[oi]|referent[ei]"
+)
+# riga con il solo incarico («Il Presidente della Sezione», «Responsabili»): nomi a capo
+ORG_ROLE_LINE = re.compile(rf"^[^:\n]{{0,20}}?\b(?:{ORG_WORDS})\b[^:\n]{{0,50}}$", re.IGNORECASE)
+# incarico seguito, nella stessa frase, da «, Nome Cognome»
+ORG_ROLE_PROSE = re.compile(
+    rf"((?i:\b(?:{ORG_WORDS}))[^.,:\n]{{0,60}}(?:\n[^.,:\n]{{0,60}})?,\s*)"
+    r"([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)"
+)
+# organigrammi: «COGNOME Nome», «COGNOME COGNOME Nome», «Nome COGNOME»
+UPPER_NAME = re.compile(
+    r"\b(?:[A-ZÀ-Ý]{2,}[ \t]+){1,2}[A-ZÀ-Ý][a-zà-ÿ'’]+\b"
+    r"|\b[A-ZÀ-Ý][a-zà-ÿ'’]+(?:[ \t]+[A-ZÀ-Ý]{2,}){1,2}\b"
+)
+ORG_ACRONYMS = {
+    "SAT",
+    "CAI",
+    "APS",
+    "ASD",
+    "AE",
+    "AG",
+    "ANE",
+    "AAG",
+    "ONC",
+    "TAM",
+    "CNSAS",
+    "SOSEC",
+    "IBAN",
+    "PEC",
+    "EE",
+    "EEA",
+    "EAI",
+    "OSM",
+    "CTS",
+    "SEZIONE",
+    "RIFUGIO",
+    "RIFUGI",
+    "SEDE",
+    "DI",
+    "DEL",
+    "DELLA",
+    "ALPINISMO",
+    "GIOVANILE",
+    "COMMISSIONE",
+    "COMM",
+}
+
+
+def _redact_organigram(text: str) -> tuple[str, int]:
+    """Pagine con l'organigramma (almeno tre incarichi diversi): nomi in stile «COGNOME Nome»."""
+    roles = {m.group(0).lower()[:6] for m in re.finditer(ORG_WORDS, text, re.IGNORECASE)}
+    if len(roles) < 3:
+        return text, 0
+    count = 0
+
+    def sub(m: re.Match[str]) -> str:
+        nonlocal count
+        upper = [w for w in m.group(0).split() if w.isupper()]
+        if all(w.strip(".") in ORG_ACRONYMS for w in upper):
+            return m.group(0)
+        count += 1
+        return "[nome rimosso]"
+
+    return UPPER_NAME.sub(sub, text), count
+
+
+# nome dentro l'etichetta: «responsabile sezionale dei sentieri, Nome Cognome:»
+NAME_IN_LABEL = re.compile(r",\s*[A-ZÀ-Ý][a-zà-ÿ'’]+(?:[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)+\s*(?=:)")
+# elenco di nomi: parole con l'iniziale maiuscola o cognomi tutti maiuscoli, separati da virgole
+_NAME_WORD = r"(?:[A-ZÀ-Ý][a-zà-ÿ'’]+|[A-ZÀ-Ý]{2,})"
+NAME_LIST = re.compile(rf"^(?:{_NAME_WORD}(?:\s+(?:de|di|da|del|dal)?\s*{_NAME_WORD})*\s*,?\s*)+$")
+# nome seguito da un titolo CAI (AE, ANE, ONC…): è sempre una persona
+QUALIFIED_NAME = re.compile(
+    r"\b[A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+"
+    r"(?=[ \t]+(?:AE|ANE|ASE|AAG|ASAG|ONC|ONCN|INA|IA|ISA|IAL|ORTAM|AEI|AC)\b)"
+)
 PLACEHOLDER = re.compile(r"\[(?:telefono|email) rimoss[oa]\]")
 CAPITALIZED = re.compile(r"\b[A-ZÀ-Ý][A-Za-zÀ-ÿ']+\b")
 # parole con iniziale maiuscola che nelle righe di contatto non sono nomi di persona
@@ -169,6 +258,7 @@ def _redact_phones(line: str, contact: bool) -> tuple[str, int]:
 
     line = MOBILE.sub(sub, line)
     if contact or "+39" in line:
+        line = MOBILE6.sub(sub, line)
         line = ANY_PHONE.sub(sub, line)
     return line, count
 
@@ -201,6 +291,14 @@ PLACE_WORDS = (
     "passo|monte|rifugio|malga|lago|val|valle|cima|forcella|chiesa|chiesetta|borgo|ponte|"
     "colle|croda|sasso|piazza|via|santuario|località|localita|maso|castel|castello|baita|pian"
 )
+# «ex Presidente generale Nome Cognome», «presidente fu Nome Cognome» (non «… del Rifugio X»)
+ORG_ROLE_NAME = re.compile(
+    r"((?i:\b(?:vice\s?presidente|presidente|segretari[oa]|tesorier[ea]|cassier[ea]))"
+    r"(?:[ \t]+[a-zà-ÿ]+){0,3}[ \t]+)"
+    rf"(?!(?i:{PLACE_WORDS})\b)([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)"
+)
+# credito fotografico con il titolo: «Nome Cognome – “Titolo”»
+CREDIT_LINE = re.compile(r"^([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)(\s*[–-]\s.*)$")
 SURNAME_INITIAL = re.compile(
     rf"\b(?!(?i:{PLACE_WORDS})\b)[A-ZÀ-Ý][a-zà-ÿ']+(?:[-–][A-ZÀ-Ý][a-zà-ÿ']+)*[ \t]+[A-ZÀ-Ý]\."
     r"(?![A-Za-z])(?:[ \t]*(?:-[ \t]*)?[A-ZÀ-Ý][a-zà-ÿ']+(?:[ \t]+[A-ZÀ-Ý]\.(?![A-Za-z]))?)*"
@@ -253,9 +351,19 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
         removed += n1 + n2
     text, n3 = _redact_rosters(text, table)
     removed += n3
+    text, n4 = _redact_organigram(text)
+    removed += n4
+    text, n5 = ORG_ROLE_PROSE.subn(r"\1[nome rimosso]", text)
+    removed += n5
+    text, n6 = QUALIFIED_NAME.subn("[nome rimosso]", text)
+    removed += n6
+    text, n7 = ORG_ROLE_NAME.subn(r"\1[nome rimosso]", text)
+    removed += n7
     redact_next = 0
+    redact_list = False
     for raw in text.splitlines():
         line = raw
+        # prima email e telefoni, su ogni riga
         line, n = EMAIL.subn("[email rimossa]", line)
         removed += n
         line, n = _redact_phones(line, bool(CONTACT_WORDS.search(line)))
@@ -265,6 +373,25 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
             line, n = _redact_contact_names(line)
             removed += n
         stripped = line.strip()
+        if redact_list and ORG_ROLE_LINE.match(line):
+            pass  # un altro incarico: l'elenco continua dopo
+        elif redact_list:
+            # righe che continuano un elenco di nomi dopo un incarico (anche «… DI\nCROINA: Nome»)
+            if stripped and NAME_LIST.match(stripped):
+                out.append("[nome rimosso]")
+                removed += 1
+                continue
+            cont = re.match(r"^([^:]{1,40}:)\s*(.+)$", stripped)
+            if cont and NAME_LIST.match(cont.group(2)):
+                out.append(f"{cont.group(1)} [nome rimosso]")
+                removed += 1
+                continue
+            credit = CREDIT_LINE.match(stripped)
+            if credit:
+                out.append("[nome rimosso]" + credit.group(2))
+                removed += 1
+                continue
+            redact_list = False
         if redact_next and stripped:
             # righe successive a un'etichetta di ruolo: nomi propri (o resti di contatti)
             if PERSON_LINE.match(stripped) or "rimoss" in stripped:
@@ -273,13 +400,26 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
                 redact_next -= 1
                 continue
             redact_next = 0
+        org = ORG_ROLE.search(line)
+        if org:
+            label, n = NAME_IN_LABEL.subn(", [nome rimosso]", line[: org.end()])
+            removed += n
+            tail = line[org.end() :]
+            line = label + tail
+            if re.search(r"[A-Za-zÀ-ÿ]{2,}", tail.replace("[nome rimosso]", "")):
+                line = label + " [nome rimosso]"
+                removed += 1
+            redact_list = True
+        elif ORG_ROLE_LINE.match(line):
+            redact_list = True  # firma o titolo: i nomi sono nelle righe seguenti
         m = ROLE_LABEL.search(line)
         if m:
             head, tail = line[: m.end()], line[m.end() :]
-            if re.search(r"[A-Za-zÀ-ÿ]{2,}", tail):
+            if re.search(r"[A-Za-zÀ-ÿ]{2,}", tail.replace("[nome rimosso]", "")):
                 line = head + ": [nome rimosso]"
                 removed += 1
-            else:
+                redact_list = True  # l'elenco può continuare a capo
+            elif not re.search(r"[A-Za-zÀ-ÿ]", tail):
                 redact_next = 3  # etichetta da sola: i nomi sono nelle righe seguenti
         out.append(line)
     return "\n".join(out), removed

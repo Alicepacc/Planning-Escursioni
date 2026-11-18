@@ -22,6 +22,53 @@ def test_sanitize_nomi_dopo_le_etichette_di_ruolo():
     assert "Rossi" not in text and "Bianchi" not in text and "Sentieri 15, 7" in text
 
 
+def test_sanitize_direttivo_e_crediti_fotografici():
+    text = (
+        "Foto:\nMario Rossi, Anna Bianchi\ne archivio Sat\n"
+        "PRESIDENTE: Verdi Luigi\nCONSIGLIERI: Neri Paolo, Gialli Rosa, De Sanctis\n"
+        "Maria, Blu Carlo\nRESPONSABILE MANUTENZIONE SEDE E BAITA: Viola Ugo\n"
+        "Il direttivo\nSi sale al Rifugio Pernici per il sentiero 405.\n"
+        "Il Presidente della Commissione Rifugi: Bruno Grigi\n"
+        "Il Gestore La Presidente SAT - Lia Rosa\n"
+        "comunicare al responsabile sezionale dei sentieri, Tino Marrone: segnalazioni"
+    )
+    clean, n = sanitize(text)
+    names = ("Rossi", "Bianchi", "Verdi", "Neri", "Gialli", "Sanctis", "Blu", "Viola")
+    for name in (*names, "Grigi", "Lia Rosa", "Marrone"):
+        assert name not in clean
+    assert "e archivio Sat" in clean
+    assert "Il direttivo" in clean
+    assert "Rifugio Pernici per il sentiero 405" in clean
+    assert n >= 5
+
+
+def test_sanitize_organigrammi_firme_e_cellulari_a_6_cifre():
+    org = (
+        "Consiglio direttivo\nPresidente\nROSSI Mario\nTesoriere\nBIANCHI VERDI Anna\n"
+        "Consigliere Segretario\nLia DE MONTE\nSAT Ledrense e CAI Bolzano"
+    )
+    clean, _ = sanitize(org)
+    for name in ("ROSSI", "BIANCHI", "Anna", "DE MONTE"):
+        assert name not in clean
+    assert "SAT Ledrense e CAI Bolzano" in clean
+    firma, _ = sanitize("Il Presidente della Sezione di Bolzano\nGino Neri\nBuone escursioni")
+    assert "Neri" not in firma and "Buone escursioni" in firma
+    prosa, _ = sanitize("A cura del Presidente della\nSezione, Ugo Grigi e della commissione")
+    assert "Grigi" not in prosa
+    tel, _ = sanitize("Responsabile escursione: Tizio Caio\nCaio Tizio tel. 335 272822")
+    assert "272822" not in tel and "Tizio" not in tel
+    altri, _ = sanitize(
+        "Foto: Ada Neri\nUgo Blu – “Sfumature”\nASAG (referente)\nBONARDO Pia\n"
+        "REFERENTI: Gino Rosso\nPellegrini Oscar, De Guelmi Alessandro\n"
+        "l’ex Presidente generale Vito Bruni. Il responsabile del Rifugio Pernici"
+    )
+    for name in ("Neri", "Blu", "BONARDO", "Rosso", "Pellegrini", "Guelmi", "Bruni"):
+        assert name not in altri
+    assert "“Sfumature”" in altri and "Rifugio Pernici" in altri
+    # elenco di sentieri: non è un telefono
+    assert "332 360 326" in sanitize("Sentieri 332 360 326 e 327")[0]
+
+
 def test_sanitize_nomi_nelle_righe_di_contatto():
     text, _ = sanitize("ISCRIZIONI: Rossi Mario 333 1234567, Bianchi Anna 340 7654321")
     assert "Rossi" not in text and "Bianchi" not in text and text.startswith("ISCRIZIONI")
