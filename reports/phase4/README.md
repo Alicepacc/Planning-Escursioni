@@ -87,3 +87,16 @@ tocchi danno un percorso di 2,6 km agganciato al sentiero 332, nessun errore).
    riprende dalle sue osservazioni.
 3. **Generatore, quando ci si torna**: prima la **valutazione indipendente** (gite verificate nuove,
    mai usate per la messa a punto), poi le proposte per **inverno e strade forestali**.
+
+## 6. Osservazioni e decisioni dell'utente (18/11/2026)
+
+- **Modello dei dati** ([ADR 0012](../../docs/decisions/0012-escursioni-solo-dalle-locandine.md)):
+  le escursioni proposte vengono solo dalle locandine delle sezioni; il catasto CAI diventa un
+  livello della mappa (toccando un sentiero se ne vedono le informazioni); il generatore resta solo
+  come strumento del planner, etichettato «non verificato».
+- **Legenda della mappa**: oggi manca; si fa insieme alla modifica del modello.
+- **Profilo e mappa nelle schede**: scorrendo il profilo il punto corrispondente sulla mappa non si
+  vede, perché la mappa resta in alto. Da risolvere nella rifinitura della UX (mappa fissa accanto
+  al profilo su desktop, mini-mappa o mappa ferma sul telefono).
+- **Ordine dei lavori** dopo le verifiche sulla demo: modifica del modello e legenda, poi blocchi di
+  ingestion, poi Fase 5 (sostituisce la risposta del 17/11 «prossimo passo: Fase 5»).
