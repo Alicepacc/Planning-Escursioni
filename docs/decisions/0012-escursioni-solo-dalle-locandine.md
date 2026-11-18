@@ -1,7 +1,6 @@
 # ADR 0012 – Le escursioni proposte vengono solo dalle locandine delle sezioni
 
-- **Stato**: accettata (proposta dell'utente, 18/11/2026); da realizzare dopo le verifiche
-  dell'utente sulla demo della Fase 4
+- **Stato**: accettata e realizzata (proposta dell'utente, 18/11/2026)
 - **Data**: 18/11/2026
 
 ## Contesto
@@ -41,4 +40,17 @@ escursioni sono le gite scelte e promosse dalle sezioni.
 - «Consigliato dal CAI» riguarda la scelta del giro: la linea sulla mappa resta una ricostruzione
   (verificata o no), e la scheda continua a dirlo; le sintesi rispettano le condizioni d'uso dei
   contenuti delle sezioni (sintesi, link e data, nessuna ripubblicazione dei PDF).
-- La SPEC va aggiornata (§5.1, §5.7 a) quando la modifica sarà realizzata.
+- SPEC aggiornata con una nota in §5.1 e §5.7 a.
+
+## Realizzazione (18/11/2026)
+
+- Pipeline: l'indice di Esplora contiene solo attività e itinerari dalle locandine (29 oggi); le
+  schede dei sentieri del catasto restano per le informazioni sulla mappa.
+- Esplora: elenco e punti solo delle escursioni; filtro «Sezione» al posto di «Fonte»; tocco su
+  un sentiero (anche nelle schede) → numero, nome, difficoltà con descrizione, km, dislivello,
+  tempo, «validato nel catasto CAI», segnalazioni, link alla scheda del sentiero.
+- Legenda su tutte le mappe (pulsante «Legenda»), con sezioni per Esplora, scheda e planner.
+- Punti delle escursioni color ambra con bordo scuro: il rosso coincideva con i sentieri E e il
+  blu con laghi e sorgenti; la traccia nella scheda resta blu.
+- Planner: «Componi un giro» con l'etichetta «Giro composto automaticamente, non verificato sul
+  terreno»; chi non sa dove andare viene indirizzato prima alle escursioni delle sezioni.

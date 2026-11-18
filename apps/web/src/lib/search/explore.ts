@@ -1,11 +1,13 @@
 // Esplora (SPEC §5.1): filtri, preset, ordinamento e distanze sull'indice generato da
 // services/ingest/src/cordata_ingest/build/explore.py. Funzioni pure, testate a parte.
+// Le escursioni sono solo quelle delle locandine delle sezioni (ADR 0012): i sentieri del
+// catasto sono un livello della mappa.
 
-export type ItemKind = 's' | 'a' | 'i';
+/** a: attività CAI dalla locandina; i: itinerario (la fixture, anch'essa da una locandina) */
+export type ItemKind = 'a' | 'i';
 export type RouteType = 'anello' | 'andata_ritorno' | 'traversata';
 export type Tag = 'lago' | 'cima' | 'rifugio' | 'acqua' | 'panorama';
 export type Difficulty = 'T' | 'E' | 'EE' | 'EEA' | 'EAI';
-export type Source = 'attivita' | 'archivio' | 'itinerari' | 'catasto' | 'osm';
 export type SortKey = 'rilevanza' | 'distanza' | 'durata' | 'dislivello' | 'data';
 export type BBox = [number, number, number, number];
 export type LonLat = [number, number];
@@ -32,8 +34,6 @@ export interface ExploreItem {
 	p: number[];
 	tag: string[];
 	mo: number[];
-	sda?: number | null;
-	iss?: string | null;
 	ok?: boolean;
 	/** deduplica (§7.5): altre proposte dello stesso itinerario; membro non canonico */
 	alt?: number;
@@ -67,7 +67,8 @@ export interface Filters {
 	types: RouteType[];
 	tags: Tag[];
 	month: number | null;
-	sources: Source[];
+	/** sezioni organizzatrici (nomi come in `sectionOf`) */
+	sections: string[];
 	futureOnly: boolean;
 	near: NearFilter | null;
 	area: BBox | null;
@@ -87,7 +88,7 @@ export const EMPTY_FILTERS: Filters = {
 	types: [],
 	tags: [],
 	month: null,
-	sources: [],
+	sections: [],
 	futureOnly: false,
 	near: null,
 	area: null
@@ -105,14 +106,6 @@ export const TYPE_LABEL: Record<RouteType, string> = {
 	anello: 'Anello',
 	andata_ritorno: 'Andata e ritorno',
 	traversata: 'Traversata'
-};
-
-export const SOURCE_LABEL: Record<Source, string> = {
-	attivita: 'Attività CAI in programma',
-	archivio: 'Archivio attività CAI',
-	itinerari: 'Itinerari',
-	catasto: 'Catasto sentieri CAI',
-	osm: 'Rete OSM'
 };
 
 export const MONTHS = [
@@ -139,10 +132,16 @@ export function haversineKm(a: LonLat, b: LonLat): number {
 	return 2 * 6371 * Math.asin(Math.sqrt(h));
 }
 
-export function sourceOf(item: ExploreItem): Source {
-	if (item.k === 'a') return item.fut ? 'attivita' : 'archivio';
-	if (item.k === 'i') return 'itinerari';
-	return item.sda ? 'catasto' : 'osm';
+/** Sezione (o sezioni) organizzatrice: il campo `src` è «CAI Bolzano, 26/07/2026». */
+export function sectionOf(item: ExploreItem): string {
+	return item.src.replace(/,\s*\d{2}\/\d{2}\/\d{4}\s*$/, '').trim();
+}
+
+/** Sezioni presenti nell'indice, dalla più rappresentata. */
+export function sectionsIn(items: ExploreItem[]): string[] {
+	const count = new Map<string, number>();
+	for (const i of items) if (!i.hide) count.set(sectionOf(i), (count.get(sectionOf(i)) ?? 0) + 1);
+	return [...count].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([s]) => s);
 }
 
 /** Le ciaspolate (EAI) sono un'etichetta a parte; "E-EE" vale per entrambe. */
@@ -197,7 +196,7 @@ export function matches(item: ExploreItem, f: Filters): boolean {
 	if (f.types.length && !f.types.includes(item.ty as RouteType)) return false;
 	if (f.tags.some((t) => !tagMatches(item, t))) return false;
 	if (f.month != null && !item.mo.includes(f.month)) return false;
-	if (f.sources.length && !f.sources.includes(sourceOf(item))) return false;
+	if (f.sections.length && !f.sections.includes(sectionOf(item))) return false;
 	if (f.futureOnly && !item.fut) return false;
 	if (f.near && haversineKm(item.s, [f.near.lon, f.near.lat]) > f.near.km) return false;
 	if (f.area && !intersects(item.b, f.area)) return false;
@@ -208,13 +207,11 @@ export function filterItems(items: ExploreItem[], f: Filters): ExploreItem[] {
 	return items.filter((item) => !item.hide && matches(item, f));
 }
 
-/** Rilevanza: attività verificate, poi catasto validato (sda 4), poi aderenza al testo. */
+/** Rilevanza: aderenza al testo, poi tracce verificate, poi gite in programma. */
 function relevance(item: ExploreItem, f: Filters): number {
-	let score = textScore(item, f.text);
-	if (item.k === 'a') score += item.ok ? 3 : 2;
-	if (item.k === 'i') score += 3;
-	if (item.sda === 4) score += 1;
-	if (item.iss && /percorribile/i.test(item.iss) && !/non/i.test(item.iss)) score += 0.2;
+	let score = textScore(item, f.text) * 10;
+	if (item.ok || item.k === 'i') score += 2;
+	if (item.fut) score += 1;
 	return score;
 }
 
@@ -297,7 +294,7 @@ function withTag(tags: Tag[], tag: Tag): Tag[] {
 }
 
 export interface Chip {
-	key: keyof Filters | `tag:${Tag}` | `type:${RouteType}` | `diff:${Difficulty}` | `src:${Source}`;
+	key: keyof Filters | `tag:${Tag}` | `type:${RouteType}` | `diff:${Difficulty}` | `sez:${string}`;
 	label: string;
 }
 
@@ -346,7 +343,7 @@ export function chipsFor(f: Filters): Chip[] {
 	for (const t of f.types) chips.push({ key: `type:${t}`, label: TYPE_LABEL[t] });
 	for (const t of f.tags) chips.push({ key: `tag:${t}`, label: TAG_LABEL[t] });
 	if (f.month != null) chips.push({ key: 'month', label: `adatto a ${MONTHS[f.month - 1]}` });
-	for (const s of f.sources) chips.push({ key: `src:${s}`, label: SOURCE_LABEL[s] });
+	for (const s of f.sections) chips.push({ key: `sez:${s}`, label: s });
 	if (f.futureOnly) chips.push({ key: 'futureOnly', label: 'solo in programma' });
 	if (f.near) chips.push({ key: 'near', label: `entro ${f.near.km} km da ${f.near.label}` });
 	if (f.area) chips.push({ key: 'area', label: "in quest'area" });
@@ -354,7 +351,9 @@ export function chipsFor(f: Filters): Chip[] {
 }
 
 export function removeChip(f: Filters, key: Chip['key']): Filters {
-	const [kind, value] = key.split(':') as [string, string | undefined];
+	const cut = key.indexOf(':');
+	const kind = cut < 0 ? key : key.slice(0, cut);
+	const value = cut < 0 ? undefined : key.slice(cut + 1);
 	switch (kind) {
 		case 'tag':
 			return { ...f, tags: f.tags.filter((t) => t !== value) };
@@ -362,8 +361,8 @@ export function removeChip(f: Filters, key: Chip['key']): Filters {
 			return { ...f, types: f.types.filter((t) => t !== value) };
 		case 'diff':
 			return { ...f, difficulties: f.difficulties.filter((d) => d !== value) };
-		case 'src':
-			return { ...f, sources: f.sources.filter((s) => s !== value) };
+		case 'sez':
+			return { ...f, sections: f.sections.filter((s) => s !== value) };
 		case 'maxMinutes':
 			return { ...f, minMinutes: null, maxMinutes: null };
 		case 'maxKm':

@@ -1,6 +1,7 @@
-"""Indice di Esplora (SPEC §5.1): un elenco unico e leggero di tutto ciò che si può proporre.
+"""Indice di Esplora (SPEC §5.1): un elenco unico e leggero delle escursioni proposte.
 
-- sentieri del catasto CAI (schede della Fase 1), attività CAI (archivio del pilota), itinerari;
+- solo le escursioni delle sezioni CAI estratte dalle locandine (attività e itinerari): i sentieri
+  del catasto sono un livello della mappa, non proposte (ADR 0012);
 - per ciascuno: metriche per filtri e card (tempo, km, D+, D−, quota massima, difficoltà, tipo),
   partenza, riquadro, **mini-profilo** (24 quote), **etichette** (lago, cima, rifugio, acqua,
   panorama) dai luoghi OSM vicini alla traccia, **stagione indicativa** dalla quota;
@@ -40,16 +41,6 @@ PLACE_KINDS = {
     "valle": "v",
     "ghiacciaio": "g",
 }
-
-
-def _n(value: Any) -> float | None:
-    """Numero da un valore del catasto, che a volte è una stringa ("939", "9,7", "")."""
-    if value is None or value == "":
-        return None
-    try:
-        return float(str(value).replace(",", "."))
-    except ValueError:
-        return None
 
 
 def season(max_ele: float, difficulty: str | None) -> list[int]:
@@ -103,39 +94,6 @@ def _tags_for(conn: psycopg.Connection, lines: dict[str, list[list[float]]]) -> 
             for (item_id,) in cur.fetchall():
                 out[item_id].add(tag)
     return out
-
-
-def _trail_items(sentieri_dir: Path) -> list[dict[str, Any]]:
-    index = json.loads((sentieri_dir / "index.json").read_text(encoding="utf-8"))["trails"]
-    items = []
-    for entry in index:
-        doc = json.loads((sentieri_dir / f"{entry['id']}.json").read_text(encoding="utf-8"))
-        c, o = doc["computed"], doc["official"]
-        minutes = _n(o.get("duration_forward_min")) or c["cai_forward_min"]
-        name = doc["name"] or (f"{doc['from']} – {doc['to']}" if doc["from"] else "")
-        items.append(
-            {
-                "id": doc["id"],
-                "k": "s",  # sentiero
-                "t": f"{doc['ref']} {name}".strip() if doc["ref"] else name or "Sentiero",
-                "sub": f"{doc['from']} – {doc['to']}" if doc["from"] and doc["to"] else "",
-                "src": "Catasto CAI (OSM2CAI)" if doc.get("sda") else "Rete OSM",
-                "min": round(minutes),
-                "km": round(_n(o.get("distance_km")) or c["distance_km"], 1),
-                "up": round(_n(o.get("ascent_m")) or c["ascent_m"]),
-                "dn": round(_n(o.get("descent_m")) or c["descent_m"]),
-                "max": round(c["max_ele_m"]),
-                "d": doc["difficulty"]["cai"],
-                "ty": "anello" if doc.get("roundtrip") else "traversata",
-                "s": [round(doc["line"][0][0], 5), round(doc["line"][0][1], 5)],
-                "b": doc["bbox"],
-                "p": mini_profile(doc["profile"]["points"]),
-                "sda": doc.get("sda"),
-                "iss": doc["issues"]["status"] if doc.get("issues") else None,
-                "_line": doc["line"],
-            }
-        )
-    return items
 
 
 NAME_TAGS: dict[str, tuple[str, ...]] = {
@@ -251,10 +209,10 @@ def build_places(conn: psycopg.Connection) -> list[list[Any]]:
 
 def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
     data = static_dir / "data"
-    items = (
-        _itinerary_items(data / "attivita", "attivita")
-        + _itinerary_items(data / "itinerari", "itinerario")
-        + _trail_items(data / "sentieri")
+    # solo escursioni dalle locandine delle sezioni (ADR 0012): i sentieri del catasto restano
+    # sulla mappa, con la loro scheda informativa
+    items = _itinerary_items(data / "attivita", "attivita") + _itinerary_items(
+        data / "itinerari", "itinerario"
     )
     tags = _tags_for(conn, {it["id"]: it["_line"] for it in items})
     for it in items:
@@ -270,7 +228,7 @@ def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
         "schema": 1,
         "generated_at": time.strftime("%Y-%m-%d"),
         "fields": {
-            "k": "s=sentiero del catasto, a=attività CAI, i=itinerario",
+            "k": "a=attività CAI dalle locandine, i=itinerario (fixture dalla locandina)",
             "min": "tempo in minuti (dichiarato o calcolato, senza soste)",
             "mo": "mesi consigliati, indicativi (dalla quota massima)",
             "p": f"mini-profilo: {PROFILE_SAMPLES} quote equidistanti",

@@ -3,22 +3,22 @@
 	import {
 		EMPTY_FILTERS,
 		MONTHS,
-		SOURCE_LABEL,
 		TAG_LABEL,
 		TYPE_LABEL,
 		type Difficulty,
 		type Filters,
 		type RouteType,
-		type Source,
 		type Tag
 	} from '../search/explore';
 
 	interface Props {
 		filters: Filters;
 		count: number;
+		/** sezioni organizzatrici presenti nell'indice */
+		sections?: string[];
 		onclose: () => void;
 	}
-	let { filters = $bindable(), count, onclose }: Props = $props();
+	let { filters = $bindable(), count, sections = [], onclose }: Props = $props();
 
 	const DIFFS: Difficulty[] = ['T', 'E', 'EE', 'EEA', 'EAI'];
 	const HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 10];
@@ -245,15 +245,14 @@
 		</fieldset>
 
 		<fieldset>
-			<legend>Fonte</legend>
+			<legend>Sezione</legend>
 			<div class="toggle">
-				{#each Object.entries(SOURCE_LABEL) as [s, label] (s)}
+				{#each sections as s (s)}
 					<button
 						type="button"
-						aria-pressed={filters.sources.includes(s as Source)}
-						onclick={() =>
-							(filters = { ...filters, sources: toggle(filters.sources, s as Source) })}
-						>{label}</button
+						aria-pressed={filters.sections.includes(s)}
+						onclick={() => (filters = { ...filters, sections: toggle(filters.sections, s) })}
+						>{s}</button
 					>
 				{/each}
 			</div>

@@ -100,3 +100,5 @@ tocchi danno un percorso di 2,6 km agganciato al sentiero 332, nessun errore).
   al profilo su desktop, mini-mappa o mappa ferma sul telefono).
 - **Ordine dei lavori** dopo le verifiche sulla demo: modifica del modello e legenda, poi blocchi di
   ingestion, poi Fase 5 (sostituisce la risposta del 17/11 «prossimo passo: Fase 5»).
+- Le osservazioni sulla demo erano queste; la modifica del modello e la legenda sono state
+  realizzate il 18/11/2026 (dettagli nell'ADR 0012).

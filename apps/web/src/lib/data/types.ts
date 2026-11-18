@@ -187,7 +187,7 @@ export interface TrailWayProps {
 	color: string;
 }
 
-/** Punto di partenza di una proposta in Esplora (k: s sentiero, a attività, i itinerario). */
+/** Partenza di un'escursione in Esplora (k: a attività dalla locandina, i itinerario). */
 export interface MapPoint {
 	id: string;
 	lon: number;

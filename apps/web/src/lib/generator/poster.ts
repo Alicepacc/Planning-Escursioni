@@ -1,4 +1,5 @@
-// Locandina della proposta generata (SPEC §5.7 a): titolo, descrizione, tappe con tempi,
+// Locandina di un giro composto dal generatore (SPEC §5.7 a, strumento del planner: ADR 0012):
+// titolo, descrizione, tappe con tempi,
 // difficoltà, attrezzatura per stagione e quota. Il testo è composto solo dai dati (nomi dei
 // luoghi, quote, sentieri, rifugi): niente frasi inventate.
 
@@ -7,7 +8,7 @@ import { formatDuration, formatKm, formatMeters } from '../hiking/format';
 import { routeProfile } from '../routing/stats';
 import type { GenOptions, Proposal } from './generator';
 
-export const GENERATED_LABEL = 'Proposta generata, non verificata sul terreno';
+export const GENERATED_LABEL = 'Giro composto automaticamente, non verificato sul terreno';
 
 export interface PosterStage {
 	name: string;

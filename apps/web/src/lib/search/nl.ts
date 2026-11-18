@@ -72,7 +72,7 @@ export function parseQuery(input: string, base: Filters = EMPTY_FILTERS): NlResu
 		difficulties: [...base.difficulties],
 		types: [...base.types],
 		tags: [...base.tags],
-		sources: [...base.sources]
+		sections: [...base.sections]
 	};
 	const unsupported: string[] = [];
 	const text = { value: ` ${fold(input)} ` };
@@ -239,8 +239,8 @@ export function parseQuery(input: string, base: Filters = EMPTY_FILTERS): NlResu
 
 	// fonte
 	if (take(text, /\b(?:in programma|in calendario|prossim\w*|future)\b/)) f.futureOnly = true;
-	if (take(text, /\b(?:attivita|gite?)\s+(?:cai|sat|delle sezioni|sociali)\b|\bgite sociali\b/))
-		f.sources = ['attivita', 'archivio'];
+	// «gite CAI», «gite sociali»: tutte le escursioni lo sono già (ADR 0012)
+	take(text, /\b(?:attivita|gite?)\s+(?:cai|sat|delle sezioni|sociali)\b|\bgite sociali\b/);
 
 	return { filters: f, place, unsupported };
 }

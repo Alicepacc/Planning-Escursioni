@@ -7,6 +7,7 @@
 	import { generatedAsset } from '#lib/data/paths.ts';
 	import MapView from '#lib/map/MapView.svelte';
 	import ResultCard from '#lib/components/ResultCard.svelte';
+	import TrailInfo from '#lib/components/TrailInfo.svelte';
 	import FiltersPanel from '#lib/components/FiltersPanel.svelte';
 	import {
 		EMPTY_FILTERS,
@@ -15,6 +16,7 @@
 		filterItems,
 		haversineKm,
 		removeChip,
+		sectionsIn,
 		sortItems,
 		textScore,
 		type BBox,
@@ -53,7 +55,8 @@
 	let mapBBox = $state<BBox | null>(null);
 	let movedByUser = $state(false);
 	let focus = $state<BBox | null>(null);
-	let trailNote = $state<{ text: string; href: string | null } | null>(null);
+	/** tratti di sentiero toccati sulla mappa: se ne mostrano le informazioni (ADR 0012) */
+	let trailWays = $state<TrailWayProps[] | null>(null);
 
 	onMount(async () => {
 		try {
@@ -61,7 +64,7 @@
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			items = ((await res.json()) as ExploreIndex).items;
 		} catch (err) {
-			loadError = `Indice delle proposte non disponibile (${err instanceof Error ? err.message : err}).`;
+			loadError = `Elenco delle escursioni non disponibile (${err instanceof Error ? err.message : err}).`;
 		}
 	});
 
@@ -87,7 +90,7 @@
 	const chips = $derived(chipsFor(filters));
 	const activeCount = $derived(chips.length);
 
-	// suggerimenti mentre si scrive: luoghi e proposte
+	// suggerimenti mentre si scrive: luoghi ed escursioni
 	const suggestions = $derived.by(() => {
 		const q = query.trim();
 		if (q.length < 2) return [];
@@ -108,10 +111,7 @@
 				});
 			}
 		}
-		const matching = items
-			.filter((i) => textScore(i, q) === 1)
-			.sort((a, b) => Number(b.k !== 's') - Number(a.k !== 's'))
-			.slice(0, 5);
+		const matching = items.filter((i) => !i.hide && textScore(i, q) === 1).slice(0, 5);
 		for (const i of matching)
 			// eslint-disable-next-line svelte/no-navigation-without-resolve -- hrefFor usa resolve()
 			out.push({ label: i.t, detail: i.src, action: () => goto(hrefFor(i)) });
@@ -214,24 +214,7 @@
 	}
 
 	function onTrailClick(ways: TrailWayProps[]) {
-		const ids = [...new Set(ways.flatMap((w) => (w.cai ? w.cai.split(',') : [])))];
-		const inResults = ids.find((id) => results.some((r) => r.id === id));
-		if (inResults) {
-			trailNote = null;
-			void selectItem(inResults);
-			return;
-		}
-		const known = ids.find((id) => items.some((r) => r.id === id));
-		const ref = ways[0]?.refs;
-		trailNote = known
-			? {
-					text: `Sentiero ${ref || ''} escluso dai filtri attivi.`,
-					href: resolve('/sentiero/[id]', { id: known })
-				}
-			: {
-					text: `Tratto ${ref ? `del sentiero ${ref}` : 'di sentiero'} senza scheda del catasto.`,
-					href: null
-				};
+		trailWays = ways;
 	}
 </script>
 
@@ -239,14 +222,15 @@
 	<title>Esplora – Cordata</title>
 	<meta
 		name="description"
-		content="Proposte di escursioni in Trentino-Alto Adige e Dolomiti venete: sentieri del catasto CAI e gite delle sezioni, con filtri e mappa."
+		content="Escursioni delle sezioni CAI e SAT in Trentino-Alto Adige e Dolomiti venete, dalle loro locandine: filtri, mappa dei sentieri e schede."
 	/>
 </svelte:head>
 
 <div class="esplora">
 	<div class="mappa">
 		<MapView
-			label="Mappa delle proposte"
+			label="Mappa delle escursioni"
+			legend={['escursioni']}
 			{points}
 			{selected}
 			{focus}
@@ -260,9 +244,14 @@
 		{#if movedByUser}
 			<button type="button" class="qui" onclick={searchHere}>Cerca in quest'area</button>
 		{/if}
+		{#if trailWays}
+			<div class="info-sentiero">
+				<TrailInfo ways={trailWays} onclose={() => (trailWays = null)} />
+			</div>
+		{/if}
 	</div>
 
-	<section class="pannello-lista" aria-label="Proposte">
+	<section class="pannello-lista" aria-label="Escursioni">
 		<form class="cerca" role="search" onsubmit={submitSearch}>
 			<label class="sr" for="q">Cerca un luogo o descrivi la gita</label>
 			<input
@@ -270,7 +259,7 @@
 				type="search"
 				bind:value={query}
 				onfocus={loadPlaces}
-				placeholder="Luogo, sentiero o «anello di 4 ore con un lago»"
+				placeholder="Luogo, gita o «anello di 4 ore con un lago»"
 				autocomplete="off"
 				enterkeyhint="search"
 			/>
@@ -311,20 +300,13 @@
 			{/each}
 		</div>
 		{#each notes as n (n)}<p class="nota">{n}</p>{/each}
-		{#if trailNote}
-			<p class="nota">
-				{trailNote.text}
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href da resolve() -->
-				{#if trailNote.href}<a href={trailNote.href}>Apri la scheda</a>{/if}
-			</p>
-		{/if}
 
 		<div class="intestazione">
 			<p aria-live="polite">
-				{#if loadError}{loadError}{:else if !items.length}Carico le proposte…{:else}<strong
+				{#if loadError}{loadError}{:else if !items.length}Carico le escursioni…{:else}<strong
 						>{results.length}</strong
 					>
-					{results.length === 1 ? 'proposta' : 'proposte'}{/if}
+					{results.length === 1 ? 'escursione' : 'escursioni'} delle sezioni CAI{/if}
 			</p>
 			<label
 				>Ordina <select bind:value={sort}>
@@ -356,9 +338,10 @@
 			>
 		{/if}
 		<p class="fonti">
-			Dati: catasto sentieri CAI (OSM2CAI) e © OpenStreetMap (ODbL); attività: sintesi delle
-			locandine delle sezioni con link agli originali. <a href={resolve('/fonti')}
-				>Fonti e licenze</a
+			Escursioni: sintesi delle locandine delle sezioni CAI e SAT, con link agli originali; tracce
+			ricostruite (tratteggiate se non verificate). Mappa: sentieri del catasto CAI (OSM2CAI) e ©
+			OpenStreetMap (ODbL); tocca un sentiero per vederne le informazioni. <a
+				href={resolve('/fonti')}>Fonti e licenze</a
 			>
 		</p>
 	</section>
@@ -371,10 +354,30 @@
 		aria-label="Chiudi i filtri"
 		onclick={() => (showFilters = false)}
 	></button>
-	<FiltersPanel bind:filters count={results.length} onclose={() => (showFilters = false)} />
+	<FiltersPanel
+		bind:filters
+		count={results.length}
+		sections={sectionsIn(items)}
+		onclose={() => (showFilters = false)}
+	/>
 {/if}
 
 <style>
+	.info-sentiero {
+		position: absolute;
+		left: 0.6rem;
+		right: 3.4rem;
+		bottom: 2rem;
+		max-height: calc(100% - 3rem);
+		display: flex;
+		z-index: 3;
+	}
+	@media (min-width: 900px) {
+		.info-sentiero {
+			right: auto;
+			width: 360px;
+		}
+	}
 	.esplora {
 		display: grid;
 		/* minmax(0, …): la riga dei preset scorre in orizzontale invece di allargare la pagina */

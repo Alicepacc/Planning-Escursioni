@@ -12,6 +12,10 @@ export const BASEMAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 export const TERRAIN_TILES = 'https://tiles.mapterhorn.com/{z}/{x}/{y}.webp';
 export const TERRAIN_MAXZOOM = 12; // disponibile ovunque; i livelli superiori solo in parte
 export const TRAILS_SOURCE = 'cordata';
+/** traccia di un'escursione nella scheda (diversa dai colori dei sentieri) */
+export const ESCURSIONE_COLOR = '#174ea6';
+/** partenza di un'escursione in Esplora: ambra con bordo scuro, colore che nessun altro elemento usa */
+export const ESCURSIONE_POINT_COLOR = '#f2a900';
 export const TRAIL_LAYERS = ['sentieri'];
 export const FONT_REGULAR = ['Noto Sans Regular'];
 export const FONT_BOLD = ['Noto Sans Bold'];
@@ -30,7 +34,7 @@ export const scaleColor: ExpressionSpecification = [
 	'#8a5a44'
 ];
 
-const POI_COLORS: Record<string, string> = {
+export const POI_COLORS: Record<string, string> = {
 	rifugio: '#b5651d',
 	bivacco: '#b5651d',
 	riparo: '#b5651d',

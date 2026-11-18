@@ -14,7 +14,8 @@
 	import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 	import type { MapPoint, TrailWayProps } from '../data/types';
 	import { demSource } from './dem';
-	import { BASEMAP_STYLE_URL, withCordataLayers } from './style';
+	import MapLegend from './MapLegend.svelte';
+	import { BASEMAP_STYLE_URL, ESCURSIONE_POINT_COLOR, withCordataLayers } from './style';
 
 	interface StageMarker {
 		n: number;
@@ -43,6 +44,8 @@
 		focus?: [number, number, number, number] | null;
 		/** mappa pronta: chi la usa può aggiungere sorgenti, layer e gestori (planner) */
 		onReady?: (map: MlMap, lib: typeof import('maplibre-gl')) => void;
+		/** sezioni della legenda oltre a sentieri e luoghi */
+		legend?: ('escursioni' | 'percorso' | 'planner')[];
 	}
 
 	let {
@@ -59,7 +62,8 @@
 		onPointClick,
 		onMoveEnd,
 		focus = null,
-		onReady
+		onReady,
+		legend = []
 	}: Props = $props();
 
 	let container: HTMLDivElement;
@@ -186,17 +190,11 @@
 					type: 'circle',
 					source: 'proposte',
 					paint: {
-						'circle-radius': [
-							'case',
-							['==', ['get', 'sel'], 1],
-							9,
-							['==', ['get', 'k'], 's'],
-							4.5,
-							6.5
-						],
-						'circle-color': ['match', ['get', 'k'], 'a', '#c0392b', 'i', '#1f2933', '#2c6e9b'],
-						'circle-stroke-color': '#ffffff',
-						'circle-stroke-width': ['case', ['==', ['get', 'sel'], 1], 3, 1.5]
+						'circle-radius': ['case', ['==', ['get', 'sel'], 1], 10, 7],
+						// un solo colore per le escursioni, diverso da quelli dei sentieri (ADR 0012)
+						'circle-color': ESCURSIONE_POINT_COLOR,
+						'circle-stroke-color': '#1f2933',
+						'circle-stroke-width': ['case', ['==', ['get', 'sel'], 1], 4, 2]
 					}
 				});
 				map.on('click', 'proposte', (e) => {
@@ -303,6 +301,7 @@
 </script>
 
 <div class="map" bind:this={container} role="region" aria-label={label}>
+	{#if !failed}<MapLegend parts={legend} />{/if}
 	{#if failed}
 		<p class="errore">
 			La mappa non si è caricata ({failed}). I dati della scheda restano disponibili qui sotto.

@@ -258,7 +258,7 @@
 	});
 </script>
 
-<MapView label="Mappa del planner" {cursor} {focus} onReady={setup} />
+<MapView label="Mappa del planner" {cursor} {focus} onReady={setup} legend={['planner']} />
 
 <style>
 	:global(.wp) {

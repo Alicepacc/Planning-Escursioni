@@ -6,18 +6,19 @@ import {
 	filterItems,
 	haversineKm,
 	removeChip,
+	sectionOf,
+	sectionsIn,
 	sortItems,
-	sourceOf,
 	type ExploreItem
 } from './explore';
 
 function item(over: Partial<ExploreItem>): ExploreItem {
 	return {
 		id: 'x',
-		k: 's',
-		t: 'Sentiero',
+		k: 'a',
+		t: 'Gita',
 		sub: '',
-		src: 'Catasto CAI (OSM2CAI)',
+		src: 'CAI Bolzano, 26/07/2026',
 		min: 180,
 		km: 8,
 		up: 500,
@@ -30,7 +31,6 @@ function item(over: Partial<ExploreItem>): ExploreItem {
 		p: [],
 		tag: [],
 		mo: [6, 7, 8, 9, 10],
-		sda: 4,
 		...over
 	};
 }
@@ -57,7 +57,17 @@ describe('filtri di Esplora', () => {
 		expect(filterItems(items, { ...EMPTY_FILTERS, difficulties: ['EE'] })).toEqual([ee]);
 		expect(filterItems(items, { ...EMPTY_FILTERS, month: 1 })).toEqual([eai]);
 		expect(filterItems(items, { ...EMPTY_FILTERS, futureOnly: true })).toEqual([eai]);
-		expect(sourceOf(eai)).toBe('attivita');
+		expect(sectionOf(eai)).toBe('CAI Bolzano');
+	});
+
+	it('filtro per sezione organizzatrice, con chip', () => {
+		const sat = item({ id: 'sat', src: 'SAT Pergine, 09/08/2026' });
+		const cai2 = item({ id: 'cai2', src: 'CAI Bolzano, 12/04/2026' });
+		expect(sectionsIn([sat, lago, cai2])).toEqual(['CAI Bolzano', 'SAT Pergine']);
+		const f = { ...EMPTY_FILTERS, sections: ['SAT Pergine'] };
+		expect(filterItems([sat, lago, cai2], f)).toEqual([sat]);
+		expect(chipsFor(f).map((c) => c.label)).toEqual(['SAT Pergine']);
+		expect(removeChip(f, 'sez:SAT Pergine').sections).toEqual([]);
 	});
 
 	it('«Panoramico» vale anche per chi tocca una cima', () => {

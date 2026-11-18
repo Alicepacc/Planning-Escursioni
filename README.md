@@ -16,7 +16,7 @@ Rapporti: [`reports/phase4/README.md`](reports/phase4/README.md) ·
 
 | Cartella | Contenuto |
 |---|---|
-| `apps/web` | PWA SvelteKit: Esplora, schede con profilo altimetrico, planner con routing nel browser, generatore di proposte, pagina Fonti e licenze |
+| `apps/web` | PWA SvelteKit: Esplora (escursioni delle sezioni CAI dalle locandine), schede con profilo altimetrico, mappa dei sentieri del catasto con legenda, planner con routing nel browser e «Componi un giro», pagina Fonti e licenze |
 | `services/ingest` | Python: verifiche delle fonti, sincronizzazione OSM2CAI, import OSM in PostGIS, quote e tempi, tile e schede per la PWA ([README](services/ingest/README.md)) |
 | `services/routing` | GraphHopper: configurazione, Dockerfile, spike sulla fixture |
 | `infra` | Docker Compose per lo sviluppo locale |

@@ -134,7 +134,7 @@
 	let mapRef = $state<{ center: () => { lon: number; lat: number; mpp: number } | null }>();
 	let restored = $state(false);
 
-	// generatore di proposte
+	// generatore: compone giri su richiesta (strumento del planner, ADR 0012)
 	let genOpen = $state(false);
 	let genStart = $state<PlanPoint | null>(null);
 	let genEnd = $state<PlanPoint | null>(null);
@@ -143,8 +143,10 @@
 	const genMarks = $derived(
 		genOpen
 			? [
-					...(genStart ? [{ ...genStart, label: 'P', title: 'Partenza della proposta' }] : []),
-					...(genEnd ? [{ ...genEnd, label: 'A', title: 'Arrivo della proposta' }] : [])
+					...(genStart
+						? [{ ...genStart, label: 'P', title: 'Partenza del giro da comporre' }]
+						: []),
+					...(genEnd ? [{ ...genEnd, label: 'A', title: 'Arrivo del giro da comporre' }] : [])
 				]
 			: []
 	);
@@ -607,7 +609,7 @@
 		/>
 		{#if genOpen && (genPicking || !genStart)}
 			<p class="suggerimento">
-				Tocca la mappa per {genPicking === 'end' ? 'l’arrivo' : 'la partenza'} della proposta.
+				Tocca la mappa per {genPicking === 'end' ? 'l’arrivo' : 'la partenza'} del giro da comporre.
 			</p>
 		{:else if genOpen}
 			<!-- nessun suggerimento: la mappa mostra l'anteprima -->
@@ -680,14 +682,15 @@
 				<button type="button" onclick={addAtCenter} title="Aggiunge un punto al centro della mappa"
 					>＋ Punto al centro</button
 				>
-				<button type="button" class="proponi" onclick={openGenerator}>✨ Proponi un giro</button>
+				<button type="button" class="proponi" onclick={openGenerator}>✨ Componi un giro</button>
 			</div>
 			{#if !plan.points.length}
 				<p class="invito">
-					Non sai dove andare?
+					Non sai dove andare? Guarda le <a href={resolve('/')}>escursioni delle sezioni CAI</a>,
+					oppure
 					<button type="button" class="link" onclick={openGenerator}
-						>Fatti proporre un giro ad anello, andata e ritorno o traversata</button
-					>
+						>componi un giro automaticamente</button
+					>.
 				</p>
 			{/if}
 
@@ -959,7 +962,7 @@
 		position: absolute;
 		left: 0.75rem;
 		right: 3.5rem;
-		top: 0.75rem;
+		top: 3.4rem; /* sotto il pulsante della legenda */
 		margin: 0;
 		padding: 0.5rem 0.75rem;
 		background: color-mix(in srgb, var(--surface) 94%, transparent);

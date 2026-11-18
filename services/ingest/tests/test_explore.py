@@ -3,13 +3,7 @@
 from datetime import date
 
 from cordata_ingest.build.activities import activity_slug, equipment, summary
-from cordata_ingest.build.explore import _n, mini_profile, season
-
-
-def test_numeri_del_catasto_anche_come_stringhe():
-    assert _n("939") == 939.0
-    assert _n("9,7") == 9.7
-    assert _n("") is None and _n(None) is None and _n("n.d.") is None
+from cordata_ingest.build.explore import mini_profile, season
 
 
 def test_stagione_indicativa_dalla_quota():

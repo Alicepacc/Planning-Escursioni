@@ -104,6 +104,8 @@ Nota privacy: la locandina contiene nome e telefono del capo gita. **Non estrarr
 ## 5. Funzionalità
 
 ### 5.1 Esplora (proposte)
+> **Aggiornamento 18/11/2026 ([ADR 0012](decisions/0012-escursioni-solo-dalle-locandine.md))**: le escursioni proposte sono solo quelle delle locandine delle sezioni CAI e SAT; i sentieri del catasto sono un livello della mappa (toccandone uno se ne vedono le informazioni) e il filtro «fonte» diventa «sezione». La mappa ha una legenda.
+
 - Vista **mappa + lista** sincronizzate. Pulsante "Cerca in quest'area" dopo lo spostamento della mappa.
 - Ricerca testuale (luoghi, cime, rifugi, valli, nomi itinerari) + geocoding locale sui POI OSM, con Nominatim self-hosted o rispettandone la policy.
 - **Filtri**: distanza (km), durata stimata, dislivello positivo, quota massima, difficoltà CAI (T, E, EE, EEA; EAI per le ciaspolate), tipo (anello / andata-ritorno / traversata), distanza dalla mia posizione o da una località, stagione consigliata, presenza di rifugi aperti o punti acqua, raggiungibile con mezzi pubblici (fase successiva), fonte (attività CAI, archivio CAI, itinerari Open Data Hub, rete OSM), solo attività future con data.
@@ -153,6 +155,8 @@ Nota privacy: la locandina contiene nome e telefono del capo gita. **Non estrarr
 - Export **GPX 1.1** (track + waypoint con nomi e quote), KML, GeoJSON; import GPX.
 
 ### 5.7 Funzioni avanzate (il valore aggiunto del progetto)
+
+> **Aggiornamento 18/11/2026 ([ADR 0012](decisions/0012-escursioni-solo-dalle-locandine.md))**: il generatore è uno strumento del planner («Componi un giro») per comporre un giro proprio, etichettato «non verificato»; non compare tra le escursioni proposte.
 
 **a) Generatore di proposte "stile sezione CAI".** Oltre a raccogliere le gite esistenti, l'app **compone nuovi itinerari** come farebbe un accompagnatore:
 - Input: punto di partenza (o "raggiungibile entro X minuti da Bolzano"), durata, D+, difficoltà massima, tipo (anello/traversata), stagione, desideri ("un lago", "una cima", "rifugio aperto per pranzo").

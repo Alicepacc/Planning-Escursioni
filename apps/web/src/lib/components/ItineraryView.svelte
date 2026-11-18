@@ -13,7 +13,8 @@
 	import { formatDate, formatDuration, formatKm, formatMeters } from '../hiking/format';
 	import { seasonMonths, seasonText } from '../hiking/season';
 	import { download, fileName, toGpx, toKml, type TrackPoint } from '../export/gpx';
-	import type { ItineraryDoc } from '../data/types';
+	import type { ItineraryDoc, TrailWayProps } from '../data/types';
+	import TrailInfo from './TrailInfo.svelte';
 
 	interface Props {
 		doc: ItineraryDoc;
@@ -129,6 +130,9 @@
 	const startLat = $derived(doc.start.lat ?? doc.line[0][1]);
 	const coordText = $derived(`${startLat.toFixed(5)}, ${startLon.toFixed(5)}`);
 
+	// sentiero toccato sulla mappa (catasto come livello della mappa, ADR 0012)
+	let trailWays = $state<TrailWayProps[] | null>(null);
+
 	// azioni
 	let saved = $state(false);
 	let shareNote = $state('');
@@ -226,7 +230,14 @@
 		{cursor}
 		stages={visibleMarkers}
 		label="Mappa dell'itinerario"
+		legend={['percorso']}
+		onTrailClick={(ways) => (trailWays = ways)}
 	/>
+	{#if trailWays}
+		<div class="info-sentiero">
+			<TrailInfo ways={trailWays} onclose={() => (trailWays = null)} />
+		</div>
+	{/if}
 </div>
 
 <article class="pagina">
@@ -503,6 +514,21 @@
 		position: relative;
 		height: 42dvh;
 		min-height: 260px;
+	}
+	.info-sentiero {
+		position: absolute;
+		left: 0.6rem;
+		right: 3.4rem;
+		bottom: 2rem;
+		max-height: calc(100% - 3rem);
+		display: flex;
+		z-index: 3;
+	}
+	@media (min-width: 900px) {
+		.info-sentiero {
+			right: auto;
+			width: 360px;
+		}
 	}
 	.tipo {
 		margin: 0.5rem 0 0;

@@ -1,5 +1,6 @@
 <script lang="ts">
-	// «Proponi un giro» (SPEC §5.7 a): vincoli → proposte in formato locandina, con anteprima sulla
+	// «Componi un giro» (SPEC §5.7 a): strumento del planner, non un'escursione delle sezioni
+	// (ADR 0012). Vincoli → giri in formato locandina, con anteprima sulla
 	// mappa e apertura nel planner. Le proposte sono generate dai dati e non verificate sul terreno.
 	import { tick } from 'svelte';
 	import DifficultyBadge from '../components/DifficultyBadge.svelte';
@@ -207,7 +208,7 @@
 
 <section class="generatore" aria-labelledby="gen-titolo" bind:this={panel}>
 	<div class="testa">
-		<h2 id="gen-titolo">Proponi un giro</h2>
+		<h2 id="gen-titolo">Componi un giro</h2>
 		<button type="button" class="link" onclick={onClose}>Chiudi</button>
 	</div>
 
@@ -285,7 +286,7 @@
 	</p>
 
 	<button type="button" class="primario" onclick={run} disabled={busy}
-		>{busy ? 'Sto componendo…' : 'Proponi'}</button
+		>{busy ? 'Sto componendo…' : 'Componi'}</button
 	>
 	{#if status}<p class="stato" role="status">{status}</p>{/if}
 
@@ -329,9 +330,9 @@
 	{/each}
 	{#if results.length}
 		<p class="piccolo">
-			Proposte composte dal grafo dei sentieri con una funzione di qualità esplicita (sentieri
-			segnati, varietà, luoghi, segnalazioni, stagione): verifica sempre percorso e condizioni prima
-			di partire.
+			Giri composti automaticamente sul grafo dei sentieri con una funzione di qualità esplicita
+			(sentieri segnati, varietà, luoghi, segnalazioni, stagione). Non sono escursioni delle sezioni
+			CAI: verifica sempre percorso e condizioni prima di partire.
 		</p>
 	{/if}
 </section>
