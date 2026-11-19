@@ -3,10 +3,23 @@
 // qui si restituisce chi va avvisato.
 
 import { currentUser, requireUser, type Utente } from './auth';
+import { notify } from './push';
 import { iscrizioniAperte, promossi, statoNuovaIscrizione, type Iscrizione } from './posti';
 import { HttpError, json, nowIso, randomId, randomToken, readJson, sha256, type Env } from './util';
 
 const VISIBILITA = ['link', 'contatti', 'pubblica'] as const;
+/** Data e ora leggibili, nel fuso dell'area (le uscite sono in Trentino-Alto Adige e Veneto). */
+export function formatRome(iso: string): string {
+	return new Intl.DateTimeFormat('it-IT', {
+		timeZone: 'Europe/Rome',
+		weekday: 'long',
+		day: 'numeric',
+		month: 'long',
+		hour: '2-digit',
+		minute: '2-digit'
+	}).format(new Date(iso));
+}
+
 export const DISCLAIMER =
 	"Uscita privata tra persone, non organizzata dal CAI: nessuna copertura assicurativa CAI, " +
 	'ognuno partecipa sotto la propria responsabilità.';
@@ -210,7 +223,16 @@ export async function show(env: Env, request: Request, id: string): Promise<Resp
 	});
 }
 
-export async function join(env: Env, request: Request, id: string): Promise<Response> {
+function page(env: Env, id: string): string {
+	return `${env.APP_URL.replace(/\/$/, '')}/uscita?id=${encodeURIComponent(id)}`;
+}
+
+export async function join(
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	id: string
+): Promise<Response> {
 	const user = await requireUser(env, request);
 	const row = await load(env, id);
 	const body = await readJson<{ t?: string }>(request);
@@ -229,7 +251,29 @@ export async function join(env: Env, request: Request, id: string): Promise<Resp
 	)
 		.bind(id, user.id, stato, nowIso())
 		.run();
+	ctx.waitUntil(
+		notify(env, [row.organizzatore], {
+			titolo: row.titolo,
+			testo:
+				stato === 'confermato'
+					? `${user.nome} partecipa all'uscita.`
+					: `${user.nome} è in lista d'attesa.`,
+			url: page(env, id)
+		})
+	);
 	return json(env, { stato });
+}
+
+function notifyPromoted(env: Env, ctx: ExecutionContext, row: UscitaRow, ids: string[]) {
+	if (ids.length) {
+		ctx.waitUntil(
+			notify(env, ids, {
+				titolo: row.titolo,
+				testo: "Si è liberato un posto: la tua partecipazione è confermata.",
+				url: page(env, row.id)
+			})
+		);
+	}
 }
 
 /** Aggiorna gli stati e fa scorrere la lista d'attesa; restituisce chi è stato promosso. */
@@ -248,7 +292,12 @@ async function promote(env: Env, row: UscitaRow): Promise<string[]> {
 	return ids;
 }
 
-export async function leave(env: Env, request: Request, id: string): Promise<Response> {
+export async function leave(
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	id: string
+): Promise<Response> {
 	const user = await requireUser(env, request);
 	const row = await load(env, id);
 	if (user.id === row.organizzatore) {
@@ -259,7 +308,9 @@ export async function leave(env: Env, request: Request, id: string): Promise<Res
 	)
 		.bind(id, user.id)
 		.run();
-	return json(env, { stato: 'rinunciato', promossi: await promote(env, row) });
+	const promoted = await promote(env, row);
+	notifyPromoted(env, ctx, row, promoted);
+	return json(env, { stato: 'rinunciato', promossi: promoted });
 }
 
 async function requireOrganizer(env: Env, request: Request, id: string) {
@@ -270,7 +321,13 @@ async function requireOrganizer(env: Env, request: Request, id: string) {
 }
 
 /** L'organizzatore sposta qualcuno tra confermati e lista d'attesa. */
-export async function setParticipant(env: Env, request: Request, id: string, utente: string) {
+export async function setParticipant(
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	id: string,
+	utente: string
+) {
 	const { row } = await requireOrganizer(env, request, id);
 	const { stato } = await readJson<{ stato?: string }>(request);
 	if (stato !== 'confermato' && stato !== 'attesa') throw new HttpError(400, 'Stato non valido.');
@@ -281,11 +338,27 @@ export async function setParticipant(env: Env, request: Request, id: string, ute
 		.run();
 	if (!res.meta.changes) throw new HttpError(404, 'Partecipante non trovato.');
 	const promoted = stato === 'attesa' ? await promote(env, row) : [];
+	notifyPromoted(env, ctx, row, promoted);
+	ctx.waitUntil(
+		notify(env, [utente], {
+			titolo: row.titolo,
+			testo:
+				stato === 'confermato'
+					? "L'organizzatore ha confermato la tua partecipazione."
+					: "L'organizzatore ti ha spostato in lista d'attesa.",
+			url: page(env, id)
+		})
+	);
 	return json(env, { stato, promossi: promoted });
 }
 
 /** Annullare, rinviare (con la nuova data) o riaprire l'uscita. */
-export async function setStatus(env: Env, request: Request, id: string): Promise<Response> {
+export async function setStatus(
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	id: string
+): Promise<Response> {
 	const { row } = await requireOrganizer(env, request, id);
 	const body = await readJson<{ stato?: string; rinviata_a?: string }>(request);
 	if (body.stato !== 'annullata' && body.stato !== 'rinviata' && body.stato !== 'aperta') {
@@ -301,17 +374,33 @@ export async function setStatus(env: Env, request: Request, id: string): Promise
 	const avvisare = (await iscrizioni(env, id))
 		.filter((i) => i.stato !== 'rinunciato' && i.utente !== row.organizzatore)
 		.map((i) => i.utente);
+	const testo =
+		body.stato === 'annullata'
+			? "L'uscita è stata annullata."
+			: body.stato === 'rinviata'
+				? `L'uscita è rinviata al ${formatRome(nuova!)}.`
+				: "L'uscita è di nuovo aperta.";
+	ctx.waitUntil(notify(env, avvisare, { titolo: row.titolo, testo, url: page(env, id) }));
 	return json(env, { stato: body.stato, rinviata_a: nuova, avvisare });
 }
 
-export async function announce(env: Env, request: Request, id: string): Promise<Response> {
-	await requireOrganizer(env, request, id);
+export async function announce(
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	id: string
+): Promise<Response> {
+	const { row } = await requireOrganizer(env, request, id);
 	const { testo } = await readJson<{ testo?: string }>(request);
 	const value = text(testo, 'testo', 1000, true)!;
 	const annuncio = randomId();
 	await env.DB.prepare('INSERT INTO annunci (id, uscita, testo) VALUES (?, ?, ?)')
 		.bind(annuncio, id, value)
 		.run();
+	const destinatari = (await iscrizioni(env, id))
+		.filter((i) => i.stato !== 'rinunciato' && i.utente !== row.organizzatore)
+		.map((i) => i.utente);
+	ctx.waitUntil(notify(env, destinatari, { titolo: row.titolo, testo: value, url: page(env, id) }));
 	return json(env, { id: annuncio }, 201);
 }
 

@@ -1,21 +1,47 @@
 // Cordata – servizio delle uscite di gruppo (Cloudflare Worker + D1, ADR 0014).
 
-import { loginOptions, loginVerify, logout, registrationOptions, registrationVerify, requireUser } from './auth';
+import {
+	loginOptions,
+	loginVerify,
+	logout,
+	registrationOptions,
+	registrationVerify,
+	requireUser
+} from './auth';
+import { publicKey, reminders, subscribe, unsubscribe } from './notifiche';
 import { announce, create, join, leave, mine, setParticipant, setStatus, show } from './uscite';
 import { HttpError, cors, json, type Env } from './util';
 
-type Handler = (env: Env, request: Request, ...params: string[]) => Promise<Response>;
+type Handler = (
+	env: Env,
+	request: Request,
+	ctx: ExecutionContext,
+	...params: string[]
+) => Promise<Response>;
+
+// gestori senza contesto (non mandano notifiche)
+const plain =
+	(fn: (env: Env, request: Request, ...params: string[]) => Promise<Response>): Handler =>
+	(env, request, _ctx, ...params) =>
+		fn(env, request, ...params);
 
 const ROUTES: [string, RegExp, Handler][] = [
-	['POST', /^\/api\/accesso\/registrazione\/opzioni$/, registrationOptions],
-	['POST', /^\/api\/accesso\/registrazione\/verifica$/, registrationVerify],
-	['POST', /^\/api\/accesso\/opzioni$/, (env) => loginOptions(env)],
-	['POST', /^\/api\/accesso\/verifica$/, loginVerify],
-	['POST', /^\/api\/accesso\/esci$/, logout],
-	['GET', /^\/api\/io$/, async (env, request) => json(env, { utente: await requireUser(env, request) })],
-	['GET', /^\/api\/uscite$/, mine],
-	['POST', /^\/api\/uscite$/, create],
-	['GET', /^\/api\/uscite\/([\w-]+)$/, show],
+	['POST', /^\/api\/accesso\/registrazione\/opzioni$/, plain(registrationOptions)],
+	['POST', /^\/api\/accesso\/registrazione\/verifica$/, plain(registrationVerify)],
+	['POST', /^\/api\/accesso\/opzioni$/, plain((env) => loginOptions(env))],
+	['POST', /^\/api\/accesso\/verifica$/, plain(loginVerify)],
+	['POST', /^\/api\/accesso\/esci$/, plain(logout)],
+	[
+		'GET',
+		/^\/api\/io$/,
+		plain(async (env, request) => json(env, { utente: await requireUser(env, request) }))
+	],
+	['GET', /^\/api\/notifiche\/chiave$/, plain((env) => publicKey(env))],
+	['POST', /^\/api\/notifiche$/, plain(subscribe)],
+	['POST', /^\/api\/notifiche\/rimuovi$/, plain(unsubscribe)],
+	['GET', /^\/api\/uscite$/, plain(mine)],
+	['POST', /^\/api\/uscite$/, plain(create)],
+	['GET', /^\/api\/uscite\/([\w-]+)$/, plain(show)],
 	['POST', /^\/api\/uscite\/([\w-]+)\/partecipa$/, join],
 	['POST', /^\/api\/uscite\/([\w-]+)\/rinuncia$/, leave],
 	['POST', /^\/api\/uscite\/([\w-]+)\/stato$/, setStatus],
@@ -24,13 +50,13 @@ const ROUTES: [string, RegExp, Handler][] = [
 ];
 
 export default {
-	async fetch(request: Request, env: Env): Promise<Response> {
+	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(env) });
 		const { pathname } = new URL(request.url);
 		try {
 			for (const [method, pattern, handler] of ROUTES) {
 				const m = pattern.exec(pathname);
-				if (m && request.method === method) return await handler(env, request, ...m.slice(1));
+				if (m && request.method === method) return await handler(env, request, ctx, ...m.slice(1));
 			}
 			return json(env, { errore: 'Indirizzo non trovato.' }, 404);
 		} catch (err) {
@@ -38,5 +64,10 @@ export default {
 			console.error(err);
 			return json(env, { errore: 'Errore interno.' }, 500);
 		}
+	},
+
+	// promemoria della sera prima (cron in wrangler.jsonc)
+	async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+		ctx.waitUntil(reminders(env));
 	}
 } satisfies ExportedHandler<Env>;

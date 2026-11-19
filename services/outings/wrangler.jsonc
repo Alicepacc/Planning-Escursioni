@@ -18,6 +18,11 @@
 		// origine della PWA (CORS) e dominio delle passkey (WebAuthn relying party)
 		"APP_ORIGIN": "https://alicepacc.github.io",
 		"RP_ID": "alicepacc.github.io",
-		"RP_NAME": "Cordata"
-	}
+		"RP_NAME": "Cordata",
+		// pagine della PWA per i link nelle notifiche; soggetto VAPID (https, niente email)
+		"APP_URL": "https://alicepacc.github.io/Planning-Escursioni",
+		"VAPID_SUBJECT": "https://alicepacc.github.io/Planning-Escursioni/"
+	},
+	// promemoria della sera prima: ogni giorno alle 16:00 UTC (17 o 18 in Italia)
+	"triggers": { "crons": ["0 16 * * *"] }
 }

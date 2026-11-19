@@ -3,8 +3,13 @@
 export interface Env {
 	DB: D1Database;
 	APP_ORIGIN: string;
+	/** indirizzo della PWA, per i link nelle notifiche (es. …/Planning-Escursioni) */
+	APP_URL: string;
 	RP_ID: string;
 	RP_NAME: string;
+	/** segreto: chiave privata VAPID in JWK; senza, le notifiche push sono spente */
+	VAPID_PRIVATE_JWK?: string;
+	VAPID_SUBJECT?: string;
 }
 
 const B64URL = /[+/=]/g;
