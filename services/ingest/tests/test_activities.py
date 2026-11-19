@@ -417,7 +417,8 @@ def test_estrazione_di_una_pagina_web_di_gita(tmp_path):
     page.write_text(
         "<html><head><script>var x=1</script></head><body><nav>Home | Gite</nav>"
         "<article><h1>Gita al Lago Nero</h1><p>Domenica 7 giugno 2026<br>Dislivello 600 m</p>"
-        "<p>Info: Mario Rossi cell. 333 1234567</p></article><footer>© sezione</footer></body></html>",
+        "<p>Info: Mario Rossi cell. 333 1234567</p></article>"
+        "<footer>© sezione</footer></body></html>",
         encoding="utf-8",
     )
     text = extract_html(page)["pages"][0]["text"]
