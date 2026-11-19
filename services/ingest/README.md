@@ -29,7 +29,14 @@ Tutti i comandi partono dalla radice del repository. I dati scaricati finiscono 
 curl -o data/osm/trentino-alto-adige.osm.pbf "https://osmit-estratti.wmcloud.org/output/pbf/regioni/04_Trentino-Alto_Adige-S%C3%BCdtirol.osm.pbf"
 curl -o data/osm/veneto.osm.pbf "https://osmit-estratti.wmcloud.org/output/pbf/regioni/05_Veneto.osm.pbf"
 osmium merge data/osm/trentino-alto-adige.osm.pbf data/osm/veneto.osm.pbf -O -o data/osm/taa-veneto.osm.pbf
-osmium extract --bbox 10.38,45.67,12.75,47.10 --strategy smart -O -o data/osm/pilot.osm.pbf data/osm/taa-veneto.osm.pbf
+# fascia di confine (ADR 0013): province confinanti dentro la stessa bbox
+for p in 014_Sondrio 017_Brescia 030_Udine 093_Pordenone; do
+  curl -o data/osm/confine/$p.osm.pbf "https://osmit-estratti.wmcloud.org/output/pbf/province/$p.osm.pbf"
+done
+# estratti di date diverse: un oggetto di confine può comparire in due versioni, si tiene l'ultima
+osmium merge data/osm/taa-veneto.osm.pbf data/osm/confine/*.osm.pbf -O -o data/osm/confine/merged.osh.pbf
+osmium time-filter data/osm/confine/merged.osh.pbf -O -o data/osm/confine/merged-now.osm.pbf
+osmium extract --bbox 10.38,45.67,12.75,47.10 --strategy smart -O -o data/osm/pilot.osm.pbf data/osm/confine/merged-now.osm.pbf
 ```
 
 ```bash

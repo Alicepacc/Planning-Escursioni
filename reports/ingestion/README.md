@@ -215,3 +215,87 @@ Registrate nell'[ADR 0013](../../docs/decisions/0013-fonti-veneto-confini-e-atti
 - estratto OSM allargato con una **fascia di confine**;
 - attività con ricostruzione fallita **mostrate senza linea**;
 - i blocchi proseguono in automatico, con una sosta prima della Fase 5.
+
+## Dopo le decisioni del 19/11/2026
+
+### Fonti CAI Veneto (solo metadati)
+
+- **La directory delle sezioni non si usa.** L'endpoint autorizzato risponde «Origin header
+  mancante» (403): accetta solo le richieste della propria pagina. Falsificare l'intestazione
+  vorrebbe dire aggirare una protezione, quindi non si fa.
+- **Al suo posto, `cai-veneto-siti`.** I siti sono stati cercati su indirizzi plausibili per 62
+  nomi di sezione compilati a mano (`organizzazione.cai.it/sez-<nome>` e `www.cai<nome>.it`):
+  124 indirizzi, robots.txt e una sola richiesta alla home ciascuno.
+- **39 sezioni venete registrate** in `config/sources/cai_sections.yaml`:
+  - 28 WordPress con l'API dei media (23 con un sito proprio, 5 sul multisite del CAI);
+  - 5 WordPress con l'API dei media spenta (Calalzo, Pieve di Cadore, San Vito di Cadore, Pieve
+    di Soligo, Arzignano);
+  - 6 con altri CMS (Agordo, Domegge, Oderzo, Schio, Valdagno, Padova): serviranno adapter come
+    per i 12 siti SAT;
+  - CAI Marostica esclusa: robots.txt risponde «accesso sospeso».
+- **Metadati di 7.251 PDF** delle 28 sezioni con l'API (nessun download). Dal solo nome,
+  941 sembrano locandine di gite dal giugno 2025, più 133 programmi. Le sezioni con più
+  locandine sono Vicenza (389), Treviso (87), Verona (63), Rovigo (57), Feltre (53) e
+  Montecchio Maggiore (52).
+
+### Fascia di confine
+
+L'estratto ora comprende, nella stessa bbox dell'area pilota, le province di **Sondrio, Brescia,
+Udine e Pordenone** (Estratti OSM Italia, 135 MB). **Austria e Svizzera restano fuori**, perché
+Geofabrik chiude la connessione da questo ambiente ([ADR 0004](../../docs/decisions/0004-estratto-osm.md)).
+
+| | Prima | Dopo |
+|---|---|---|
+| Sentieri (OSM e catasto) | 7.109 | 8.028 |
+| Luoghi con nome (geocodifica) | 116.126 | 127.593 |
+| Tasselli PMTiles della mappa | 19,7 MB | 22,2 MB |
+| Grafo del planner | 562 tasselli, 66 MB | 633 tasselli, 74 MB |
+
+Effetto sulle 62 attività, ricostruite di nuovo:
+
+| Esito | Prima | Dopo |
+|---|---|---|
+| verificata | 23 | 27 |
+| da rivedere | 32 | 31 |
+| fallita | 7 | 4 |
+
+Nel dettaglio:
+
+- **Spiedo in Nota** (2025 e 2026) passa da fallita a verificata, e le due uscite diventano un
+  solo itinerario.
+- Diventano verificate anche **Cima Nara** e **Val di Cembra, tappa 1**.
+- **Sentiero dei Fiori** passa da 68 a 14,3 km (15 dichiarati). Resta da rivedere per il
+  dislivello: i 500 m della locandina contano le funivie.
+- Peggiora **Pasta/Spiedo dal Franco** (10,2 → 15,2 km). Era già da rivedere: tra Bocca dei
+  Fortini, sul confine, e Leano il percorso ora passa per sentieri lombardi.
+
+### Attività senza traccia
+
+Restano 4 attività senza traccia. Sono visibili in app con i dati della locandina, l'avviso
+«Percorso non disponibile sulla mappa» e l'etichetta «senza traccia» in Esplora; non hanno
+profilo né esportazioni.
+
+| Attività | Punto sulla mappa |
+|---|---|
+| Anello da Tiso di CAI Appiano | sì |
+| Ferrata di Preore | sì |
+| Piccolo Tibet | no: segnata `fuori_area`, i nomi trovati in Italia erano omonimi |
+| Monte Tullo | no: partenza non indicata |
+
+Un punto isolato va sulla mappa solo se la locandina indica la partenza e la gita non è fuori
+area: senza un secondo punto che lo confermi potrebbe essere un omonimo lontano.
+
+**In app: 60 escursioni visibili** (61 schede, 2 itinerari con più proposte). Verificato nel
+browser: elenco, schede con e senza traccia, nessun errore.
+
+| File | Cosa mostra |
+|---|---|
+| `screenshots/4-senza-traccia-telefono.jpg` | Una scheda senza traccia, prima della fascia di confine |
+| `screenshots/5-spiedo-in-nota-telefono.jpg` | Spiedo in Nota con la traccia ricostruita in Lombardia e le due proposte della sezione |
+
+### Prossimi passi
+
+1. **Blocco 4**: locandine venete, a partire dalle sezioni dolomitiche e da quelle con più gite
+   in montagna (Belluno, Feltre, Alpago, Vicenza, Treviso), con revisione.
+2. Adapter per i siti SAT non WordPress e per i 6 siti veneti con altri CMS.
+3. Poi la Fase 5, con una sosta per scegliere il backend.

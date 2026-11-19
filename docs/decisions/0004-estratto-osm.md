@@ -27,3 +27,13 @@ Per i test bastano gli estratti comunali (Scurelle: 0,4 MB).
   `europe/austria` da una rete in cui è raggiungibile, dopo aver verificato termini e limiti.
 - Nota di trasparenza: il primo download di prova è stato fatto da OSM-FR prima di leggerne il
   `robots.txt`; il file è stato cancellato e sostituito.
+
+## Aggiornamento (19/11/2026): fascia di confine
+
+Su decisione dell'utente ([ADR 0013](0013-fonti-veneto-confini-e-attivita-senza-traccia.md))
+l'estratto usato per routing, luoghi e tasselli comprende, dentro la stessa bbox dell'area
+pilota, anche le province confinanti di Estratti OSM Italia: Sondrio e Brescia (Adamello,
+Tonale, Ledro–Garda), Udine e Pordenone. Gli estratti hanno date diverse: dopo `osmium merge`
+si tiene l'ultima versione di ogni oggetto con `osmium time-filter`. **Austria e Svizzera
+restano fuori**: Geofabrik chiude ancora la connessione da questo ambiente (verificato il
+19/11/2026; il proxy di rete non c'entra) e OSM-FR vieta i client automatici.
