@@ -201,3 +201,273 @@ sections:
 # Le pagine «Just a moment» / «One moment» sono protezioni anti-bot: non vanno aggirate.
 # Non trovati con i domini sat<nome>.it le altre sezioni; satborgo.it (Borgo Valsugana, citato
 # nelle locandine) non ha risposto per un errore di rete: da riprovare.
+
+  # --- CAI Veneto: siti trovati il 19/11/2026 con `cai-veneto-siti` (ADR 0013). La directory
+  # del Gruppo regionale risponde solo alla propria pagina; i nomi sono provati uno per uno.
+  # CAI Marostica: robots.txt risponde «accesso sospeso», non usata.
+  - slug: agordo
+    name: CAI Sezione di Agordo
+    group: CAI Veneto
+    base_url: https://www.caiagordo.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter."
+  - slug: alpago
+    name: CAI Sezione di Alpago
+    group: CAI Veneto
+    base_url: https://www.caialpago.it
+    site_type: wordpress
+    pilot: false
+    notes: "239 PDF pubblici via REST al 19/11/2026."
+  - slug: auronzo
+    name: CAI Sezione di Auronzo
+    group: CAI Veneto
+    base_url: https://www.caiauronzo.it
+    site_type: wordpress
+    pilot: false
+    notes: "9 PDF pubblici via REST al 19/11/2026."
+  - slug: belluno
+    name: CAI Sezione di Belluno
+    group: CAI Veneto
+    base_url: https://caibelluno.it
+    site_type: wordpress
+    pilot: false
+    notes: "291 PDF pubblici via REST al 19/11/2026."
+  - slug: calalzo
+    name: CAI Sezione di Calalzo
+    group: CAI Veneto
+    base_url: https://caicalalzo.it
+    site_type: wordpress_senza_rest
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter."
+  - slug: cortina
+    name: CAI Sezione di Cortina
+    group: CAI Veneto
+    base_url: https://caicortina.it
+    site_type: wordpress
+    pilot: false
+    notes: "10 PDF pubblici via REST al 19/11/2026."
+  - slug: domegge
+    name: CAI Sezione di Domegge
+    group: CAI Veneto
+    base_url: https://www.caidomegge.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter. Da verificare: la home non cita chiaramente la sezione."
+  - slug: feltre
+    name: CAI Sezione di Feltre
+    group: CAI Veneto
+    base_url: https://www.caifeltre.it
+    site_type: wordpress
+    pilot: false
+    notes: "981 PDF pubblici via REST al 19/11/2026."
+  - slug: longarone
+    name: CAI Sezione di Longarone
+    group: CAI Veneto
+    base_url: https://www.cailongarone.it
+    site_type: wordpress
+    pilot: false
+    notes: "49 PDF pubblici via REST al 19/11/2026."
+  - slug: pieve-di-cadore
+    name: CAI Sezione di Pieve di Cadore
+    group: CAI Veneto
+    base_url: https://www.caipievedicadore.it
+    site_type: wordpress_senza_rest
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter."
+  - slug: san-vito-di-cadore
+    name: CAI Sezione di San Vito di Cadore
+    group: CAI Veneto
+    base_url: https://www.caisanvitodicadore.it
+    site_type: wordpress_senza_rest
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter."
+  - slug: val-comelico
+    name: CAI Sezione di Val Comelico
+    group: CAI Veneto
+    base_url: https://organizzazione.cai.it/sez-val-comelico
+    site_type: wordpress_cai
+    pilot: false
+    notes: "17 PDF pubblici via REST al 19/11/2026."
+  - slug: treviso
+    name: CAI Sezione di Treviso
+    group: CAI Veneto
+    base_url: https://www.caitreviso.it
+    site_type: wordpress
+    pilot: false
+    notes: "1297 PDF pubblici via REST al 19/11/2026."
+  - slug: conegliano
+    name: CAI Sezione di Conegliano
+    group: CAI Veneto
+    base_url: https://www.caiconegliano.it
+    site_type: wordpress
+    pilot: false
+    notes: "59 PDF pubblici via REST al 19/11/2026."
+  - slug: montebelluna
+    name: CAI Sezione di Montebelluna
+    group: CAI Veneto
+    base_url: https://www.caimontebelluna.it
+    site_type: wordpress
+    pilot: false
+    notes: "89 PDF pubblici via REST al 19/11/2026."
+  - slug: oderzo
+    name: CAI Sezione di Oderzo
+    group: CAI Veneto
+    base_url: https://www.caioderzo.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter."
+  - slug: pieve-di-soligo
+    name: CAI Sezione di Pieve di Soligo
+    group: CAI Veneto
+    base_url: https://www.caipievedisoligo.it
+    site_type: wordpress_senza_rest
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter."
+  - slug: vicenza
+    name: CAI Sezione di Vicenza
+    group: CAI Veneto
+    base_url: https://organizzazione.cai.it/sez-vicenza
+    site_type: wordpress_cai
+    pilot: false
+    notes: "535 PDF pubblici via REST al 19/11/2026."
+  - slug: schio
+    name: CAI Sezione di Schio
+    group: CAI Veneto
+    base_url: https://www.caischio.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter."
+  - slug: thiene
+    name: CAI Sezione di Thiene
+    group: CAI Veneto
+    base_url: https://www.caithiene.it
+    site_type: wordpress
+    pilot: false
+    notes: "16 PDF pubblici via REST al 19/11/2026."
+  - slug: valdagno
+    name: CAI Sezione di Valdagno
+    group: CAI Veneto
+    base_url: https://www.caivaldagno.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter."
+  - slug: arzignano
+    name: CAI Sezione di Arzignano
+    group: CAI Veneto
+    base_url: https://www.caiarzignano.it
+    site_type: wordpress_senza_rest
+    pilot: false
+    notes: "WordPress, ma l'API dei media non risponde: serve un adapter. Da verificare: la home non cita chiaramente la sezione."
+  - slug: bassano-del-grappa
+    name: CAI Sezione di Bassano del Grappa
+    group: CAI Veneto
+    base_url: https://organizzazione.cai.it/sez-bassano-del-grappa
+    site_type: wordpress_cai
+    pilot: false
+    notes: "11 PDF pubblici via REST al 19/11/2026."
+  - slug: asiago
+    name: CAI Sezione di Asiago
+    group: CAI Veneto
+    base_url: https://www.caiasiago.it
+    site_type: wordpress
+    pilot: false
+    notes: "203 PDF pubblici via REST al 19/11/2026."
+  - slug: recoaro-terme
+    name: CAI Sezione di Recoaro Terme
+    group: CAI Veneto
+    base_url: https://www.cairecoaroterme.it
+    site_type: wordpress
+    pilot: false
+    notes: "6 PDF pubblici via REST al 19/11/2026."
+  - slug: malo
+    name: CAI Sezione di Malo
+    group: CAI Veneto
+    base_url: https://www.caimalo.it
+    site_type: wordpress
+    pilot: false
+    notes: "114 PDF pubblici via REST al 19/11/2026."
+  - slug: montecchio-maggiore
+    name: CAI Sezione di Montecchio Maggiore
+    group: CAI Veneto
+    base_url: https://organizzazione.cai.it/sez-montecchio-maggiore
+    site_type: wordpress_cai
+    pilot: false
+    notes: "248 PDF pubblici via REST al 19/11/2026."
+  - slug: padova
+    name: CAI Sezione di Padova
+    group: CAI Veneto
+    base_url: https://www.caipadova.it
+    site_type: sito_proprio
+    pilot: false
+    notes: "sito non WordPress: serve un adapter."
+  - slug: camposampiero
+    name: CAI Sezione di Camposampiero
+    group: CAI Veneto
+    base_url: https://www.caicamposampiero.it
+    site_type: wordpress
+    pilot: false
+    notes: "224 PDF pubblici via REST al 19/11/2026."
+  - slug: cittadella
+    name: CAI Sezione di Cittadella
+    group: CAI Veneto
+    base_url: https://www.caicittadella.it
+    site_type: wordpress
+    pilot: false
+    notes: "108 PDF pubblici via REST al 19/11/2026."
+  - slug: venezia
+    name: CAI Sezione di Venezia
+    group: CAI Veneto
+    base_url: https://caivenezia.it/s
+    site_type: wordpress
+    pilot: false
+    notes: "94 PDF pubblici via REST al 19/11/2026."
+  - slug: dolo
+    name: CAI Sezione di Dolo
+    group: CAI Veneto
+    base_url: https://www.caidolo.it
+    site_type: wordpress
+    pilot: false
+    notes: "857 PDF pubblici via REST al 19/11/2026."
+  - slug: mirano
+    name: CAI Sezione di Mirano
+    group: CAI Veneto
+    base_url: https://www.caimirano.it
+    site_type: wordpress
+    pilot: false
+    notes: "439 PDF pubblici via REST al 19/11/2026."
+  - slug: portogruaro
+    name: CAI Sezione di Portogruaro
+    group: CAI Veneto
+    base_url: https://organizzazione.cai.it/sez-portogruaro
+    site_type: wordpress_cai
+    pilot: false
+    notes: "9 PDF pubblici via REST al 19/11/2026."
+  - slug: chioggia
+    name: CAI Sezione di Chioggia
+    group: CAI Veneto
+    base_url: https://www.caichioggia.it
+    site_type: wordpress
+    pilot: false
+    notes: "13 PDF pubblici via REST al 19/11/2026."
+  - slug: verona
+    name: CAI Sezione di Verona
+    group: CAI Veneto
+    base_url: https://www.caiverona.it
+    site_type: wordpress
+    pilot: false
+    notes: "341 PDF pubblici via REST al 19/11/2026."
+  - slug: legnago
+    name: CAI Sezione di Legnago
+    group: CAI Veneto
+    base_url: https://www.cailegnago.it
+    site_type: wordpress
+    pilot: false
+    notes: "11 PDF pubblici via REST al 19/11/2026."
+  - slug: rovigo
+    name: CAI Sezione di Rovigo
+    group: CAI Veneto
+    base_url: https://www.cairovigo.it
+    site_type: wordpress
+    pilot: false
+    notes: "433 PDF pubblici via REST al 19/11/2026."

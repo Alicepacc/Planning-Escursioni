@@ -15,7 +15,7 @@ from typing import Any
 import yaml
 
 from ..config import data_dir, repo_root
-from ..http import PoliteClient
+from ..http import FetchError, PoliteClient, RobotsDisallowed
 from .classify import classify_name
 
 WP_FIELDS = "id,date,modified,title,source_url,mime_type,link"
@@ -120,8 +120,14 @@ def discover(
     declared: dict[str, int] = {
         k: v for k, v in old.get("declared_total", {}).items() if not only or k not in only
     }
+    errors: dict[str, str] = {}
     for s in chosen:
-        found = list_pdfs(client, s, declared)
+        try:
+            found = list_pdfs(client, s, declared)
+        except (FetchError, RobotsDisallowed) as exc:
+            # una sezione irraggiungibile non ferma le altre: l'errore resta nell'indice
+            errors[s["slug"]] = str(exc)[:200]
+            continue
         per_section[s["slug"]] = len(found)
         docs.extend(asdict(d) for d in found)
     payload = {
@@ -129,6 +135,7 @@ def discover(
         "per_section": per_section,
         "declared_total": declared,  # X-WP-Total: include allegati non pubblici
         "documents": docs,
+        **({"errori": errors} if errors else {}),
     }
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
     return payload

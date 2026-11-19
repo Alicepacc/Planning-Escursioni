@@ -44,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
             only = [x.strip() for x in args.sezioni.split(",")] if args.sezioni else None
             payload = discover(client, only=only)
         print(payload["per_section"])
+        if payload.get("errori"):
+            print("errori:", payload["errori"])
     elif args.cmd == "archive":
         from .archive import archive, load_candidates
 
