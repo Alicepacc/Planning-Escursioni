@@ -15,7 +15,7 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | Bacheca annunci (solo organizzatore → partecipanti) | **fatto** |
 | Condivisione (Web Share o copia del link) | **fatto**; QR code e anteprima Open Graph da fare |
 | Disclaimer «uscita privata, non organizzata dal CAI» | **fatto**, sulla pagina invito, sul modulo e in «Uscite» |
-| Notifiche push e promemoria | da fare: le API restituiscono già chi va avvisato |
+| Notifiche push e promemoria | **fatto**: «Attiva le notifiche» in «Uscite» e sulla pagina invito; avvisi per iscrizioni, lista d'attesa, promozioni, annullamenti, rinvii e annunci; promemoria della sera prima con un cron. App installabile (manifest e icone): su iPhone le notifiche arrivano solo dalla schermata Home |
 | Visibilità «contatti» e feed delle uscite pubbliche vicine | da fare |
 
 **Servizio** (`services/outings`):
@@ -27,8 +27,11 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 
 ## Prove
 
-- **9 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
-  posti, permessi, link d'invito, lista d'attesa, annullamento e rinvio, bacheca, sessioni.
+- **14 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
+  posti, permessi, link d'invito, lista d'attesa, annullamento e rinvio, bacheca, sessioni;
+  cifratura push sul vettore dell'Appendice A della RFC 8291 e decifrata come farebbe il
+  browser, firma VAPID verificata, iscrizioni scadute (410) cancellate, promemoria del giorno
+  prima in ora italiana.
 - **Prova end-to-end** (`apps/web/scripts/e2e-uscite.cjs`), senza account: Worker con
   `wrangler dev` e D1 locale, app compilata con `VITE_USCITE_API`, passkey vere su autenticatori
   virtuali di Chromium.
@@ -38,12 +41,23 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
   - Anna vede i partecipanti e pubblica un annuncio, che Carla legge.
   - «Le mie uscite» elenca l'uscita.
   - Nessun errore in console.
+- **Prova delle notifiche** (`apps/web/scripts/e2e-notifiche.cjs`) con una chiave VAPID usa e
+  getta: Carla organizza e attiva le notifiche, Bruno partecipa, il servizio locale manda una push
+  vera attraverso il servizio push di Chrome e il service worker di Carla mostra «Giro del lago di
+  Tovel — Bruno partecipa all'uscita.».
+  - Chrome non offre il Push API nelle finestre private: la prova usa un profilo persistente e
+    l'app lo spiega se l'attivazione non riesce.
+  - La consegna passa dai server di Google e può richiedere qualche decina di secondi; la prova
+    aspetta fino a un minuto.
+  - Il service worker mostra anche i messaggi consegnati direttamente (CDP `deliverPushMessage`),
+    con icona e link alla pagina dell'uscita; il manifest e le icone si caricano.
 
 | File | Cosa mostra |
 |---|---|
 | `screenshots/1-organizza-telefono.jpg` | Il modulo «Organizza un'uscita» precompilato dalla scheda |
 | `screenshots/2-invito-telefono.jpg` | La pagina invito vista da chi non ha ancora un account |
 | `screenshots/3-organizzatore-telefono.jpg` | La gestione dell'organizzatrice: partecipanti, bacheca, annulla o rinvia |
+| `screenshots/4-notifica-telefono.jpg` | La pagina dell'uscita con le notifiche attive («Disattiva le notifiche») |
 
 ## Per pubblicare il servizio (serve l'account Cloudflare dell'utente)
 
@@ -54,8 +68,6 @@ attivo».
 
 ## Prossimi passi della fase
 
-1. Notifiche Web Push (VAPID): iscrizione del browser, avviso a chi va in lista d'attesa,
-   promozioni, annullamenti, rinvii e annunci; promemoria del giorno prima con un cron.
-2. Anteprima Open Graph e QR code della pagina invito.
-3. Visibilità «contatti» e feed delle uscite pubbliche vicine.
-4. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare.
+1. Anteprima Open Graph e QR code della pagina invito.
+2. Visibilità «contatti» e feed delle uscite pubbliche vicine.
+3. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare.

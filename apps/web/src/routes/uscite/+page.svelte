@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
+	import PushToggle from '#lib/uscite/PushToggle.svelte';
 	import { SERVICE_ON, logout, me, myOutings, type Utente } from '#lib/uscite/api.ts';
 	import { formatWhen } from '#lib/uscite/local.ts';
 
@@ -71,6 +72,7 @@
 			>
 		</p>
 		<p><a class="bottone" href={resolve('/uscite/nuova')}>Organizza un’uscita</a></p>
+		<PushToggle />
 		<h2>Le mie uscite</h2>
 		{#if list.length}
 			<ul class="elenco">

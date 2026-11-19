@@ -29,3 +29,7 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+
+# segreti locali di wrangler (mai nel repository)
+.dev.vars
+.dev.vars.*

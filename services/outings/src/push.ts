@@ -154,6 +154,9 @@ export async function notify(
 				await env.DB.prepare('DELETE FROM notifiche_push WHERE endpoint = ?').bind(sub.endpoint).run();
 			} else if (res.ok) {
 				sent += 1;
+			} else {
+				// 400/401/403: firma VAPID o cifratura rifiutate; 413: troppo lungo; 429: troppe richieste
+				console.warn('push rifiutata', new URL(sub.endpoint).host, res.status);
 			}
 		} catch (err) {
 			console.error('push non inviata', err);

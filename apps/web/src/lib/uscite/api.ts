@@ -196,3 +196,9 @@ export const myOutings = () =>
 			mio_stato: string;
 		}[];
 	}>('GET', '/api/uscite');
+
+// notifiche push (ADR 0014): chiave pubblica VAPID e iscrizione del browser
+export const pushKey = () => call<{ chiave: string }>('GET', '/api/notifiche/chiave');
+export const savePush = (sub: PushSubscriptionJSON) => call('POST', '/api/notifiche', sub);
+export const removePush = (endpoint: string) =>
+	call('POST', '/api/notifiche/rimuovi', { endpoint });

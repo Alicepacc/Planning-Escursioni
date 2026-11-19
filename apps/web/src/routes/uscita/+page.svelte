@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
+	import PushToggle from '#lib/uscite/PushToggle.svelte';
 	import {
 		SERVICE_ON,
 		announce,
@@ -64,7 +65,7 @@
 	const seatsText = $derived(
 		u
 			? [
-					`${u.confermati} confermati${u.posti ? ` su ${u.posti}` : ''}`,
+					`${u.confermati} ${u.confermati === 1 ? 'confermato' : 'confermati'}${u.posti ? ` su ${u.posti}` : ''}`,
 					u.in_attesa ? `${u.in_attesa} in lista d’attesa` : ''
 				]
 					.filter(Boolean)
@@ -205,6 +206,10 @@
 			{/if}
 		</section>
 
+		{#if u.sono_organizzatore || u.mio_stato === 'confermato' || u.mio_stato === 'attesa'}
+			<PushToggle />
+		{/if}
+
 		{#if u.annunci.length}
 			<section aria-labelledby="bacheca">
 				<h2 id="bacheca">Bacheca</h2>
@@ -288,7 +293,9 @@
 						>Rinvia</button
 					>
 				</div>
-				<p class="nota">Le notifiche ai partecipanti arriveranno con le notifiche push.</p>
+				<p class="nota">
+					Chi ha attivato le notifiche riceve un avviso per annullamenti, rinvii e annunci.
+				</p>
 			</section>
 		{/if}
 		{#if notice}<p class="ok" role="status">{notice}</p>{/if}

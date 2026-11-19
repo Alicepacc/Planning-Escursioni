@@ -2,8 +2,10 @@
 
 Cloudflare Worker + D1 ([ADR 0014](../../docs/decisions/0014-backend-uscite-di-gruppo.md)):
 uscite create dagli utenti, pagina invito, iscrizione con lista d'attesa, azioni
-dell'organizzatore (SPEC §5.4). Accesso con **passkey**; niente email, niente password. Le
-notifiche Web Push arriveranno in un passo successivo: le API restituiscono già chi va avvisato.
+dell'organizzatore (SPEC §5.4). Accesso con **passkey**; niente email, niente password.
+Notifiche **Web Push** senza librerie (cifratura RFC 8291 e firma VAPID RFC 8292 con WebCrypto):
+iscrizioni, lista d'attesa, promozioni, annullamenti, rinvii, annunci e il promemoria della sera
+prima (cron alle 16:00 UTC). Senza chiave VAPID il servizio funziona lo stesso, senza notifiche.
 
 ## In locale (senza account)
 
@@ -29,6 +31,8 @@ pnpm run db:migrate:local && pnpm run dev   # API su http://localhost:8787
 | `POST /api/uscite/:id/partecipanti/:utente` | organizzatore | sposta tra confermati e lista d'attesa |
 | `POST /api/uscite/:id/annunci` | organizzatore | bacheca, letta dai partecipanti |
 | `GET /api/uscite` | con sessione | le mie uscite |
+| `GET /api/notifiche/chiave` | chiunque | chiave pubblica VAPID per `pushManager.subscribe` (404 se le notifiche non sono attive) |
+| `POST /api/notifiche` · `POST /api/notifiche/rimuovi` | con sessione | registra o toglie l'iscrizione push del browser |
 
 La sessione si passa con `Authorization: Bearer <token>`; nel database ci sono solo gli hash di
 sessioni e link d'invito.
@@ -37,7 +41,13 @@ sessioni e link d'invito.
 
 1. `wrangler d1 create cordata-uscite` e l'id ottenuto in `wrangler.jsonc` (`database_id`).
 2. `wrangler d1 migrations apply cordata-uscite --remote`.
-3. `wrangler deploy`. Le chiavi (token di pubblicazione, più avanti la chiave VAPID) stanno nei
-   segreti di Cloudflare e dell'ambiente, **mai nel repository**.
+3. `node scripts/vapid-key.mjs | pnpm exec wrangler secret put VAPID_PRIVATE_JWK`: la chiave
+   privata delle notifiche va direttamente nei segreti di Cloudflare, senza passare da un file.
+4. `wrangler deploy`. Il token di pubblicazione e la chiave VAPID stanno solo nei segreti di
+   Cloudflare e dell'ambiente, **mai nel repository**.
+
+In locale le notifiche si provano con una chiave usa e getta passata a `wrangler dev` con
+`--var "VAPID_PRIVATE_JWK:…"` (i file `.dev.vars` sono esclusi da git); la prova end-to-end è
+`apps/web/scripts/e2e-notifiche.cjs`.
 
 La data di compatibilità è 2026-08-15: è la più recente supportata dal runtime dei test.
