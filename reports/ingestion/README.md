@@ -206,3 +206,12 @@ diventano un solo itinerario con due proposte della sezione (screenshot 2).
   partenza e i dati della locandina, senza linea (4 attività oggi).
 - **Le tracce da rivedere** (25) non hanno ancora uno strumento di revisione: restano tratteggiate,
   con l'avviso e i soli valori della locandina.
+
+## Decisioni dell'utente (19/11/2026)
+
+Registrate nell'[ADR 0013](../../docs/decisions/0013-fonti-veneto-confini-e-attivita-senza-traccia.md):
+
+- elenco delle sezioni venete dalla directory del CAI (una richiesta in lettura): autorizzato;
+- estratto OSM allargato con una **fascia di confine**;
+- attività con ricostruzione fallita **mostrate senza linea**;
+- i blocchi proseguono in automatico, con una sosta prima della Fase 5.
