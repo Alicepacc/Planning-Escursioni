@@ -48,7 +48,7 @@ CONTACT_WORDS = re.compile(
     re.IGNORECASE,
 )
 ROLE_LABEL = re.compile(
-    r"\b(capo\s?gita|capigita|capogruppo|accompagnator[ei]|accompagnatrice|"
+    r"\b(cap[oi]\s?gita|capogruppo|accompagnator[ei]|accompagnatrice|"
     r"accompagnano|referent[ei]|coordinator[ei]|coordinatrice|direttor[ei] di escursione|"
     r"organizzator[ei] (?:della gita|tecnic\w+)|"
     r"responsabil[ei](?: dell[a'’]\s?| di )?\s?(?:gita|escursione|uscita)|"
@@ -328,7 +328,7 @@ TABLE_ROLE_HEADER = re.compile(
     # intestazione di colonna, da sola sulla riga ("Referente", "Categoria Tipologia Referente");
     # "refer\w{0,3}nt" tollera refusi come "Referernte" (calendario SAT Rovereto 2021)
     r"^\s*(?:(?:categoria|tipologia|data|destinazione|difficolt\S*|dislivello)\s+)*"
-    r"(?:refer\w{0,3}nt[ei]|capo\s?gita|capigita|accompagnator[ei]|tourenleiter)\s*/?\s*$",
+    r"(?:refer\w{0,3}nt[ei]|cap[oi]\s?gita|accompagnator[ei]|tourenleiter)\s*/?\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
 # "Passo S. Pellegrino", "Monte S. Vigilio": luoghi, non "Cognome I."
@@ -338,13 +338,25 @@ PLACE_WORDS = (
 )
 # «ex Presidente generale Nome Cognome», «presidente fu Nome Cognome» (non «… del Rifugio X»)
 # «presso l'istruttore Nome Cognome»; il nome può chiudere la riga col cognome a capo
+_CAP = r"[A-ZÀ-Ý][a-zà-ÿ'’]+"
+# «Nome Cognome», «Nome De Cognome», anche due persone unite da «e»
+_PERSON = rf"{_CAP}[ \t]+(?:(?:De|Da|Di|Del|Dal|Della|Dalla|Dai|Dei)[ \t]+)?{_CAP}"
 ORG_ROLE_NAME = re.compile(
     r"((?i:\b(?:vice\s?presidente|presidente|segretari[oa]|tesorier[ea]|cassier[ea]|"
-    r"istruttor[ei]|istruttrice))"
+    r"istruttor[ei]|istruttrice|soci[oa]?))"
     r"(?:[ \t]+[a-zà-ÿ]+){0,3}[ \t]+)"
-    rf"(?!(?i:{PLACE_WORDS})\b)([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+"
-    r"|[A-ZÀ-Ý][a-zà-ÿ'’]+(?=[ \t]*\n))"
+    rf"(?!(?i:{PLACE_WORDS}|cai|sat|club|sezione|alpinismo)\b)"
+    rf"({_PERSON}(?:[ \t]+e[ \t]+{_PERSON})?"
+    rf"|{_CAP}[ \t]*\n[ \t]*(?:\[nome rimosso\][ \t]*)?{_CAP}"
+    rf"|{_CAP}(?=[ \t]*\n))"
 )
+
+
+def _role_name_sub(m: re.Match[str]) -> str:
+    """Il nome diventa «[nome rimosso]»; se il cognome andava a capo, l'a capo resta."""
+    return m.group(1) + "[nome rimosso]" + ("\n" if "\n" in m.group(2) else "")
+
+
 # credito fotografico con il titolo: «Nome Cognome – “Titolo”»
 CREDIT_LINE = re.compile(r"^([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)(\s*[–-]\s.*)$")
 SURNAME_INITIAL = re.compile(
@@ -405,7 +417,7 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
     removed += n5
     text, n6 = QUALIFIED_NAME.subn("[nome rimosso]", text)
     removed += n6
-    text, n7 = ORG_ROLE_NAME.subn(r"\1[nome rimosso]", text)
+    text, n7 = ORG_ROLE_NAME.subn(_role_name_sub, text)
     removed += n7
     redact_next = 0
     redact_list = False

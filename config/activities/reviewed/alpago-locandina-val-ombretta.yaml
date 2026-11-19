@@ -1,0 +1,21 @@
+sezione: CAI Alpago
+titolo: Escursioni in Val Ombretta
+data: 2026-06-27
+zona: Marmolada
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "4:00"
+distanza_km: 10.1
+salita_m: 590
+discesa_m: 590
+quota_max_m: 2074
+partenza: {nome: Malga Ciapela}
+arrivo: {nome: Malga Ciapela}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Malga Ciapela}
+  - {nome: Rifugio Falier, quota_m: 2074}
+note_revisione: 'gruppo giovani; due percorsi, qui il n. 1 fino al Rifugio Falier (il n. 2 prosegue al Passo Ombretta, 2700 m)'

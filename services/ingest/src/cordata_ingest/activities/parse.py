@@ -109,14 +109,24 @@ class Doc:
 
 
 # data di una lettera («Cavalese, 3 maggio 2018»): non è la data della gita
+DEADLINE = re.compile(r"\b(?:entro|iscrizion\w*|prenotazion\w*|scadenz\w*|dalle ore|fino a)\b")
 LETTER_DATE = re.compile(r"^[a-z][\w' ]{2,30},\s*\d{1,2}\s+\w+\s+20\d{2}\s*$")
 
 
 def parse_date(doc: Doc, hint: str = "") -> Field:
     rx = rf"(?:{WEEKDAYS}\s*,?\s*)?(\d{{1,2}})\s+({'|'.join(MONTHS)})\s*(20\d{{2}})"
     letter: Field | None = None
-    for page, line in doc.lines[:40]:
-        m = re.search(rx, _fold(line))
+    head = doc.lines[:40]
+    for i, (page, line) in enumerate(head):
+        nxt = head[i + 1][1].strip() if i + 1 < len(head) else ""
+        m = None
+        # «Domenica 8 novembre» a capo «2026» (impaginazione delle locandine)
+        for text in (line, f"{line} {nxt}") if re.fullmatch(r"20\d{2}", nxt) else (line,):
+            m = re.search(rx, _fold(text))
+            if m:
+                break
+        if m and DEADLINE.search(_fold(line)[: m.start()]):
+            continue  # «iscrizioni … entro martedì 20 ottobre 2026»: non è la data della gita
         if m:
             day, month, year = int(m.group(1)), MONTHS[m.group(2)], int(m.group(3))
             found = Field(f"{year:04d}-{month:02d}-{day:02d}", 0.9, _cite(line), page)
@@ -154,10 +164,16 @@ def parse_date(doc: Doc, hint: str = "") -> Field:
     return Field(None, 0.0)
 
 
+GRADE_ORDER = ("T", "E", "EE", "EEA")
+
+
 def _norm_difficulty(raw: str) -> str | None:
     raw = raw.upper().replace(".", "").replace(" ", "")
     if raw in {"E-EE", "EE-E"}:
         return raw
+    pair = re.fullmatch(r"(EEA|EE|E|T)[-/](EEA|EE|E|T)", raw)
+    if pair:  # «EE-EEA», «T/E»: il grado più alto, per prudenza
+        return max(pair.groups(), key=GRADE_ORDER.index)
     for d in DIFFICULTIES:
         if raw.startswith(d):
             return "EAI" if raw.startswith("EAI") else d
@@ -168,7 +184,8 @@ def parse_difficulty(doc: Doc) -> Field:
     # etichetta senza distinzione di maiuscole, valore solo in maiuscolo (scala CAI)
     patterns = [
         (
-            r"(?i:difficolt[aà])\s*:?\s*((?:E\.?){2}A\.?|EAI(?:-F)?|E-EE|EE-E|E\.?E\.?|E|T)(?![\w.])",
+            r"(?i:difficolt[aà])['’]?\s*:?\s*((?:E\.?){2}A\.?|EAI(?:-F)?|E-EE|EE-E|"
+            r"(?:EEA|EE|E|T)\s*[-/]\s*(?:EEA|EE|E|T)|E\.?E\.?|E|T)(?![\w.])",
             0.95,
         ),
         (r"(?i:escursione)\s*:\s*(EAI|EEA|EE|E|T)\b", 0.95),
@@ -324,6 +341,7 @@ def parse_distance(doc: Doc) -> Field:
         ),
         (r"(?:sviluppo|distanza)(?:\s+totale)?\s*:?\s*(?:km\.?\s*)(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"(\d{1,2}(?:[.,]\d{1,2})?)\s*km\s*(?:di\s*)?(?:distanza|sviluppo)", 0.85),
+        (r"dislivell[^\n]*\bkm\.?\s*(\d{1,2}(?:[.,]\d{1,2})?)\b", 0.8),
         (r"^km\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"^sviluppo$", 0.0),
         # su una riga da sola, anche «A: 15 km» (non gli intervalli «25-30km»)
@@ -389,6 +407,7 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
         rf"{v}\s*{m_}?\s*(?:di\s*|in\s*)?salita",
         rf"dislivello positivo(?:\s*itinerario\s*\d+)?\s*:?\s*{v}",
         rf"dislivello in salita\s*:?\s*(?:circa)?\s*{v}",
+        rf"positiv[oa]\s*:?\s*{m_}?\s*{v}",
     ):
         hit = doc.find(pattern)
         if hit:
@@ -398,6 +417,7 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
     for pattern in (
         rf"discesa\s*:?\s*(?:di\s*)?(?:circa\s*)?{m_}?\s*{v}",
         rf"{v}\s*{m_}?\s*(?:di\s*|in\s*)?discesa",
+        rf"negativ[oa]\s*:?\s*{m_}?\s*{v}",
     ):
         hit = doc.find(pattern)
         if hit:
@@ -465,12 +485,15 @@ def parse_max_elevation(doc: Doc) -> Field:
 
 QUOTA = r"\((?:m\.?\s*|mt\.?\s*)?(\d{1,2}\.\d{3}|\d{3,4})\s*(?:m|mt|m\.s\.l\.m\.?|metri)?\)"
 # quota anche senza parentesi: "(m 1792)", "2557 m", "m 2.414", "(2036M)"
-QUOTA_ANY = r"(?:\(?\s*(?:m\.?|mt\.?)\s*(\d\.\d{3}|\d{4})\b|\b(\d\.\d{3}|\d{4})\s*(?:m|mt|M)\b\.?)"
+QUOTA_ANY = (
+    r"(?:\(?\s*(?:m\.?|mt\.?)\s*(\d\.\d{3}|\d{4})\b"
+    r"|\b(\d\.\d{3}|\d{4})\s*(?:m|mt|M|metri)\b\.?)"
+)
 # nome proprio: parole con l'iniziale maiuscola, anche abbreviate («Rif. Zannes», «P.so Rolle»)
 NAME = (
     r"((?:[A-ZÀ-Ý][\w'’-]*\.(?=\s+[A-ZÀ-Ý])|[A-ZÀ-Ý][\w'’-]+|S\.)"
-    r"(?:\s+(?:[A-ZÀ-Ý][\w'’-]*\.(?=\s+[A-ZÀ-Ý])|[A-ZÀ-Ý][\w'’-]+|S\.|di|de|da|al|alla|del|"
-    r"dei|delle|della|dal|dalla))*)"
+    r"(?:\s+(?:[A-ZÀ-Ý][\w'’-]*\.(?=\s+[A-ZÀ-Ý])|[A-ZÀ-Ý][\w'’-]+|S\.|(?:di|de|da|al|alla|del|"
+    r"dei|delle|della|dal|dalla)\b))*)"
 )
 
 
@@ -486,6 +509,8 @@ def _place(text: str) -> tuple[str | None, float | None]:
 def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
     """Partenza (nome, quota) e arrivo, dalle etichette o dalle frasi tipiche."""
     start = doc.after_label(r"punto di partenza", 1)
+    if start and re.match(r"(?i)(?:di|per|delle|dei)\b", start[0].strip()):
+        start = None  # «è punto di partenza di diverse escursioni»: non un'etichetta
     end = doc.after_label(r"punto di arrivo", 1)
     if start:
         name, ele = _place(start[0])
@@ -493,6 +518,15 @@ def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
         f_ele = Field(ele, 0.9 if ele else 0.0, _cite(start[2]), start[1])
         f_end = Field(_place(end[0])[0], 0.9, _cite(end[2]), end[1]) if end else Field(None, 0.0)
         return f_name, f_ele, f_end
+    # la città della sezione («Sezione di Feltre», «CAI FELTRE») è il ritrovo, non la partenza
+    home = {
+        m.group(1).lower()
+        for _, line in doc.lines[:15]
+        for m in re.finditer(
+            r"(?i:sezione|sez\.|cai)\s+(?:(?i:cai|c\.a\.i\.)\s+)?(?:(?i:di)\s+)?([A-ZÀ-Ý][A-Za-zÀ-ÿ]+)",
+            line,
+        )
+    } - {"cai", "alpino", "giovani", "escursionismo"}
     # parole chiave senza distinzione di maiuscole, nomi propri con l'iniziale maiuscola
     art = r"(?i:il|lo|la|l'|al|alla|ai|del|della|dei)"
     phrases = [
@@ -533,6 +567,14 @@ def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
                 re.IGNORECASE,
             )
             if transfer:
+                continue
+            # solo il testo prima del nome: «Partenza con il pullman da X» è il viaggio, mentre
+            # «X (m 1334) dove si lasciano le macchine» è proprio la partenza a piedi
+            travel = re.search(
+                r"(?i)pullman|autobus|\bbus\b|\bauto\b|macchin|mezzi|pulmin",
+                m.string[m.start() : m.start(1)],
+            )
+            if travel or (name or "").lower() in home:
                 continue
             if name and name.lower() not in {"bressanone", "bolzano", "trento", "sede"}:
                 conf = 0.6 if i < 3 else 0.5
@@ -610,16 +652,27 @@ def parse_meeting_time(doc: Doc) -> Field:
     if hit:
         m, page, line = hit
         return Field(f"{int(m.group(1)):02d}:30", 0.7, _cite(line), page)
+    # nei programmi «Ore 7:00 Ritrovo …, Ore 17:00 Arrivo»: si cerca riga per riga, perché la
+    # riga dopo porta spesso l'orario del rientro
+    time_ = r"(\d{1,2})(?:[:.,](\d{2}))?"
     for pattern, conf in (
-        (r"ritrovo[^\n]{0,70}?(?:ore|h)\s*:?\s*(\d{1,2})(?:[:.,](\d{2}))?", 0.85),
-        (r"partenza[^\n]{0,90}?\b(?:ore|h)\s*:?\s*(\d{1,2})(?:[:.,](\d{2}))?", 0.85),
+        (rf"\b(?:ore|h)\s*:?\s*{time_}\s*[-–:]?\s*ritrovo", 0.85),
+        (rf"ritrovo[^\n]{{0,70}}?\b(?:ore|h)\s*:?\s*{time_}", 0.85),
+        (rf"partenza[^\n]{{0,90}}?\b(?:ore|h)\s*:?\s*{time_}", 0.85),
+        (rf"\b(?:ore|h)\s*:?\s*{time_}\s*[-–:]?\s*partenza", 0.75),
     ):
-        hit = doc.find(pattern)
-        if hit:
-            m, page, line = hit
-            hh, mm = int(m.group(1)), int(m.group(2) or 0)
-            if 4 <= hh <= 22:
+        for page, line in doc.lines:
+            m = re.search(pattern, line, re.IGNORECASE)
+            if m and 4 <= int(m.group(1)) <= 22:
+                hh, mm = int(m.group(1)), int(m.group(2) or 0)
                 return Field(f"{hh:02d}:{mm:02d}", conf, _cite(line), page)
+    # etichetta e orario su due righe («RITROVO:» a capo «ore 6.30»)
+    hit = doc.find(rf"ritrovo[^\n]{{0,70}}?\b(?:ore|h)\s*:?\s*{time_}")
+    if hit:
+        m, page, line = hit
+        hh, mm = int(m.group(1)), int(m.group(2) or 0)
+        if 4 <= hh <= 22:
+            return Field(f"{hh:02d}:{mm:02d}", 0.7, _cite(line), page)
     return Field(None, 0.0)
 
 

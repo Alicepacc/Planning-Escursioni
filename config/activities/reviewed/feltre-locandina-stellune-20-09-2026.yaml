@@ -1,0 +1,27 @@
+sezione: CAI Feltre
+titolo: Salita alla cima delle Stellune
+data: 2026-09-20
+zona: Lagorai
+tipo_percorso: anello
+difficolta: EE
+durata: "9:30"
+distanza_km: 18
+salita_m: 1250
+discesa_m: 1250
+quota_max_m: 2605
+partenza: {nome: Ponte Conseria, quota_m: 1465}
+arrivo: {nome: Ponte Conseria, quota_m: 1465}
+ora_ritrovo: "06:00"
+mezzi: mezzi propri
+quota_eur: 20
+sentieri: ["317", "318", "326"]
+punti_chiave:
+  - {nome: Ponte Conseria, quota_m: 1465}
+  - {nome: Malga Valsorda Seconda, quota_m: 1901}
+  - {nome: Forcella Val Sorda, quota_m: 2256}
+  - {nome: Forcella Val Moena, quota_m: 2294}
+  - {nome: Cima delle Stellune, quota_m: 2605}
+  - {nome: Passo Val Cion, quota_m: 2076}
+  - {nome: Passo Cinque Croci, quota_m: 2018}
+  - {nome: Ponte Conseria, quota_m: 1465}
+note_revisione: 'tempo 9:30 «comprese le soste»; variante senza la cima (-250 m); costo con i pulmini 20 €'

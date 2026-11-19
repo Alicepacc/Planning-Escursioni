@@ -1,0 +1,26 @@
+sezione: CAI Feltre
+titolo: Col Visentin
+data: 2026-10-14
+zona: Prealpi Bellunesi
+tipo_percorso: anello
+difficolta: null
+durata: null
+distanza_km: 13
+salita_m: 650
+discesa_m: 650
+quota_max_m: 1751
+partenza: {nome: Rifugio Casera, quota_m: 1395, comune: Belluno}
+arrivo: {nome: Rifugio Casera, quota_m: 1395}
+ora_ritrovo: "08:30"
+mezzi: mezzi propri
+quota_eur: 1
+sentieri: []
+punti_chiave:
+  - {nome: Rifugio Casera, quota_m: 1395}
+  - {nome: Casera Erte}
+  - {nome: Malga Col Toront, quota_m: 1389}
+  - {nome: Busa da Camp, quota_m: 1543}
+  - {nome: Col Visentin, quota_m: 1751}
+  - {nome: Rifugio Brigata Alpina Cadore, quota_m: 1615}
+  - {nome: Rifugio Casera, quota_m: 1395}
+note_revisione: 'escursione del mercoledì; andata per Busa da Camp, ritorno per la Via delle Creste e il Rifugio Brigata Cadore; quota 1 € soci, 13 € non soci'

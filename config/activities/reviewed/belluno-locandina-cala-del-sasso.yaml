@@ -1,0 +1,23 @@
+sezione: CAI Belluno
+titolo: Calà del Sasso
+data: 2026-05-16
+zona: Altopiano di Asiago
+tipo_percorso: anello
+difficolta: E
+durata: null
+distanza_km: 9
+salita_m: 760
+discesa_m: 760
+quota_max_m: null
+partenza: {nome: Valstagna}
+arrivo: {nome: Valstagna}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["778", "778B"]
+punti_chiave:
+  - {nome: Valstagna}
+  - {nome: Calà del Sasso}
+  - {nome: Sasso}
+  - {nome: Valstagna}
+note_revisione: 'gruppo senior; salita per il 778 (4444 gradini), rientro per il 778B; visita al museo di Sasso (2,50 €)'

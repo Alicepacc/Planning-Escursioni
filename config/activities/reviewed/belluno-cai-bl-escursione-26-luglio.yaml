@@ -1,0 +1,24 @@
+sezione: CAI Belluno
+titolo: Via normale alla Cima Ombretta Est
+data: 2026-07-26
+zona: Marmolada
+tipo_percorso: andata_ritorno
+difficolta: EEA
+durata: "7:00"
+distanza_km: 15
+salita_m: 1450
+discesa_m: 1450
+quota_max_m: 3011
+partenza: {nome: Malga Ciapela}
+arrivo: {nome: Malga Ciapela}
+ora_ritrovo: "05:45"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["610"]
+punti_chiave:
+  - {nome: Malga Ciapela}
+  - {nome: Malga Ombretta}
+  - {nome: Rifugio Falier, quota_m: 2074}
+  - {nome: Bivacco Dal Bianco, quota_m: 2702}
+  - {nome: Cima Ombretta Est, quota_m: 3011}
+note_revisione: 'dislivello «salita/totale: 1450 m/2900 m»; 7 ore soste incluse; discesa per la via di salita'

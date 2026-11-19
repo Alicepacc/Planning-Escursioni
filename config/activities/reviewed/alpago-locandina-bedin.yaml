@@ -1,0 +1,21 @@
+sezione: CAI Alpago
+titolo: Escursione al Bivacco Bedin
+data: 2026-08-01
+zona: Pale di San Lucano
+tipo_percorso: andata_ritorno
+difficolta: EE
+durata: "7:00"
+distanza_km: 13.4
+salita_m: 1400
+discesa_m: 1400
+quota_max_m: 2210
+partenza: {nome: Pradimezzo, quota_m: 840}
+arrivo: {nome: Pradimezzo, quota_m: 840}
+ora_ritrovo: "06:00"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Pradimezzo, quota_m: 840}
+  - {nome: Bivacco Bedin, quota_m: 2210}
+note_revisione: 'gruppo giovani; tempo 7 ore più soste; rientro per lo stesso percorso'

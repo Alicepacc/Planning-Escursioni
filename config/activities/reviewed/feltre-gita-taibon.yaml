@@ -1,0 +1,24 @@
+sezione: CAI Feltre
+titolo: Taibon Agordino – giro ad anello
+data: 2026-09-30
+zona: Agordino
+tipo_percorso: anello
+difficolta: null
+durata: null
+distanza_km: 11
+salita_m: 400
+discesa_m: 400
+quota_max_m: null
+partenza: {nome: Taibon Agordino}
+arrivo: {nome: Taibon Agordino}
+ora_ritrovo: "08:00"
+mezzi: pullman
+quota_eur: 10
+sentieri: []
+punti_chiave:
+  - {nome: Taibon Agordino}
+  - {nome: Forte Peden}
+  - {nome: Peschiere}
+  - {nome: Soccol}
+  - {nome: Taibon Agordino}
+note_revisione: 'escursione del mercoledì; quota 10 € soci, 22 € non soci'

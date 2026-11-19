@@ -1,0 +1,24 @@
+sezione: CAI Belluno
+titolo: Cima Palombino
+data: 2026-09-20
+zona: Alpi Carniche
+tipo_percorso: anello
+difficolta: EEA
+durata: "6:00"
+distanza_km: 12
+salita_m: 1000
+discesa_m: 1000
+quota_max_m: 2600
+partenza: {nome: Malga Melin, quota_m: 1673}
+arrivo: {nome: Malga Melin, quota_m: 1673}
+ora_ritrovo: "05:45"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["165", "160", "144"]
+punti_chiave:
+  - {nome: Malga Melin, quota_m: 1673}
+  - {nome: Passo Palombino, quota_m: 2035}
+  - {nome: Cima Palombino, quota_m: 2600}
+  - {nome: Passo di Cima Vallona}
+  - {nome: Malga Melin, quota_m: 1673}
+note_revisione: 'difficoltà dichiarata EE-EEA, si tiene il grado più alto; intersezionale con CAI Lorenzago; discesa per il tratto attrezzato del 160; durata soste escluse'

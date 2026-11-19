@@ -1,0 +1,21 @@
+sezione: CAI Belluno
+titolo: Rifugio Bianchet al Pian dei Gat
+data: 2026-09-10
+zona: Dolomiti Bellunesi
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "5:30"
+distanza_km: 14
+salita_m: 800
+discesa_m: 800
+quota_max_m: 1245
+partenza: {nome: La Stanga, quota_m: 450}
+arrivo: {nome: La Stanga, quota_m: 450}
+ora_ritrovo: "08:00"
+mezzi: null
+quota_eur: null
+sentieri: ["503"]
+punti_chiave:
+  - {nome: La Stanga}
+  - {nome: Rifugio Bianchet, quota_m: 1245}
+note_revisione: 'gruppo seniores; lunghezza «7 km salita più 7 km discesa»; quota minima 450 m; ritrovo a Cavarzano'

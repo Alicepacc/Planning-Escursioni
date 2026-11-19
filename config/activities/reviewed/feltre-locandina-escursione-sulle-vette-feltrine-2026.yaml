@@ -1,0 +1,24 @@
+sezione: CAI Feltre
+titolo: Alle pendici delle Vette Feltrine
+data: 2026-11-08
+zona: Vette Feltrine
+tipo_percorso: traversata
+difficolta: E
+durata: "3:30"
+distanza_km: 8
+salita_m: 720
+discesa_m: null
+quota_max_m: 1011
+partenza: {nome: Val di Faont, quota_m: 400, comune: Pedavena}
+arrivo: {nome: Croce d'Aune, quota_m: 1011}
+ora_ritrovo: "08:45"
+mezzi: mezzi propri
+quota_eur: 32
+sentieri: []
+punti_chiave:
+  - {nome: Val di Faont, quota_m: 400}
+  - {nome: Norcen, quota_m: 500}
+  - {nome: Salzena, quota_m: 710}
+  - {nome: Paradis, quota_m: 880}
+  - {nome: Croce d'Aune, quota_m: 1011}
+note_revisione: 'tempo 3:30 «comprese le soste»; pranzo al ristorante a Croce d''Aune; costo 32 € con il pranzo, 3 € solo la camminata'

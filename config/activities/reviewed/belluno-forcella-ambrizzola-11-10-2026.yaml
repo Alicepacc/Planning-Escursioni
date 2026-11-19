@@ -1,0 +1,23 @@
+sezione: CAI Belluno
+titolo: Forcella Ambrizzola da Passo Giau
+data: 2026-10-11
+zona: Dolomiti ampezzane
+tipo_percorso: andata_ritorno
+difficolta: null
+durata: null
+distanza_km: null
+salita_m: null
+discesa_m: null
+quota_max_m: 2277
+partenza: {nome: Passo Giau, quota_m: 2236}
+arrivo: {nome: Passo Giau, quota_m: 2236}
+ora_ritrovo: "07:30"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["436"]
+punti_chiave:
+  - {nome: Passo Giau, quota_m: 2236}
+  - {nome: Forcella Giau}
+  - {nome: Mondeval}
+  - {nome: Forcella Ambrizzola, quota_m: 2277}
+note_revisione: 'alpinismo giovanile (8-17 anni); «500-600 m complessivi tra salite e discese», non attribuibili alla sola salita; rientro per il percorso dell''andata'

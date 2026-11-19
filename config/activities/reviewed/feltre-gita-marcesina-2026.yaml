@@ -1,0 +1,24 @@
+sezione: CAI Feltre
+titolo: Anello della Piana di Marcesina
+data: 2026-09-16
+zona: Altopiano di Asiago
+tipo_percorso: anello
+difficolta: null
+durata: null
+distanza_km: 14
+salita_m: 300
+discesa_m: 300
+quota_max_m: null
+partenza: {nome: Marcesina, quota_m: 1350}
+arrivo: {nome: Valmaron}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 13
+sentieri: []
+punti_chiave:
+  - {nome: Marcesina, quota_m: 1350}
+  - {nome: Forcellona, quota_m: 1400}
+  - {nome: Aquila di Vaia}
+  - {nome: Rifugio Marcesina}
+  - {nome: Valmaron}
+note_revisione: 'escursione del mercoledì; arrivo in Valmaron dove aspetta il pullman; quota 13 € soci, 25 € non soci'

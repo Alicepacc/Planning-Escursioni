@@ -1,0 +1,24 @@
+sezione: CAI Alpago
+titolo: Anello Rifugio Fonda Savio e Forcella Rinbianco
+data: 2026-06-20
+zona: Cadini di Misurina
+tipo_percorso: anello
+difficolta: EEA
+durata: "5:00"
+distanza_km: 10
+salita_m: 700
+discesa_m: 700
+quota_max_m: 2375
+partenza: {nome: Lago Antorno, quota_m: 1840}
+arrivo: {nome: Lago Antorno, quota_m: 1840}
+ora_ritrovo: "06:45"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: ["119", "117", "115"]
+punti_chiave:
+  - {nome: Lago Antorno, quota_m: 1840}
+  - {nome: Forcella Rinbianco, quota_m: 2176}
+  - {nome: Passo dei Tocci, quota_m: 2375}
+  - {nome: Rifugio Fonda Savio, quota_m: 2370}
+  - {nome: Lago Antorno, quota_m: 1840}
+note_revisione: 'tratti con corde metalliche; 15 € solo per i non tesserati'

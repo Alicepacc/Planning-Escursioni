@@ -1,0 +1,23 @@
+sezione: CAI Belluno
+titolo: Lago Coldai
+data: 2026-05-17
+zona: Civetta
+tipo_percorso: andata_ritorno
+difficolta: null
+durata: null
+distanza_km: null
+salita_m: 700
+discesa_m: 700
+quota_max_m: null
+partenza: {nome: Palafavera, comune: Val di Zoldo}
+arrivo: {nome: Palafavera}
+ora_ritrovo: "07:30"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Palafavera}
+  - {nome: Malga Pioda}
+  - {nome: Rifugio Sonino al Coldai}
+  - {nome: Lago Coldai}
+note_revisione: 'alpinismo giovanile, sull''Alta Via n. 1; «dislivello complessivo 700 m circa», coerente con la sola salita (Palafavera 1507 m, lago 2143 m); rientro per il medesimo percorso'

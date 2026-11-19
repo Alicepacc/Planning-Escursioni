@@ -1,0 +1,24 @@
+sezione: CAI Feltre
+titolo: Salita al Monte Totoga e visita agli stoli
+data: 2026-10-10
+zona: Primiero e Vanoi
+tipo_percorso: anello
+difficolta: null
+durata: "5:00"
+distanza_km: 13
+salita_m: 860
+discesa_m: 860
+quota_max_m: 1705
+partenza: {nome: Passo Gobbera, quota_m: 987}
+arrivo: {nome: Passo Gobbera, quota_m: 987}
+ora_ritrovo: "07:30"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Passo Gobbera, quota_m: 987}
+  - {nome: Col de la Cros, quota_m: 1083}
+  - {nome: Rifugio San Giovanni Gualberto, quota_m: 1565}
+  - {nome: Monte Totoga, quota_m: 1705}
+  - {nome: Passo Gobbera, quota_m: 987}
+note_revisione: 'commissione TAM; «dislivello complessivo attorno agli 860 metri e cinque ore di sola camminata»; passaggi esposti ma protetti'

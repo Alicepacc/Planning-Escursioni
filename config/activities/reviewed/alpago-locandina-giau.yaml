@@ -1,0 +1,25 @@
+sezione: CAI Alpago
+titolo: Anello dei 4 rifugi
+data: 2026-09-26
+zona: Cinque Torri
+tipo_percorso: anello
+difficolta: E
+durata: "5:00"
+distanza_km: 10.4
+salita_m: 500
+discesa_m: 500
+quota_max_m: 2575
+partenza: {nome: Passo Giau, quota_m: 2200}
+arrivo: {nome: Passo Giau, quota_m: 2200}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Passo Giau}
+  - {nome: Rifugio Averau}
+  - {nome: Rifugio Nuvolau, quota_m: 2575}
+  - {nome: Rifugio Scoiattoli}
+  - {nome: Rifugio Cinque Torri}
+  - {nome: Passo Giau}
+note_revisione: 'gruppo giovani; 15 € solo per i non tesserati'

@@ -349,3 +349,46 @@ def test_sanitize_righe_lunghe_in_maiuscolo_senza_rallentare():
     ):
         assert NAME_LIST.match(names), names
     assert NAME_LIST.match("Rifugio aperto") is None
+
+
+def test_sanitize_cognome_a_capo_dopo_il_ruolo():
+    text = "costruito grazie al Presidente Giovanni\nBianchi con l'aiuto dei soci\nRifugio Roma"
+    out = sanitize(text)[0]
+    assert "Giovanni" not in out and "Bianchi" not in out
+    assert out.count("\n") == 2 and "Rifugio Roma" in out
+
+
+def test_sanitize_soci_nominati_e_capi_gita():
+    text = (
+        "ci attenderà un rinfresco curato dai soci Mario Bianchi e Luca De Rossi.\n"
+        "riservata ai soci CAI in regola\n"
+        "CAPI GITA: VERDI S. – NERI M."
+    )
+    out = sanitize(text)[0]
+    for name in ("Mario", "Bianchi", "Luca", "Rossi", "VERDI", "NERI"):
+        assert name not in out, name
+    assert "riservata ai soci CAI in regola" in out
+
+
+def test_parser_programmi_con_orari_partenze_in_pullman_e_gradi_doppi():
+    p = _parse(
+        "CLUB ALPINO ITALIANO\n"
+        "Sezione di Feltre\n"
+        "Domenica 20 settembre\n"
+        "2026\n"
+        "Ore 6,00: Partenza con pullman da Feltre (parcheggio Pra del Moro).\n"
+        "Ore 7:30 Ritrovo al parcheggio.\n"
+        "Ore 17:00 Arrivo a Feltre.\n"
+        "Difficoltà: EE-EEA\n"
+        "Dislivello: positivo m 1250 ca, negativo m 1200 ca. Km 18 ca.\n"
+        "Iscrizioni: entro martedì 15 settembre 2026\n"
+    )
+    assert p["data"] == "2026-09-20"  # non la scadenza delle iscrizioni
+    assert p["ora_ritrovo"] == "07:30"  # non l'orario del rientro
+    assert p["difficolta"] == "EEA"
+    assert (p["salita_m"], p["discesa_m"], p["distanza_km"]) == (1250, 1200, 18)
+    assert p["partenza_nome"] != "Feltre"  # è il viaggio in pullman, non la partenza a piedi
+    q = _parse(
+        "Difficoltà: T/E\nSi sale alla cima del Monte Totoga, a 1705 metri, punto panoramico"
+    )
+    assert (q["difficolta"], q["quota_max_m"]) == ("E", 1705)

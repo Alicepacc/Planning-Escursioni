@@ -1,0 +1,25 @@
+sezione: CAI Feltre
+titolo: Lastoi de Formin – traversata da Ponte Rucurto a Santa Fosca
+data: 2026-08-23
+zona: Dolomiti ampezzane
+tipo_percorso: traversata
+difficolta: EE
+durata: "8:00"
+distanza_km: 15
+salita_m: 1000
+discesa_m: 1250
+quota_max_m: 2657
+partenza: {nome: Ponte de Rucurto, quota_m: 1708}
+arrivo: {nome: Santa Fosca}
+ora_ritrovo: "06:00"
+mezzi: pullman
+quota_eur: 25
+sentieri: ["435", "465"]
+punti_chiave:
+  - {nome: Ponte de Rucurto, quota_m: 1708}
+  - {nome: Cason de Formin, quota_m: 1845}
+  - {nome: Forcella Formin, quota_m: 2462}
+  - {nome: Lastoi de Formin, quota_m: 2657}
+  - {nome: Mondeval de Sora}
+  - {nome: Santa Fosca}
+note_revisione: 'tempo 8:00 «comprese le soste»; costo con il pullman 25 € fino a 30 partecipanti'
