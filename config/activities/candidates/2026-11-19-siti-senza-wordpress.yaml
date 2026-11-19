@@ -1,0 +1,22 @@
+# Quinto blocco di ingestion (19/11/2026): siti senza l'API di WordPress, trovati con l'adapter
+# generico. SAT Mori pubblica il programma delle escursioni della domenica come pagina web
+# (tipo: pagina, archiviata in HTML); SAT Rovereto il programma 2026 in PDF; SAT Trento e CAI
+# Padova singole locandine. Solo link pubblici; archivio privato.
+candidates:
+- id: sat-mori-escursioni-domenica-2026
+  section: sat-mori
+  url: https://www.sat-mori.it/escursionisatdomenica2026/
+  published: '2025-12-09'
+  tipo: pagina
+- id: sat-rovereto-attivita-2026
+  section: sat-rovereto
+  url: https://www.satrovereto.it/wp-content/uploads/2025/12/attività-2026.pdf
+  published: '2025-12-01'
+- id: sat-trento-giro-circolare-castelrotto-tagusa-tisana
+  section: sat-trento
+  url: https://www.sattrento.it/2026-11-11%20Giro%20circolare%20Castelrotto,%20Tagusa,%20Tisana.pdf
+  published: '2026-11-11'
+- id: padova-primiero-anello-da-tonadico
+  section: padova
+  url: https://www.caipadova.it/fileadmin/user_upload/Gruppo_Veterani/File_Locandine/2026_11_25_Loc_52_Primiero_Anello_da_Tonadico_per_maso_Tais_rifugio_Petina_e_Siror.pdf
+  published: '2026-11-25'

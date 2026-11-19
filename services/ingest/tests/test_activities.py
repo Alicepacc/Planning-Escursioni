@@ -429,3 +429,31 @@ def test_estrazione_di_una_pagina_web_di_gita(tmp_path):
     ]
     assert "Home" not in text and "sezione" not in text and "var x" not in text
     assert "1234567" not in text and "Rossi" not in text
+
+
+def test_programma_pubblicato_come_pagina_web():
+    from cordata_ingest.activities.parse import calendar_entry, parse
+
+    text = (
+        "ESCURSIONI SAT DELLA DOMENICA 2026\n"
+        "Giro del Garda: Campione, Forra di\n"
+        "San Michele, Tremosine\n"
+        "Domenica 25 gennaio 2026\n"
+        "Bel percorso sul lago.\n"
+        "Tipologia: traversata\nSalita: 920 m\nDiscesa: 640 m\nSviluppo: 15 km\n"
+        "Tempo: 5 ore e 30\nDifficoltà: E\n"
+        "Villamontagna, Cima Calisio\n"
+        "Domenica 1 marzo 2026\n"
+        "Tipologia: traversata\nSalita: 820 m\nTempo: 6 ore\nDifficoltà: EE\n"
+    )
+    entry = calendar_entry([(1, text)], "2026-01-25")
+    assert entry[0][1].splitlines()[0] == "Giro del Garda: Campione, Forra di"
+    p = parse(entry, entry_date="2026-01-25")
+    assert p["titolo"]["value"] == "Giro del Garda: Campione, Forra di San Michele, Tremosine"
+    assert (p["durata"]["value"], p["salita_m"]["value"], p["discesa_m"]["value"]) == (
+        "5:30",
+        920,
+        640,
+    )
+    q = parse(calendar_entry([(1, text)], "2026-03-01"), entry_date="2026-03-01")
+    assert (q["difficolta"]["value"], q["durata"]["value"]) == ("EE", "6:00")

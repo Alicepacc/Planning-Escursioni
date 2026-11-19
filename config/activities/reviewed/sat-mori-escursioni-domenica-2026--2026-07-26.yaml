@@ -1,0 +1,27 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: Cadini di Misurina
+data: 2026-07-26
+zona: Cadini di Misurina
+tipo_percorso: anello
+difficolta: EE
+durata: "6:00"
+distanza_km: 15
+salita_m: 820
+discesa_m: 820
+quota_max_m: null
+partenza: {nome: Lago di Misurina}
+arrivo: {nome: Lago di Misurina}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Lago di Misurina}
+  - {nome: Rifugio Col de Varda}
+  - {nome: Rifugio Città di Carpi}
+  - {nome: Rifugio Fonda Savio}
+  - {nome: Lago d'Antorno}
+  - {nome: Lago di Misurina}
+note_revisione: 'traversata in quota dal Rifugio Carpi al Fonda Savio'

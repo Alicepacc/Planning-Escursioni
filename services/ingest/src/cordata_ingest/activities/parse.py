@@ -302,6 +302,13 @@ def parse_duration(doc: Doc) -> Field:
     window = _labelled_duration(doc)
     if window:
         return window
+    hit = doc.find(r"\btempo\s*:\s*(\d{1,2})\s*(?:h|ore)\b(?:\s*e\s*(\d{1,2}|mezz[ao]))?")
+    if hit:
+        m, page, line = hit
+        extra = m.group(2) or "0"
+        minutes = 30 if extra.startswith("mezz") else int(extra)
+        if minutes < 60:
+            return Field(_hm(int(m.group(1)) + minutes / 60), 0.85, _cite(line), page)
     hit = doc.find(r"(?:andata e ritorno|a/r)[^\d]{0,15}h\s*:?\s*(\d{1,2})\s*e\s*(\d{2})")
     if hit:
         m, page, line = hit
@@ -858,6 +865,13 @@ def parse_key_points(doc: Doc) -> Field:
 # ------------------------------------------------------------------ voci di calendario
 
 
+WRITTEN_DATE = re.compile(rf"(?:{WEEKDAYS}\s+)?(\d{{1,2}})\s+({'|'.join(MONTHS)})\s+(20\d{{2}})")
+FIELD_LINE = re.compile(
+    r"^(?:tipologia|salita|discesa|sviluppo|tempo|difficolt\w*|dislivell\w*|durata|quota\w*|"
+    r"ritrovo|partenza|lunghezza|distanza)\b\s*:"
+)
+
+
 def calendar_entry(pages: list[tuple[int, str]], date: str) -> list[tuple[int, str]]:
     """Ritaglia la voce di un calendario o libretto per la data indicata (AAAA-MM-GG)."""
     year, month, day = (int(x) for x in date.split("-"))
@@ -876,6 +890,22 @@ def calendar_entry(pages: list[tuple[int, str]], date: str) -> list[tuple[int, s
                 header = _fold(text[:200])
                 months = [MONTHS[k] for k in MONTHS if re.search(rf"^{k}\b", header, re.M)]
                 starts.append((i, (year, months[0] if months else month, int(m.group(1)))))
+                continue
+            # «Domenica 1 marzo 2026» su una riga sola, col titolo nella riga prima (programmi
+            # pubblicati come pagina web): la voce comincia dal titolo
+            m = WRITTEN_DATE.fullmatch(_fold(s))
+            if m:
+                first = i
+                # il titolo può andare a capo: al più due righe sopra, fino a un campo o a una data
+                while first > 0 and i - first < 2:
+                    prev = lines[first - 1].strip()
+                    if not prev or len(prev) > 120 or FIELD_LINE.match(_fold(prev)):
+                        break
+                    if WRITTEN_DATE.fullmatch(_fold(prev)):
+                        break
+                    first -= 1
+                ymd = (int(m.group(3)), MONTHS[m.group(2)], int(m.group(1)))
+                starts.append((first, ymd))
         consecutive = sum(1 for a, b in itertools.pairwise(starts) if b[0] - a[0] == 1)
         if consecutive >= 2:
             continue  # «12/01/2026», «18/01/2026», … uno sotto l'altro: non sono voci
@@ -997,7 +1027,14 @@ def _short_date_entry(pages: list[tuple[int, str]], month: int, day: int) -> lis
 
 
 def _calendar_title(doc: Doc) -> Field:
-    """Prima riga della voce senza data e giorno: "09 sabato ANELLO DA TISO …"."""
+    """Prima riga della voce senza data e giorno: "09 sabato ANELLO DA TISO …". Nei programmi
+    pubblicati come pagina web il titolo sta sopra la data scritta per esteso, anche su due
+    righe."""
+    head = doc.lines[:4]
+    dated = [k for k, (_, line) in enumerate(head) if WRITTEN_DATE.fullmatch(_fold(line.strip()))]
+    if dated and dated[0] > 0:
+        title = " ".join(line.strip() for _, line in head[: dated[0]])
+        return Field(re.sub(r"\s+", " ", title), 0.7, _cite(head[0][1]), head[0][0])
     for page, line in doc.lines[:4]:
         t = re.sub(
             rf"^\d{{1,2}}(?:/\d{{1,2}}(?:/\d{{4}})?)?\s*(?:{WEEKDAYS}|gio|dom|sab|ven|mer|mar|lun)?\b\.?",

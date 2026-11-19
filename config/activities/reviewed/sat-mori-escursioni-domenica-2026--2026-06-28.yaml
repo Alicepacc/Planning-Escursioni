@@ -1,0 +1,23 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: San Martino di Castrozza – Rifugio Velo della Madonna
+data: 2026-06-28
+zona: Pale di San Martino
+tipo_percorso: andata_ritorno
+difficolta: EE
+durata: "5:30"
+distanza_km: 13.5
+salita_m: 920
+discesa_m: 920
+quota_max_m: 2348
+partenza: {nome: San Martino di Castrozza, quota_m: 1400}
+arrivo: {nome: San Martino di Castrozza, quota_m: 1400}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: San Martino di Castrozza, quota_m: 1400}
+  - {nome: Rifugio Velo della Madonna, quota_m: 2348}
+note_revisione: ''

@@ -1,0 +1,24 @@
+sezione: SAT Trento
+titolo: Giro circolare Castelrotto, Tagusa, Tisana
+data: 2026-11-11
+zona: Altopiano dello Sciliar
+tipo_percorso: anello
+difficolta: E
+durata: "4:00"
+distanza_km: 12.7
+salita_m: 470
+discesa_m: 470
+quota_max_m: null
+partenza: {nome: Castelrotto, quota_m: 1060}
+arrivo: {nome: Castelrotto, quota_m: 1060}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: null
+sentieri: ["10", "2A", "1"]
+punti_chiave:
+  - {nome: Castelrotto, quota_m: 1060}
+  - {nome: Tagusa, quota_m: 932}
+  - {nome: Tisana, quota_m: 930}
+  - {nome: Monte Calvario}
+  - {nome: Castelrotto, quota_m: 1060}
+note_revisione: 'escursione del mercoledì; ritorno per il Sentiero della pace e il Monte Calvario'

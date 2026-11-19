@@ -1,0 +1,24 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: "Spring Trek: Lago di Caldaro, Castelchiaro, Valli di Primavera, Laghi di Monticolo"
+data: 2026-03-29
+zona: Oltradige
+tipo_percorso: traversata
+difficolta: E
+durata: "5:30"
+distanza_km: 18
+salita_m: 660
+discesa_m: 430
+quota_max_m: null
+partenza: {nome: San Giuseppe al Lago}
+arrivo: {nome: Laghi di Monticolo}
+ora_ritrovo: null
+mezzi: pullman
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: San Giuseppe al Lago}
+  - {nome: Castelchiaro}
+  - {nome: Lago Grande di Monticolo}
+note_revisione: 'ai Laghi di Monticolo aspetta il pullman'

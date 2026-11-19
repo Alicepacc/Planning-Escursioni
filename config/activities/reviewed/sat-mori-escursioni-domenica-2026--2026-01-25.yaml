@@ -1,0 +1,26 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: "Giro del Garda: Campione, Forra di San Michele, Cima Cas, Santuario Montecastello, Tremosine"
+data: 2026-01-25
+zona: Alto Garda
+tipo_percorso: traversata
+difficolta: E
+durata: "5:30"
+distanza_km: 15
+salita_m: 920
+discesa_m: 640
+quota_max_m: null
+partenza: {nome: Campione del Garda}
+arrivo: {nome: Tremosine}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Campione del Garda}
+  - {nome: Santuario di Montecastello}
+  - {nome: Forra di San Michele}
+  - {nome: Cima Cas}
+  - {nome: Tremosine}
+note_revisione: 'programma delle escursioni della domenica (pagina web); in Lombardia, dentro la fascia di confine'

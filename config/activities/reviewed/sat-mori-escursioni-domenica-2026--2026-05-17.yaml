@@ -1,0 +1,24 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: "Sentiero dell'ascolto: il viaggio di Alcide"
+data: 2026-05-17
+zona: Altopiano del Tesino
+tipo_percorso: anello
+difficolta: E
+durata: "5:00"
+distanza_km: 12.4
+salita_m: 910
+discesa_m: 910
+quota_max_m: null
+partenza: {nome: Pieve Tesino}
+arrivo: {nome: Pieve Tesino}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+reti: [Sentiero dell'ascolto]
+punti_chiave:
+  - {nome: Pieve Tesino}
+  - {nome: Pieve Tesino}
+note_revisione: 'sentiero tematico su Alcide De Gasperi; il programma non nomina altri punti'

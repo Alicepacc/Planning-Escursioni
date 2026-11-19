@@ -1,0 +1,27 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: Villamontagna, Cima Calisio, Lago di Santa Colomba, Fornace
+data: 2026-03-01
+zona: Monte Calisio
+tipo_percorso: traversata
+difficolta: E
+durata: "6:00"
+distanza_km: 17.6
+salita_m: 820
+discesa_m: 660
+quota_max_m: null
+partenza: {nome: Villamontagna}
+arrivo: {nome: Fornace}
+ora_ritrovo: null
+mezzi: pullman
+quota_eur: null
+sentieri: ["402", "421"]
+punti_chiave:
+  - {nome: Villamontagna}
+  - {nome: Pez}
+  - {nome: Monte Calisio}
+  - {nome: Rifugio Campel}
+  - {nome: Lago di Santa Colomba}
+  - {nome: Fornace}
+note_revisione: 'a Fornace aspetta il pullman'

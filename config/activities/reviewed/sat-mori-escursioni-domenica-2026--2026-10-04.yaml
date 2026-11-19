@@ -1,0 +1,24 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: Yoga Trekking in Val Venegia
+data: 2026-10-04
+zona: Pale di San Martino
+tipo_percorso: traversata
+difficolta: E
+durata: "5:00"
+distanza_km: 13
+salita_m: 700
+discesa_m: 400
+quota_max_m: null
+partenza: null
+arrivo: {nome: Passo Rolle}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Baita Segantini}
+  - {nome: Castellazzo}
+  - {nome: Passo Rolle}
+note_revisione: 'partenza non indicata (Val Venegia); momenti di yoga lungo il percorso'

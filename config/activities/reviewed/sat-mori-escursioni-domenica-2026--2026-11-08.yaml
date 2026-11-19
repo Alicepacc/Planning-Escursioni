@@ -1,0 +1,25 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: Ledro Trek Low
+data: 2026-11-08
+zona: Val di Ledro
+tipo_percorso: anello
+difficolta: EE
+durata: "7:00"
+distanza_km: 18
+salita_m: 930
+discesa_m: 930
+quota_max_m: null
+partenza: {nome: Pieve di Ledro}
+arrivo: {nome: Pieve di Ledro}
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Pieve di Ledro}
+  - {nome: Besta}
+  - {nome: Museo delle Palafitte}
+  - {nome: Pieve di Ledro}
+note_revisione: 'titolo tolto per errore dalla rimozione dei nomi (tre parole maiuscole), letto nell''archivio'

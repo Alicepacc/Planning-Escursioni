@@ -1,0 +1,25 @@
+sezione: CAI Padova
+titolo: Giro ad anello da Tonadico per Maso Tais, Rifugio Petina e Siror
+data: 2026-11-25
+zona: Primiero
+tipo_percorso: anello
+difficolta: E
+durata: "4:30"
+distanza_km: 12
+salita_m: 550
+discesa_m: 550
+quota_max_m: null
+partenza: {nome: Tonadico, quota_m: 760}
+arrivo: {nome: Tonadico, quota_m: 760}
+ora_ritrovo: "06:15"
+mezzi: pullman
+quota_eur: null
+sentieri: ["734", "274"]
+punti_chiave:
+  - {nome: Tonadico, quota_m: 760}
+  - {nome: Chiesa di San Vittore}
+  - {nome: Maso Tais, quota_m: 1140}
+  - {nome: Rifugio Petina, quota_m: 1175}
+  - {nome: Siror}
+  - {nome: Tonadico, quota_m: 760}
+note_revisione: 'gruppo veterani; tempo 4:30 soste escluse; su strade forestali'

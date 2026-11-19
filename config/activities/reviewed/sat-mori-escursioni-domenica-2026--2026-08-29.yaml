@@ -1,0 +1,23 @@
+sezione: SAT Mori
+documento: sat-mori-escursioni-domenica-2026
+pagina: 1
+titolo: Dossobello di dentro
+data: 2026-08-29
+zona: Ortles
+tipo_percorso: anello
+difficolta: EE
+durata: "7:00"
+distanza_km: 13
+salita_m: 1210
+discesa_m: 1210
+quota_max_m: null
+partenza: null
+arrivo: null
+ora_ritrovo: null
+mezzi: null
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Rifugio Serristori}
+  - {nome: Dossobello di dentro}
+note_revisione: 'sabato; partenza non indicata (si sale per la Valle di Zay); un «3000» con tratti attrezzati'
