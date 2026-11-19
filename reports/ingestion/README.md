@@ -373,3 +373,23 @@ compaiono CAI Belluno, CAI Feltre e CAI Alpago.
    sempre con revisione.
 2. Adapter per i siti SAT non WordPress e per i 6 siti veneti con altri CMS.
 3. Poi la Fase 5, con una sosta per scegliere il backend.
+
+## Adapter per i siti senza l'API di WordPress (19/11/2026)
+
+**Adapter generico** (`site_adapter.py`). Per ognuno dei 23 siti (12 SAT e 11 veneti) legge
+robots.txt, la home e al massimo 6 pagine delle gite dello stesso sito, e raccoglie solo i
+link ai PDF.
+
+**Risultato: 77 PDF in tutto**, quasi nessuno di gite. Su 23 siti, 13 non hanno alcun PDF
+collegato.
+
+**Motivo.** Questi siti pubblicano le gite come **pagine web**, non come locandine:
+
+- SAT Mori: un articolo per gita;
+- SAT Riva del Garda: pagine degli eventi del mese;
+- SAT Ton: un articolo «Programma 2026»;
+- SAT Arco: una pagina «Escursioni sociali».
+
+**Prossimo passo.** Trattare le pagine delle gite scelte a mano come le locandine: archivio
+privato della pagina, testo del corpo della pagina, stessa rimozione dei dati personali e stesso
+parser.
