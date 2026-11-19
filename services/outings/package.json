@@ -1,0 +1,29 @@
+{
+	"name": "cordata-uscite",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"description": "Servizio delle uscite di gruppo di Cordata (Fase 5, ADR 0014): Cloudflare Worker + D1",
+	"scripts": {
+		"dev": "wrangler dev",
+		"test": "vitest run",
+		"check": "tsc --noEmit",
+		"db:migrate:local": "wrangler d1 migrations apply cordata-uscite --local"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.23.0",
+		"@cloudflare/workers-types": "5.20261104.1",
+		"typescript": "^6.0.3",
+		"vitest": "4.1.12",
+		"wrangler": "4.157.0"
+	},
+	"dependencies": {
+		"@simplewebauthn/server": "14.0.3"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"workerd"
+		]
+	}
+}
