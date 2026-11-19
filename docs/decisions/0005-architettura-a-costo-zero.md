@@ -25,7 +25,7 @@ pubblicato come file statici. I servizi sempre accesi si riducono al routing del
 | Proxy e cache meteo (Fase 6) | **Cloudflare Worker** gratuito davanti a Open-Meteo | Workers Free: 100.000 richieste al giorno, 10 ms di CPU per richiesta ([prezzi](https://developers.cloudflare.com/workers/platform/pricing/)). Open-Meteo stesso suggerisce i Workers, perché i suoi limiti si applicano per utente Cloudflare |
 | PostGIS | Solo **in fase di build**: nelle sessioni di sviluppo, sul Mac o in GitHub Actions. Non c'è un database pubblico | – |
 | Estrazione delle locandine | Parser a regole + revisione in sessione con Claude Code (ADR 0006) | Nessuna API LLM a pagamento |
-| Backend delle uscite di gruppo (Fase 5) | Da scegliere tra Supabase Free e Cloudflare Workers + D1 | Da verificare nella Fase 5 (pausa dei progetti inattivi, invio delle email di accesso) |
+| Backend delle uscite di gruppo (Fase 5) | **Cloudflare Workers + D1**, accesso con passkey, notifiche Web Push ([ADR 0014](0014-backend-uscite-di-gruppo.md)) | D1 Free: 5 GB, 5 milioni di righe lette e 100.000 scritte al giorno; nessuna pausa per inattività (verificato il 19/11/2026) |
 
 ## Conseguenze
 
