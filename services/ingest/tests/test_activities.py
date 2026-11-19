@@ -326,3 +326,26 @@ def test_parser_tempi_a_segmenti_costi_di_viaggio_e_quote():
         "Tempo di percorrenza: ca. 1 ora (salita), 45 minuti (ritorno)\nPunto più alto\n2.643 m"
     )
     assert (r["durata"], r["quota_max_m"]) == ("1:45", 2643)
+
+
+def test_sanitize_righe_lunghe_in_maiuscolo_senza_rallentare():
+    import time
+
+    from cordata_ingest.activities.extract import NAME_LIST
+
+    line = (
+        "COPERTURA ASSICURATIVA ED IL CONSENSO DEI DATI PERSONALI, OLTRE AL VERSAMENTO "
+        "DELLA QUOTA DI €. 15"
+    )
+    start = time.perf_counter()
+    assert NAME_LIST.match(line) is None
+    assert time.perf_counter() - start < 0.5
+    for names in (
+        "Mario Rossi, Anna BIANCHI",
+        "ROSSI Mario",
+        "Maria de Rossi, Luca Verdi,",
+        "Anna D'Angelo",
+        "ROSSIMario",
+    ):
+        assert NAME_LIST.match(names), names
+    assert NAME_LIST.match("Rifugio aperto") is None

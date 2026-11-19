@@ -25,7 +25,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     arc = sub.add_parser("archive", help="scarica i PDF candidati nell'archivio privato")
     arc.add_argument("--candidati", type=Path, help="file YAML dei candidati (default: pilota)")
-    sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
+    ext = sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
+    ext.add_argument("ids", nargs="*", help="solo questi documenti (default: tutti)")
     sub.add_parser("gazetteer", help="carica in PostGIS i luoghi OSM con nome (geocodifica)")
     sub.add_parser("sat-siti", help="cerca i siti delle sezioni SAT (solo la home di ciascuno)")
     sub.add_parser("cai-veneto-siti", help="cerca i siti delle sezioni CAI del Veneto (solo home)")
@@ -56,7 +57,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.cmd == "extract":
         from .extract import extract_all
 
-        results = extract_all()
+        results = extract_all(ids=args.ids or None)
         ocr = [r["id"] for r in results if r["ocr_pages"]]
         print(f"{len(results)} documenti estratti; OCR su: {ocr}")
     elif args.cmd == "gazetteer":

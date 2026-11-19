@@ -135,8 +135,16 @@ def _redact_organigram(text: str) -> tuple[str, int]:
 # nome dentro l'etichetta: «responsabile sezionale dei sentieri, Nome Cognome:»
 NAME_IN_LABEL = re.compile(r",\s*[A-ZÀ-Ý][a-zà-ÿ'’]+(?:[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)+\s*(?=:)")
 # elenco di nomi: parole con l'iniziale maiuscola o cognomi tutti maiuscoli, separati da virgole
-_NAME_WORD = r"(?:[A-ZÀ-Ý][a-zà-ÿ'’]+|[A-ZÀ-Ý]{2,})"
-NAME_LIST = re.compile(rf"^(?:{_NAME_WORD}(?:\s+(?:de|di|da|del|dal)?\s*{_NAME_WORD})*\s*,?\s*)+$")
+# parola intera (non spezzabile: niente backtracking esponenziale sulle righe in maiuscolo)
+_NAME_WORD = (
+    r"(?:[A-ZÀ-Ý][a-zà-ÿ]*['’][A-ZÀ-Ý][a-zà-ÿ'’]+"  # D'Angelo, Dell'Antonio
+    r"|[A-ZÀ-Ý]+['’][A-ZÀ-Ý]{2,}"  # D'ANGELO
+    r"|[A-ZÀ-Ý]{2,}[A-ZÀ-Ý][a-zà-ÿ'’]+"  # COGNOMENome attaccati dall'impaginazione
+    r"|[A-ZÀ-Ý][a-zà-ÿ'’]+|[A-ZÀ-Ý]{2,})(?![A-Za-zÀ-ÿ'’])"
+)
+NAME_LIST = re.compile(
+    rf"^{_NAME_WORD}(?:(?:\s*,\s*|\s+)(?:(?:de|di|da|del|dal)\s+)?{_NAME_WORD})*\s*,?\s*$"
+)
 # nome seguito da un titolo CAI (AE, ANE, ONC…): è sempre una persona
 QUALIFIED_NAME = re.compile(
     r"\b[A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+"
@@ -548,14 +556,18 @@ def load_text(doc_id: str) -> dict[str, Any]:
     return json.loads((text_dir() / f"{doc_id}.json").read_text(encoding="utf-8"))
 
 
-def extract_all(base: Path | None = None, out: Path | None = None) -> list[dict[str, Any]]:
+def extract_all(
+    base: Path | None = None, out: Path | None = None, ids: list[str] | None = None
+) -> list[dict[str, Any]]:
+    """Testo di tutti i documenti archiviati, o dei soli `ids` (un blocco nuovo non richiede
+    di rifare l'OCR dell'intero archivio)."""
     base = base or raw_dir()
     out = out or text_dir()
     out.mkdir(parents=True, exist_ok=True)
     manifest = json.loads((base / "manifest.json").read_text(encoding="utf-8"))
     results = []
     for doc_id, entry in manifest.items():
-        if "path" not in entry:
+        if "path" not in entry or (ids and doc_id not in ids):
             continue
         data = {"id": doc_id, "section": entry["section"], "url": entry["url"]}
         data.update(extract_pdf(base / entry["path"]))
