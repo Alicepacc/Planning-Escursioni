@@ -33,6 +33,7 @@ pnpm run db:migrate:local && pnpm run dev   # API su http://localhost:8787
 | `GET /api/uscite` | con sessione | le mie uscite |
 | `GET /api/notifiche/chiave` | chiunque | chiave pubblica VAPID per `pushManager.subscribe` (404 se le notifiche non sono attive) |
 | `POST /api/notifiche` · `POST /api/notifiche/rimuovi` | con sessione | registra o toglie l'iscrizione push del browser |
+| `GET /invito/:id?t=<invito>` | chiunque | il link da condividere: pagina HTML con l'anteprima Open Graph (titolo, data, luogo, avvertenza; generica senza link valido) che rimanda alla pagina dell'app. Niente referrer, cache o indicizzazione |
 
 La sessione si passa con `Authorization: Bearer <token>`; nel database ci sono solo gli hash di
 sessioni e link d'invito.

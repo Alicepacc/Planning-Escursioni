@@ -4,7 +4,9 @@
 	import { resolve } from '$app/paths';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
 	import PushToggle from '#lib/uscite/PushToggle.svelte';
+	import QrCode from '#lib/uscite/QrCode.svelte';
 	import {
+		API,
 		SERVICE_ON,
 		announce,
 		getOuting,
@@ -83,17 +85,23 @@
 			: ''
 	);
 
+	// il link da condividere passa dal servizio, che mostra l'anteprima nelle app di messaggistica
+	// e rimanda alla pagina; il codice QR punta direttamente alla pagina
+	const shareUrl = $derived(
+		token ? `${API}/invito/${encodeURIComponent(id)}?t=${encodeURIComponent(token)}` : ''
+	);
+
 	async function share() {
-		if (!u || !inviteUrl) return;
+		if (!u || !shareUrl) return;
 		const data = {
 			title: u.titolo,
 			text: `${u.titolo} – ${formatWhen(u.ritrovo_quando)}`,
-			url: inviteUrl
+			url: shareUrl
 		};
 		try {
 			if (navigator.share) await navigator.share(data);
 			else {
-				await navigator.clipboard.writeText(inviteUrl);
+				await navigator.clipboard.writeText(shareUrl);
 				notice = 'Link d’invito copiato.';
 			}
 		} catch {
@@ -203,6 +211,11 @@
 			{/if}
 			{#if inviteUrl}
 				<button type="button" class="secondario" onclick={share}>Condividi il link d’invito</button>
+				<details class="qr">
+					<summary>Mostra il codice QR</summary>
+					<QrCode text={inviteUrl} label={`Codice QR dell’invito a ${u.titolo}`} />
+					<p class="nota">Da inquadrare con la fotocamera del telefono: apre questa pagina.</p>
+				</details>
 			{/if}
 		</section>
 
@@ -377,6 +390,21 @@
 	button.secondario {
 		background: transparent;
 		color: var(--accent, #1f6f43);
+	}
+	.qr {
+		width: 100%;
+	}
+	.qr summary {
+		padding: 0.7rem 0;
+		color: var(--accent, #1f6f43);
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.qr :global(svg) {
+		margin: 0.4rem 0;
+		padding: 0.5rem;
+		border: 1px solid var(--border);
+		border-radius: 8px;
 	}
 	button.pericolo {
 		background: #b42318;

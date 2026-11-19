@@ -8,6 +8,7 @@ import {
 	registrationVerify,
 	requireUser
 } from './auth';
+import { invitePreview } from './invito';
 import { publicKey, reminders, subscribe, unsubscribe } from './notifiche';
 import { announce, create, join, leave, mine, setParticipant, setStatus, show } from './uscite';
 import { HttpError, cors, json, type Env } from './util';
@@ -46,7 +47,9 @@ const ROUTES: [string, RegExp, Handler][] = [
 	['POST', /^\/api\/uscite\/([\w-]+)\/rinuncia$/, leave],
 	['POST', /^\/api\/uscite\/([\w-]+)\/stato$/, setStatus],
 	['POST', /^\/api\/uscite\/([\w-]+)\/annunci$/, announce],
-	['POST', /^\/api\/uscite\/([\w-]+)\/partecipanti\/([\w-]+)$/, setParticipant]
+	['POST', /^\/api\/uscite\/([\w-]+)\/partecipanti\/([\w-]+)$/, setParticipant],
+	// link da condividere: anteprima per le app di messaggistica, poi la pagina dell'app
+	['GET', /^\/invito\/([\w-]+)$/, plain(invitePreview)]
 ];
 
 export default {

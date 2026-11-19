@@ -13,7 +13,8 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | Confermato / lista d'attesa / rinuncia | **fatto**: la lista d'attesa scorre in ordine di arrivo quando qualcuno rinuncia |
 | L'organizzatore conferma, sposta in attesa, annulla, rinvia | **fatto** |
 | Bacheca annunci (solo organizzatore → partecipanti) | **fatto** |
-| Condivisione (Web Share o copia del link) | **fatto**; QR code e anteprima Open Graph da fare |
+| Condivisione (Web Share o copia del link) | **fatto** |
+| Anteprima Open Graph e QR code | **fatto**: il link condiviso passa dal servizio (`/invito/:id?t=…`), che dà alle app di messaggistica titolo, data, luogo e avvertenza, poi rimanda alla pagina; senza link valido l'anteprima è generica. Il QR, disegnato nel browser, apre direttamente la pagina |
 | Disclaimer «uscita privata, non organizzata dal CAI» | **fatto**, sulla pagina invito, sul modulo e in «Uscite» |
 | Notifiche push e promemoria | **fatto**: «Attiva le notifiche» in «Uscite» e sulla pagina invito; avvisi per iscrizioni, lista d'attesa, promozioni, annullamenti, rinvii e annunci; promemoria della sera prima con un cron. App installabile (manifest e icone): su iPhone le notifiche arrivano solo dalla schermata Home |
 | Visibilità «contatti» e feed delle uscite pubbliche vicine | da fare |
@@ -27,11 +28,12 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 
 ## Prove
 
-- **14 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
+- **17 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
   posti, permessi, link d'invito, lista d'attesa, annullamento e rinvio, bacheca, sessioni;
   cifratura push sul vettore dell'Appendice A della RFC 8291 e decifrata come farebbe il
   browser, firma VAPID verificata, iscrizioni scadute (410) cancellate, promemoria del giorno
-  prima in ora italiana.
+  prima in ora italiana; anteprima dell'invito (escape dell'HTML, niente dettagli senza link
+  valido, script consentito solo dall'hash nella CSP, uscite annullate).
 - **Prova end-to-end** (`apps/web/scripts/e2e-uscite.cjs`), senza account: Worker con
   `wrangler dev` e D1 locale, app compilata con `VITE_USCITE_API`, passkey vere su autenticatori
   virtuali di Chromium.
@@ -41,6 +43,13 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
   - Anna vede i partecipanti e pubblica un annuncio, che Carla legge.
   - «Le mie uscite» elenca l'uscita.
   - Nessun errore in console.
+- **Prova del link d'invito** (`apps/web/scripts/e2e-invito.cjs`):
+  - il codice QR, decodificato con una libreria indipendente (jsQR), è esattamente il link della
+    pagina;
+  - il link condiviso, letto come farebbe un'app di messaggistica (senza JavaScript), ha titolo,
+    «Lunedì 12 luglio alle ore 07:00 · Palù del Fersina» e l'avvertenza; l'immagine
+    dell'anteprima si carica;
+  - aperto nel browser, porta alla pagina dell'uscita.
 - **Prova delle notifiche** (`apps/web/scripts/e2e-notifiche.cjs`) con una chiave VAPID usa e
   getta: Carla organizza e attiva le notifiche, Bruno partecipa, il servizio locale manda una push
   vera attraverso il servizio push di Chrome e il service worker di Carla mostra «Giro del lago di
@@ -58,6 +67,7 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | `screenshots/2-invito-telefono.jpg` | La pagina invito vista da chi non ha ancora un account |
 | `screenshots/3-organizzatore-telefono.jpg` | La gestione dell'organizzatrice: partecipanti, bacheca, annulla o rinvia |
 | `screenshots/4-notifica-telefono.jpg` | La pagina dell'uscita con le notifiche attive («Disattiva le notifiche») |
+| `screenshots/5-qr-invito-telefono.jpg` | Il codice QR dell'invito sulla pagina dell'uscita |
 
 ## Per pubblicare il servizio (serve l'account Cloudflare dell'utente)
 
@@ -68,6 +78,5 @@ attivo».
 
 ## Prossimi passi della fase
 
-1. Anteprima Open Graph e QR code della pagina invito.
-2. Visibilità «contatti» e feed delle uscite pubbliche vicine.
-3. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare.
+1. Visibilità «contatti» e feed delle uscite pubbliche vicine.
+2. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare.
