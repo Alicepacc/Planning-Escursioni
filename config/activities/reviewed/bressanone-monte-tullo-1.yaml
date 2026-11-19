@@ -1,0 +1,22 @@
+sezione: CAI Bressanone
+titolo: Monte Tullo – Alta Via Günther Messner
+data: 2026-08-30
+zona: Odle di Eores
+tipo_percorso: anello
+difficolta: null
+durata: "6:07"
+distanza_km: 16.5
+salita_m: 1216
+discesa_m: 1223
+quota_max_m: 2643
+partenza: null
+arrivo: null
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: 10
+sentieri: []
+reti: [Alta Via Günther Messner]
+punti_chiave:
+  - {nome: Monte Tullo, quota_m: 2643}
+  - {nome: Monte Rovina}
+note_revisione: 'partenza non indicata (punto più basso 1730 m); anello dedotto da salita e discesa quasi uguali; difficoltà non indicata, richiesta l''attrezzatura da ferrata'

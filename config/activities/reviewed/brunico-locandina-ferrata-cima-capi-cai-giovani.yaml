@@ -1,0 +1,23 @@
+sezione: CAI Brunico
+titolo: Ferrata Susatti a Cima Capi
+data: 2026-11-07
+zona: Alto Garda e Ledro
+tipo_percorso: anello
+difficolta: EEA
+durata: "5:00"
+distanza_km: 6.5
+salita_m: 652
+discesa_m: 652
+quota_max_m: 909
+partenza: {nome: Biacesa di Ledro, comune: Ledro}
+arrivo: {nome: Biacesa di Ledro}
+ora_ritrovo: "09:30"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["470", "471"]
+punti_chiave:
+  - {nome: Biacesa}
+  - {nome: Cima Capi, quota_m: 909}
+  - {nome: Bivacco Arcioni, quota_m: 858}
+  - {nome: Biacesa}
+note_revisione: 'riservata ai soci CAI Giovani 18-35 anni; variante con Punta Rocca (1089 m): 886 m, 7,5 km, 6:30; discesa non dichiarata, uguale alla salita perché è un anello'

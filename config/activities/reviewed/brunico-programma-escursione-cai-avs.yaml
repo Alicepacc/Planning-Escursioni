@@ -1,0 +1,26 @@
+sezione: CAI Brunico
+titolo: Traversata Sarè – Pederü (Dolomiti di Fanes)
+data: 2026-10-11
+zona: Dolomiti di Fanes
+tipo_percorso: traversata
+difficolta: E
+durata: "5:00"
+distanza_km: 16.5
+salita_m: 640
+discesa_m: 760
+quota_max_m: 2174
+partenza: {nome: Sarè, quota_m: 1659, comune: Badia}
+arrivo: {nome: Pederü, quota_m: 1548}
+ora_ritrovo: "08:00"
+mezzi: pullman
+quota_eur: 15
+sentieri: []
+punti_chiave:
+  - {nome: Sarè, quota_m: 1659}
+  - {nome: Capanna Alpina}
+  - {nome: Col de Locia, quota_m: 2069}
+  - {nome: Ùtia de Gran Fanes, quota_m: 2103}
+  - {nome: Passo di Limo, quota_m: 2174}
+  - {nome: Rifugio Fanes}
+  - {nome: Pederü, quota_m: 1548}
+note_revisione: 'gita congiunta CAI-AVS riservata ai soci; durata = 1:30 salita + 1:30 piano + 2:00 discesa'

@@ -1,0 +1,23 @@
+sezione: CAI Bressanone
+titolo: Ferrata Piz da Peres
+data: 2026-07-12
+zona: Plan de Corones
+tipo_percorso: anello
+difficolta: EEA
+durata: "5:30"
+distanza_km: null
+salita_m: 750
+discesa_m: 750
+quota_max_m: 2507
+partenza: {nome: Passo Furcia}
+arrivo: {nome: Passo Furcia}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["3", "12"]
+punti_chiave:
+  - {nome: Passo Furcia}
+  - {nome: Piz da Peres, quota_m: 2507}
+  - {nome: Forcella Tre Dita}
+  - {nome: Passo Furcia}
+note_revisione: 'ferrata di grado MD; alternativa escursionistica (E, 5:00) per la Forcella Tre Dita in andata e ritorno; qui la ferrata'

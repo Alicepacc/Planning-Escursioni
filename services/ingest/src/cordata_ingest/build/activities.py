@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import unicodedata
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -44,9 +45,9 @@ WINTER_MONTHS = {12, 1, 2, 3}
 
 
 def slug(text: str) -> str:
-    text = text.lower()
-    for a, b in (("à", "a"), ("è", "e"), ("é", "e"), ("ì", "i"), ("ò", "o"), ("ù", "u")):
-        text = text.replace(a, b)
+    """Accenti e dieresi tolti («Pederü» → «pederu», «Günther» → «gunther»)."""
+    text = unicodedata.normalize("NFKD", text.lower().replace("ß", "ss"))
+    text = text.encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", text).strip("-")[:60]
 
 

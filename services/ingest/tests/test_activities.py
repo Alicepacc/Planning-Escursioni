@@ -262,3 +262,67 @@ def test_ricostruzione_incompatibile_con_la_locandina_non_mostrata():
     assert verdict({"distanza": ok, "salita": ok}, 1, 4) == ("auto_ok", None)
     assert verdict({"distanza": ok, "salita": ok}, 2, 4)[0] == "da_rivedere"
     assert verdict({"anello_chiuso": {"distanza_m": 0, "ok": True}}, 0, 3)[0] == "da_rivedere"
+
+
+def test_sanitize_telefono_fisso_sulla_riga_del_sito():
+    text = (
+        "0471/123456   -   www.sezione-esempio.it  -   segreteria@example.org\n"
+        "quota 1250 m, ore 8.30"
+    )
+    out = sanitize(text)[0]
+    assert "123456" not in out and "example.org" not in out
+    assert "654321" not in sanitize("Tel. 0471 / 654321")[0]
+    assert "1250 m" in out and "8.30" in out
+
+
+def test_sanitize_istruttore_e_nome_a_fine_riga():
+    text = (
+        "oppure presso l'istruttore Mario Bianchi o presso il Presidente della sezione Luca \n"
+        "Verdi (333-1234567)\n"
+        "Il presidente del Rifugio Roma apre a giugno"
+    )
+    out = sanitize(text)[0]
+    for name in ("Mario", "Bianchi", "Luca", "Verdi", "1234567"):
+        assert name not in out
+    assert "Rifugio Roma" in out
+
+
+def test_sanitize_scheda_tecnica_sulla_riga_di_una_email():
+    text = (
+        "SCHEDA TECNICA Iscrizioni: entro le 19 via e-mail\n"
+        "Difficoltà: EEA (Escursionisti Esperti con Attrezzatura). La ferrata è gite@example.org\n"
+        "Capogita: Mario Rossi (cell. 333 1234567)"
+    )
+    out = sanitize(text)[0]
+    assert "Difficoltà: EEA (Escursionisti Esperti con Attrezzatura)" in out
+    assert "Rossi" not in out and "example.org" not in out
+
+
+def test_parser_tempi_a_segmenti_costi_di_viaggio_e_quote():
+    p = _parse(
+        "Domenica 11 ottobre 2026\n"
+        "Distanza: 16,5 km.\n"
+        "Dislivello: 640 m in salita e 760 m in discesa.\n"
+        "Tempi di cammino: 1h 30' in salita,\n"
+        '1h 30" in piano, 2h in discesa.\n'
+        "Quota di viaggio: € 15,00.\n"
+    )
+    assert (p["durata"], p["salita_m"], p["discesa_m"]) == ("5:00", 640, 760)
+    assert p["quota_eur"] == 15
+    q = _parse(
+        "Tempi di cammino: Circa 4 ore e 15 minuti complessivi\n"
+        "Distanza totale: km 12,00\n"
+        "Rifugio Giogo Lungo 2603m.\n"
+        "Sullo sfondo vediamo il Pizzo Rosso che, con i suoi 3495 m, è la seconda vetta\n"
+        "E previsto un rimborso di € 5,00 a passeggero.\n"
+    )
+    assert (q["durata"], q["distanza_km"], q["quota_max_m"], q["quota_eur"]) == (
+        "4:15",
+        12,
+        2603,
+        5,
+    )
+    r = _parse(
+        "Tempo di percorrenza: ca. 1 ora (salita), 45 minuti (ritorno)\nPunto più alto\n2.643 m"
+    )
+    assert (r["durata"], r["quota_max_m"]) == ("1:45", 2643)

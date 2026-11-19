@@ -1,0 +1,23 @@
+sezione: CAI Brunico
+titolo: Rifugio Torre di Pisa
+data: 2026-09-19
+zona: Latemar
+tipo_percorso: anello
+difficolta: EE
+durata: "4:00"
+distanza_km: null
+salita_m: 890
+discesa_m: 890
+quota_max_m: null
+partenza: {nome: Seggiovia Oberholz (stazione a monte), quota_m: 2100, comune: Nova Ponente}
+arrivo: {nome: Seggiovia Oberholz (stazione a monte), quota_m: 2100}
+ora_ritrovo: "07:00"
+mezzi: mezzi propri
+quota_eur: 10
+sentieri: ["18", "516", "22"]
+punti_chiave:
+  - {nome: Oberholz, quota_m: 2100}
+  - {nome: Forcella dei Camosci}
+  - {nome: Rifugio Torre di Pisa}
+  - {nome: Oberholz, quota_m: 2100}
+note_revisione: 'con la seggiovia da Obereggen (A/R a parte: 15,50 € con Alto Adige Pass, 22 € senza); trasporto 10 €; forcella «circa 2700 m»; gruppo EEA parallelo alla Torre Diamantidi (non incluso)'

@@ -1,0 +1,23 @@
+sezione: CAI Brunico
+titolo: Giro del Castello di Monguelfo
+data: 2026-10-14
+zona: Val Pusteria
+tipo_percorso: anello
+difficolta: T
+durata: "4:00"
+distanza_km: null
+salita_m: 300
+discesa_m: 300
+quota_max_m: null
+partenza: {nome: Stazione di Monguelfo, comune: Monguelfo-Tesido}
+arrivo: {nome: Stazione di Monguelfo}
+ora_ritrovo: "09:15"
+mezzi: mezzi pubblici
+quota_eur: null
+sentieri: []
+punti_chiave:
+  - {nome: Stazione Monguelfo-Valle di Casies}
+  - {nome: Burgruine Thurn - Castel Thurn}
+  - {nome: Schloss Welsperg - Castel Welsperg}
+  - {nome: Stazione Monguelfo-Valle di Casies}
+note_revisione: 'titolo e data dall''immagine (OCR incompleto); in treno da Brunico; rovine di un castello verso la Val Casies, discesa per la strada panoramica fino al castello; durata = 2 h salita + 2 h discesa; le rovine verso la Val Casies sono Castel Thurn, il castello è Castel Welsperg'

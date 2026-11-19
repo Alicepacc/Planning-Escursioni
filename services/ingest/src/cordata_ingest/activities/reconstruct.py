@@ -259,10 +259,11 @@ def _near_trails(conn: Any, lon: float, lat: float, refs: list[str], km: float =
 
 def search_radius_km(activity: dict[str, Any]) -> float:
     """Distanza massima di un punto chiave dalla partenza, dalla lunghezza o dalla durata."""
-    km = activity.get("distanza_km")
-    if not km and activity.get("durata"):
+    km = float(activity.get("distanza_km") or 0)
+    if activity.get("durata"):
+        # stima prudente: 3,5 km/h. Vale anche se c'è la distanza: spesso è la sola andata
         h, m = str(activity["durata"]).split(":")
-        km = 3.5 * (int(h) + int(m) / 60)  # stima prudente: 3,5 km/h
+        km = max(km, 3.5 * (int(h) + int(m) / 60))
     if not km:
         return POINT_RADIUS_KM
     if activity.get("tipo_percorso") in {"anello", "andata_ritorno"}:

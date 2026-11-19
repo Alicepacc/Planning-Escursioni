@@ -130,3 +130,11 @@ def test_tile_zoom_filter_rules():
     flat = json.dumps(rules["poi"])
     for kind in POI_MINZOOM:
         assert f'"{kind}"' in flat or POI_MINZOOM[kind] >= 14
+
+
+def test_slug_con_dieresi_e_accenti():
+    from cordata_ingest.build.activities import slug
+
+    assert slug("Traversata Sarè – Pederü") == "traversata-sare-pederu"
+    assert slug("Sentiero attrezzato Günther Messner") == "sentiero-attrezzato-gunther-messner"
+    assert slug("Città di Trento") == "citta-di-trento"

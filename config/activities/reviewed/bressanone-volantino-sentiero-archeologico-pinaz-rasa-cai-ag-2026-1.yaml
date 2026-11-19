@@ -1,0 +1,25 @@
+sezione: CAI Bressanone
+titolo: Da Bressanone a Rasa sul Sentiero Archeologico
+data: 2026-10-18
+zona: Bressanone
+tipo_percorso: anello
+difficolta: null
+durata: null
+distanza_km: null
+salita_m: null
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Sede CAI Bressanone, comune: Bressanone}
+arrivo: {nome: Sede CAI Bressanone}
+ora_ritrovo: "10:00"
+mezzi: null
+quota_eur: null
+sentieri: []
+reti: [Sentiero Archeologico]
+punti_chiave:
+  - {nome: Bressanone}
+  - {nome: Pinaz}
+  - {nome: Elvas}
+  - {nome: Rasa}
+  - {nome: Bressanone}
+note_revisione: 'alpinismo giovanile; a piedi dalla sede, rientro a Bressanone nel primo pomeriggio (percorso di ritorno non indicato); nessun dato tecnico'

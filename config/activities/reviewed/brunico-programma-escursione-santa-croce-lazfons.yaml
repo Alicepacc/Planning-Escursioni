@@ -1,0 +1,22 @@
+sezione: CAI Brunico
+titolo: Rifugio e Santuario di Santa Croce di Lazfons
+data: 2026-10-18
+zona: Valle Isarco
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "4:30"
+distanza_km: 6.5
+salita_m: 750
+discesa_m: 750
+quota_max_m: 2296
+partenza: {nome: Parcheggio Kühhof, quota_m: 1545, comune: Chiusa}
+arrivo: {nome: Parcheggio Kühhof, quota_m: 1545}
+ora_ritrovo: "08:30"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["1"]
+punti_chiave:
+  - {nome: Kühhof, quota_m: 1545}
+  - {nome: Klausner Hütte - Rifugio Chiusa al Campaccio, quota_m: 1923}
+  - {nome: Latzfonser Kreuz - Santa Croce di Lazfons, quota_m: 2296}
+note_revisione: 'data dalla chiusura del rifugio «il 18 ottobre»; durata = 2:30 salita + 2:00 discesa; sviluppo 6,5 km «circa», forse la sola andata; rimborso viaggio 5 € a passeggero; punti chiave con i nomi bilingui della cartografia'

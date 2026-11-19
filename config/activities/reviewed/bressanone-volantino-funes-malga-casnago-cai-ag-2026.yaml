@@ -1,0 +1,21 @@
+sezione: CAI Bressanone
+titolo: Val di Funes – Malga Casnago
+data: 2026-09-26
+zona: Val di Funes
+tipo_percorso: andata_ritorno
+difficolta: null
+durata: "2:00"
+distanza_km: null
+salita_m: null
+discesa_m: null
+quota_max_m: null
+partenza: {nome: Parcheggio Malga Zannes}
+arrivo: {nome: Parcheggio Malga Zannes}
+ora_ritrovo: "08:30"
+mezzi: pullman
+quota_eur: 15
+sentieri: []
+punti_chiave:
+  - {nome: Zanser Alm - Malga Zannes}
+  - {nome: Gschnagenhardt Alm - Malga Casnago}
+note_revisione: 'alpinismo giovanile; «2 ore di cammino» dal parcheggio di Malga Zannes, probabilmente la sola andata; quota bus 15 € per le uscite singole; punti chiave con i nomi bilingui della cartografia'

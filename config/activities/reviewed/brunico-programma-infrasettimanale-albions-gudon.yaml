@@ -1,0 +1,24 @@
+sezione: CAI Brunico
+titolo: Chiusa – Albions – Gudon
+data: 2026-09-09
+zona: Valle Isarco
+tipo_percorso: anello
+difficolta: E
+durata: "4:15"
+distanza_km: null
+salita_m: 570
+discesa_m: 570
+quota_max_m: 897
+partenza: {nome: Stazione di Chiusa, quota_m: 520, comune: Chiusa}
+arrivo: {nome: Stazione di Chiusa, quota_m: 520}
+ora_ritrovo: "07:50"
+mezzi: mezzi pubblici
+quota_eur: null
+sentieri: ["5", "10", "4"]
+punti_chiave:
+  - {nome: Stazione di Chiusa, quota_m: 520}
+  - {nome: Albions, quota_m: 857}
+  - {nome: Fonteklaus, quota_m: 897}
+  - {nome: Gudon, quota_m: 720}
+  - {nome: Stazione di Chiusa, quota_m: 520}
+note_revisione: 'difficoltà dichiarata T/E, si tiene il grado più alto; in treno da Brunico; durata = 1:30 salita + 1:30 piano + 1:15 discesa; quota massima = Tenuta Fonteklaus'

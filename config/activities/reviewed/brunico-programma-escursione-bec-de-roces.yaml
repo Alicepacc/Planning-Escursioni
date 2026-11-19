@@ -1,0 +1,23 @@
+sezione: CAI Brunico
+titolo: Bec de Roces e Lago di Boè
+data: 2026-10-04
+zona: Alta Val Badia
+tipo_percorso: anello
+difficolta: EE
+durata: "4:30"
+distanza_km: 8
+salita_m: 500
+discesa_m: 500
+quota_max_m: 2370
+partenza: {nome: Passo Campolongo, quota_m: 1875}
+arrivo: {nome: Passo Campolongo, quota_m: 1875}
+ora_ritrovo: "09:00"
+mezzi: mezzi propri
+quota_eur: 5
+sentieri: ["636", "638"]
+punti_chiave:
+  - {nome: Passo Campolongo, quota_m: 1875}
+  - {nome: Rifugio Bec de Roces, quota_m: 2160}
+  - {nome: Lago di Boè, quota_m: 2250}
+  - {nome: Passo Campolongo, quota_m: 1875}
+note_revisione: 'data e tempo di salita dall''immagine (OCR incompleto); durata = 1:30 salita + 1:00 in piano + 2:00 discesa; roccette con un passaggio esposto'

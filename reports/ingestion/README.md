@@ -10,8 +10,103 @@ per il ruolo delle locandine nell'app).
 |---|---|---|---|---|---|
 | 1 – SAT Pergine | 17/11/2026 | 8 locandine 2026 | 8 | 8 | 5 |
 | 2 – siti WordPress SAT | 18/11/2026 | 13 PDF di Cavalese, Primiero, Ledro | 18 | 15 | 5 |
+| 3 – sezioni CAI Alto Adige | 19/11/2026 | 20 locandine di Brunico e Bressanone | 15 | 12 | 5 |
 
 Il primo blocco è descritto nel [rapporto della Fase 3](../phase3/README.md).
+
+## Blocco 3 – sezioni CAI Alto Adige (19/11/2026)
+
+Candidati: [`config/activities/candidates/2026-11-18-cai-alto-adige.yaml`](../../config/activities/candidates/2026-11-18-cai-alto-adige.yaml).
+
+### Cosa è entrato
+
+- **CAI Brunico** è stata aggiunta all'indice delle fonti (metadati di 122 PDF; nuova opzione
+  `discover --sezioni brunico`, che aggiorna solo quella sezione). Scelte le 10 locandine singole
+  di agosto-ottobre 2026; per **CAI Bressanone** le 10 locandine 2026 non usate nel pilota.
+  Vipiteno pubblica solo moduli e una falesia; il programma 2025 di Appiano resta per un blocco
+  successivo.
+- **15 attività riviste.** Escluse con il motivo: Törggelen e gita di chiusura di Brunico (pranzi
+  sociali), la salita alpinistica alla Torre Diamantidi (via PD, fuori dall'escursionismo),
+  Zinsnock e Cima di Pozzo di Bressanone (scialpinismo).
+- Le date e i tempi che l'OCR delle locandine di Brunico aveva perso sono stati letti
+  sull'immagine della pagina (annotato in `note_revisione`).
+
+### Dati personali
+
+Il controllo dei testi ha trovato tre casi, corretti con test e con la nuova estrazione di tutto
+l'archivio:
+
+- nomi dopo «istruttore» e nome proprio a fine riga col cognome a capo («presso il Presidente della
+  sezione Nome⏎Cognome»);
+- telefoni fissi scritti «0xxx/xxxxxx» o «0xxx / xxxxxx» su righe senza la parola «tel» ma con il
+  sito o l'email della sezione;
+- al contrario, parole della scheda tecnica («Difficoltà: EEA (Escursionisti Esperti…)») tolte come
+  se fossero nomi quando l'OCR a due colonne le metteva sulla riga di un'email.
+
+### Parser a regole: la misura indipendente
+
+Il parser è stato misurato su queste locandine **prima** di ogni ritocco: è la misura onesta delle
+regole scritte nei blocchi precedenti.
+
+| Insieme | Prima (indipendente) | Dopo |
+|---|---|---|
+| Blocco 3, precisione | **75,5%** | 80,6% |
+| Blocco 3, copertura | **54,3%** | 64,8% |
+| Pilota | 98,1% | 98,1% |
+| Controllo (holdout) | 92,4% | 92,4% |
+| Blocchi 1 e 2 | 92,3% | 92,3% (un campo corretto in più) |
+
+Il 75,5% contro l'88,5% «ottimistico» del blocco 2 conferma che i numeri misurati sulle stesse
+locandine usate per scrivere le regole sono gonfiati. Regole nuove: tempi dopo l'etichetta su più
+righe (totale «4 ore e 15 minuti complessivi» o somma di salita, piano e discesa, anche «1 ora
+(salita), 45 minuti (ritorno)»), «N m in salita/in discesa», «distanza totale: km N», «13 km
+distanza», «punto più alto» con la quota a capo, quota massima senza le mete facoltative e le cime
+viste da lontano, rimborsi e quote di viaggio, «Dal Passo X (quota)». Restano difficili i titoli e
+le date delle locandine solo grafiche (OCR).
+
+### Ricostruzione delle tracce
+
+| Esito | Blocco 3 | Tutte le attività (62) |
+|---|---|---|
+| verificata (auto_ok) | 5 | 23 |
+| da rivedere | 7 | 32 |
+| fallita (non mostrata) | 3 | 7 |
+
+Verificate: Ferrata Piz da Peres, Valle Aurina – Rifugio Giogo Lungo, traversata Sarè – Pederü,
+Chiusa – Albions – Gudon, Corno di Tres. Fallite: Ferrata di Preore (la locandina non nomina punti
+oltre al paese), Piccolo Tibet (in Austria, fuori dall'estratto), Monte Tullo (partenza non
+indicata). Da rivedere: Santa Croce di Lazfons (i 6,5 km sono la sola andata), Ferrata Susatti a
+Cima Capi, Bec de Roces, Rifugio Torre di Pisa, Giro del Castello di Monguelfo, e le due uscite
+dell'alpinismo giovanile senza dati tecnici.
+
+Correzioni generali:
+
+- **Raggio di ricerca dei punti chiave**: il maggiore tra la stima dalla distanza e quella dalla
+  durata (3,5 km/h), perché la distanza dichiarata è spesso la sola andata. Nessun cambiamento
+  sulle altre 47 attività.
+- **Comuni omonimi**: «Funes» e «Magrè» portavano la ricerca della partenza in Veneto e in
+  Trentino; corretti nella revisione (Cortaccia sulla Strada del Vino; nessun comune per Funes).
+- **Indirizzi delle schede** con dieresi e accenti: «Pederü» → `pederu`, «Günther» → `gunther`
+  (prima `g-nther`). Cambia l'indirizzo della scheda Odle di Eores di SAT Pergine.
+- Nomi dei punti chiave allineati alla cartografia bilingue (Klausner Hütte, Latzfonser Kreuz,
+  Castel Thurn, Castel Welsperg, Röt Alm, Malga Zannes, Malga Casnago, Fennberg - Favogna).
+
+### In app
+
+**54 escursioni** (erano 42); «CAI Brunico» compare nel filtro «Sezione». Verificato nel browser
+(Pixel 7): elenco, filtro, schede del blocco, nessun errore.
+
+| File | Cosa mostra |
+|---|---|
+| `screenshots/3-sare-pederu-telefono.jpg` | Traversata Sarè – Pederü (CAI Brunico, gita con l'AVS): traccia verificata, 7 punti chiave |
+
+### Problemi aperti
+
+- **Comuni omonimi**: l'àncora del comune cerca in tutta l'area; andrebbe limitata alla provincia
+  della sezione.
+- **Locandine solo grafiche**: titoli e date persi dall'OCR vanno letti a mano.
+- **Escursioni fuori area** (Austria, Lombardia): restano fuori finché l'estratto OSM copre solo
+  Trentino-Alto Adige e Veneto.
 
 ## Blocco 2 – siti WordPress SAT (18/11/2026)
 

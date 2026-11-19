@@ -19,7 +19,10 @@ from ..http import PoliteClient
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="cordata_ingest.activities")
     sub = parser.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("discover", help="elenca i PDF delle sezioni pilota (solo metadati)")
+    dis = sub.add_parser("discover", help="elenca i PDF delle sezioni pilota (solo metadati)")
+    dis.add_argument(
+        "--sezioni", help="solo queste sezioni (slug separati da virgola), aggiunte all'indice"
+    )
     arc = sub.add_parser("archive", help="scarica i PDF candidati nell'archivio privato")
     arc.add_argument("--candidati", type=Path, help="file YAML dei candidati (default: pilota)")
     sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
@@ -37,7 +40,8 @@ def main(argv: list[str] | None = None) -> int:
         from .discover import discover
 
         with PoliteClient(timeout=60) as client:
-            payload = discover(client)
+            only = [x.strip() for x in args.sezioni.split(",")] if args.sezioni else None
+            payload = discover(client, only=only)
         print(payload["per_section"])
     elif args.cmd == "archive":
         from .archive import archive, load_candidates

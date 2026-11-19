@@ -1,0 +1,24 @@
+sezione: CAI Bressanone
+titolo: Corno di Tres – traversata da Favogna di Sopra al Rifugio Sores
+data: 2026-04-26
+zona: Val di Non
+tipo_percorso: traversata
+difficolta: EE
+durata: "5:00"
+distanza_km: 12
+salita_m: 600
+discesa_m: 590
+quota_max_m: 1812
+partenza: {nome: Favogna di Sopra, comune: Cortaccia sulla Strada del Vino}
+arrivo: {nome: Rifugio Sores}
+ora_ritrovo: "07:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["3", "500", "503"]
+punti_chiave:
+  - {nome: Fennberg - Favogna}
+  - {nome: Sella di Favogna}
+  - {nome: Corno di Tres, quota_m: 1812}
+  - {nome: Rifugio Predaia «ai Todes ci»}
+  - {nome: Rifugio Sores}
+note_revisione: 'possibili tratti innevati sul 503; punti chiave con i nomi della cartografia'

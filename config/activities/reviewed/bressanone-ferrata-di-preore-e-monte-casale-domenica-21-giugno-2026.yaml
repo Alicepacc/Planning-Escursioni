@@ -1,0 +1,22 @@
+sezione: CAI Bressanone
+titolo: Ferrata di Preore
+data: 2026-06-21
+zona: Giudicarie
+tipo_percorso: anello
+difficolta: EEA
+durata: "3:30"
+distanza_km: null
+salita_m: 190
+discesa_m: 190
+quota_max_m: null
+partenza: {nome: Preore}
+arrivo: {nome: Preore}
+ora_ritrovo: "07:00"
+mezzi: pullman
+quota_eur: 20
+sentieri: []
+reti: [Sentiero alpinistico delle Niere]
+punti_chiave:
+  - {nome: Preore}
+  - {nome: Preore}
+note_revisione: 'due itinerari, qui la ferrata (n. 1); «distanza ca. 270 m» è la lunghezza della ferrata; alternativa Monte Casale da Comano: E, 1015 m, 10,5 km, 3:30 + 2:30, sentiero 411'

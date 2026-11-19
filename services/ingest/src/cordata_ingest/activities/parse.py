@@ -207,6 +207,61 @@ def _hours(token: str) -> float:
     return _num(token)
 
 
+DUR_LABEL = re.compile(
+    r"\b(?:tempi\s+di\s+(?:cammino|percorrenza)|ore\s+di\s+cammino(?:\s+totali)?|"
+    r"tempo\s+di\s+percorrenza)\b",
+    re.IGNORECASE,
+)
+DUR_TOKEN = re.compile(
+    r"(?<![\d.,:])(?:(?P<h>\d{1,2})(?:[:.](?P<m1>\d{2})(?!\d)|\s*(?:h|ore|ora)\b\.?(?:\s*e)?"
+    r"(?:\s*(?P<m2>\d{1,2})\s*(?:'|’|\"|″|minuti|min\b))?)|(?P<m3>\d{1,2})\s*minuti)",
+    re.IGNORECASE,
+)
+DUR_TOTAL = re.compile(
+    r"(\d{1,2})\s*(?:h|ore)(?:\s*e\s*(\d{1,2})\s*(?:minuti|min|'|’))?\s*(?:circa\s*)?"
+    r"(?:complessiv|total)|totale\s*:?\s*(?:ca\.?|circa)?\s*(\d{1,2})\s*(?:h|ore)",
+    re.IGNORECASE,
+)
+SEG_AFTER = re.compile(
+    r"^\s*(?:circa\s*)?(?:\(|in\s+|di\s+)(salita|piano|discesa|ritorno)", re.IGNORECASE
+)
+SEG_BEFORE = re.compile(r"(salita|piano|discesa|ritorno)[^\d]{0,12}$", re.IGNORECASE)
+
+
+def _labelled_duration(doc: Doc) -> Field | None:
+    """Tempi dopo l'etichetta, anche su più righe: il totale dichiarato («4 ore circa totali»,
+    «4 ore e 15 minuti complessivi») oppure la somma di salita, piano e discesa («1h 30' in
+    salita, 1h 30" in piano, 2h in discesa»; «Salita 3 ore | In piano 1 ora | Discesa 3 ore»)."""
+    for i, (page, line) in enumerate(doc.lines):
+        label = DUR_LABEL.search(line)
+        if not label:
+            continue
+        window = " ".join([line[label.end() :]] + [t for _, t in doc.lines[i + 1 : i + 3]])
+        total = DUR_TOTAL.search(window)
+        if total:
+            h = int(total.group(1) or total.group(3))
+            minutes = int(total.group(2)) if total.group(2) else 0
+            return Field(_hm(h + minutes / 60), 0.9, _cite(line), page)
+        segments: dict[str, float] = {}
+        first: float | None = None
+        for t in DUR_TOKEN.finditer(window):
+            hours = (
+                int(t.group("h") or 0)
+                + int(t.group("m1") or t.group("m2") or t.group("m3") or 0) / 60
+            )
+            kind = SEG_AFTER.match(window[t.end() :]) or SEG_BEFORE.search(window[: t.start()])
+            if first is None and t.start() <= 12:
+                first = hours
+            seg = kind.group(1).lower().replace("ritorno", "discesa") if kind else None
+            if seg and seg not in segments:
+                segments[seg] = hours
+        if len(segments) >= 2 and {"salita", "discesa"} & set(segments):
+            return Field(_hm(sum(segments.values())), 0.85, _cite(line), page)
+        if first and 0.5 <= first <= 14:
+            return Field(_hm(first), 0.85, _cite(line), page)
+    return None
+
+
 def parse_duration(doc: Doc) -> Field:
     num = r"(\d{1,2}(?:[.,:]\d{1,2})?)"
     # salita + discesa: "circa 3 ore in salita e circa 1,5 ore in discesa"
@@ -227,6 +282,9 @@ def parse_duration(doc: Doc) -> Field:
         m = tot_rx.search(line)
         if m:
             return Field(_hm(_hours(m.group(1) or m.group(2))), 0.9, _cite(line), page)
+    window = _labelled_duration(doc)
+    if window:
+        return window
     hit = doc.find(r"(?:andata e ritorno|a/r)[^\d]{0,15}h\s*:?\s*(\d{1,2})\s*e\s*(\d{2})")
     if hit:
         m, page, line = hit
@@ -234,6 +292,7 @@ def parse_duration(doc: Doc) -> Field:
     # mai "ore N" da solo: è quasi sempre un orario ("ritrovo ore 7", "ore 8 e mezza")
     patterns = [
         rf"ore di cammino(?: effettiv[oei])?\s*:?\s*(?:ca\.?|circa)?\s*{num}\s*(?:h|ore)?",
+        rf"{num}\s*ore di cammino",
         rf"ore di cammino\s*:?\s*{num}",
         rf"tempo di percorrenza\s*:?\s*(?:circa)?\s*{num}\s*(?:h|ore)",
         rf"durata(?:\s*a/r)?\s*:?\s*{num}\s*(?:h|ore)",
@@ -263,7 +322,8 @@ def parse_distance(doc: Doc) -> Field:
             r"(?:sviluppo|distanza|lunghezza|lungezza)[^\d\n]{0,40}?(\d{1,2}(?:[.,]\d{1,2})?)\s*km",
             0.9,
         ),
-        (r"(?:sviluppo|distanza)\s*:?\s*(?:km\.?\s*)(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
+        (r"(?:sviluppo|distanza)(?:\s+totale)?\s*:?\s*(?:km\.?\s*)(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
+        (r"(\d{1,2}(?:[.,]\d{1,2})?)\s*km\s*(?:di\s*)?(?:distanza|sviluppo)", 0.85),
         (r"^km\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"^sviluppo$", 0.0),
         # su una riga da sola, anche «A: 15 km» (non gli intervalli «25-30km»)
@@ -326,7 +386,7 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
         )
     for pattern in (
         rf"salita\s*:?\s*(?:di\s*)?(?:circa\s*)?{m_}?\s*{v}",
-        rf"{v}\s*{m_}?\s*(?:di\s*)?salita",
+        rf"{v}\s*{m_}?\s*(?:di\s*|in\s*)?salita",
         rf"dislivello positivo(?:\s*itinerario\s*\d+)?\s*:?\s*{v}",
         rf"dislivello in salita\s*:?\s*(?:circa)?\s*{v}",
     ):
@@ -337,7 +397,7 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
             break
     for pattern in (
         rf"discesa\s*:?\s*(?:di\s*)?(?:circa\s*)?{m_}?\s*{v}",
-        rf"{v}\s*{m_}?\s*(?:di\s*)?discesa",
+        rf"{v}\s*{m_}?\s*(?:di\s*|in\s*)?discesa",
     ):
         hit = doc.find(pattern)
         if hit:
@@ -359,8 +419,14 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
     return up or Field(None, 0.0), down or Field(None, 0.0)
 
 
+OPTIONAL_PEAK = re.compile(
+    r"possibilit[àa]|facoltativ|eventualmente|sullo sfondo|vediamo|si vede|si scorg|in alternativa",
+    re.IGNORECASE,
+)
+
+
 def parse_max_elevation(doc: Doc) -> Field:
-    label = doc.after_label(r"quota massima(?: raggiunta)?", 1)
+    label = doc.after_label(r"(?:quota massima(?: raggiunta)?|punto più alto)", 1)
     if label:
         m = re.search(r"(\d{1,2}\.\d{3}|\d{3,4})", label[0])
         if m:
@@ -374,7 +440,13 @@ def parse_max_elevation(doc: Doc) -> Field:
         return Field(_num(value), 0.8, _cite(line), page)
     # altrimenti la quota più alta citata nel testo (escluse le righe di dislivelli e sviluppi)
     best: tuple[float, int, str] | None = None
+    previous = ""
     for page, line in doc.lines:
+        # mete facoltative e cime viste da lontano non sono il punto più alto del giro
+        optional = OPTIONAL_PEAK.search(f"{previous} {line}")
+        previous = line
+        if optional:
+            continue
         if re.search(
             r"dislivell|sviluppo|lunghezza|\bD\+|md[+-]|(?:salita|discesa)\s*:?\s*(?:di\s*)?"
             r"(?:circa\s*)?(?:m\.?|mt\.?)?\s*\d",
@@ -431,7 +503,7 @@ def parse_start(doc: Doc) -> tuple[Field, Field, Field]:
         rf"abitato|borgo)\s+(?i:di)\s+{NAME}\s*{QUOTA}",
         r"(?i:ini?zia|parte)\s+(?i:dal|dalla|da|presso)\s+(?:(?i:parcheggio)\s+"
         rf"(?:(?i:presso|del|della|di)\s+)?(?:(?i:il|la)\s+)?)?{NAME}\s*{QUOTA}",
-        rf"^(?i:da)\s+{NAME}\s*{QUOTA}",
+        rf"^(?i:da|dal|dalla|dallo)\s+{NAME}\s*{QUOTA}",
         rf"{NAME}\s*{QUOTA}\s*(?i:dove si lasciano le (?:macchine|auto))",
         r"(?i:iniziamo l.escursione|il percorso inizia|si parte|partenza)\s+"
         r"(?i:da|a|dal|dall.|dalla)\s*(?i:l.?\s*)?(?i:abitato di|paese di|centro di|localit\S+)?"
@@ -589,6 +661,15 @@ def parse_fee(doc: Doc) -> Field:
         if "non soci" in _fold(line):
             return Field(0.0, 0.5, _cite(line), page)
         return Field(_num(m.group(1)), 0.9, _cite(line), page)
+    # rimborso del viaggio o quota del trasporto: «rimborso di € 5 a passeggero», «Trasporto:
+    # € 10,00 a passeggero», «QUOTA BUS € 15,00», «Quota di viaggio: € 15,00», «Costo: 5€»
+    hit = doc.find(
+        r"(?:rimborso|trasporto|quota bus|quota di viaggio|^costo)\b[^\d\n]{0,40}?(?:€\s*)?"
+        r"(\d{1,3}(?:,\d{2})?)\s*(?:€|euro)?"
+    )
+    if hit:
+        m, page, line = hit
+        return Field(_num(m.group(1)), 0.6, _cite(line), page)
     return Field(None, 0.0)
 
 

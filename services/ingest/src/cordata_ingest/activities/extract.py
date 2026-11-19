@@ -37,7 +37,10 @@ MOBILE = re.compile(r"(?<![\d])(?:\+39[\s.]?)?3\d{2}(?:[\s./-]?\d){7}(?![\d])")
 # cellulari vecchi con 6 cifre dopo il prefisso: solo nelle righe di contatto, perché «332 360 326»
 # può essere un elenco di sentieri
 MOBILE6 = re.compile(r"(?<![\d])(?:\+39[\s.]?)?3\d{2}(?:[\s./-]?\d){6}(?![\d])")
-ANY_PHONE = re.compile(r"(?<![\d])(?:\+39[\s.]?)?0\d{1,3}(?:[\s./-]?\d){5,8}(?![\d])")
+ANY_PHONE = re.compile(
+    r"(?<![\d])(?:\+39[\s.]?)?0\d{1,3}(?:[ \t]*/[ \t]*|[\s.-])?\d(?:[\s./-]?\d){4,7}(?![\d])"
+)
+WEB_ADDRESS = re.compile(r"\bwww\.|https?://", re.IGNORECASE)
 DATE_LIKE = re.compile(r"^\d{1,2}[./]\d{1,2}[./]\d{2,4}$")
 CONTACT_WORDS = re.compile(
     r"\b(tel|tel\.|telefono|cell|cell\.|cellulare|whatsapp|contatt|info|informazioni|"
@@ -242,6 +245,40 @@ NOT_NAMES = {
         "Bei",
         "Bis",
         "Uhr",
+        # scheda tecnica: nelle locandine a due colonne finisce sulla riga dei contatti
+        "Difficoltà",
+        "Difficolta",
+        "EE",
+        "EEA",
+        "EAI",
+        "PD",
+        "Escursionisti",
+        "Escursionistico",
+        "Esperti",
+        "Attrezzatura",
+        "Turistico",
+        "Dislivello",
+        "Sviluppo",
+        "Lunghezza",
+        "Distanza",
+        "Tempi",
+        "Tempo",
+        "Durata",
+        "Salita",
+        "Discesa",
+        "Partenza",
+        "Ritrovo",
+        "Rientro",
+        "Viaggio",
+        "Trasporto",
+        "Pranzo",
+        "Costo",
+        "Rifugio",
+        "Malga",
+        "Passo",
+        "Monte",
+        "Cima",
+        "Lago",
     ]
 }
 
@@ -292,10 +329,13 @@ PLACE_WORDS = (
     "colle|croda|sasso|piazza|via|santuario|località|localita|maso|castel|castello|baita|pian"
 )
 # «ex Presidente generale Nome Cognome», «presidente fu Nome Cognome» (non «… del Rifugio X»)
+# «presso l'istruttore Nome Cognome»; il nome può chiudere la riga col cognome a capo
 ORG_ROLE_NAME = re.compile(
-    r"((?i:\b(?:vice\s?presidente|presidente|segretari[oa]|tesorier[ea]|cassier[ea]))"
+    r"((?i:\b(?:vice\s?presidente|presidente|segretari[oa]|tesorier[ea]|cassier[ea]|"
+    r"istruttor[ei]|istruttrice))"
     r"(?:[ \t]+[a-zà-ÿ]+){0,3}[ \t]+)"
-    rf"(?!(?i:{PLACE_WORDS})\b)([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)"
+    rf"(?!(?i:{PLACE_WORDS})\b)([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+"
+    r"|[A-ZÀ-Ý][a-zà-ÿ'’]+(?=[ \t]*\n))"
 )
 # credito fotografico con il titolo: «Nome Cognome – “Titolo”»
 CREDIT_LINE = re.compile(r"^([A-ZÀ-Ý][a-zà-ÿ'’]+[ \t]+[A-ZÀ-Ý][a-zà-ÿ'’]+)(\s*[–-]\s.*)$")
@@ -366,7 +406,9 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
         # prima email e telefoni, su ogni riga
         line, n = EMAIL.subn("[email rimossa]", line)
         removed += n
-        line, n = _redact_phones(line, bool(CONTACT_WORDS.search(line)))
+        # una riga con un indirizzo email o un sito è una riga di contatti
+        contact = n > 0 or bool(CONTACT_WORDS.search(line) or WEB_ADDRESS.search(line))
+        line, n = _redact_phones(line, contact)
         removed += n
         if PLACEHOLDER.search(line):
             # riga di contatto: le parole maiuscole che non sono termini comuni sono nomi

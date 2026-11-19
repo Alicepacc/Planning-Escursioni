@@ -1,0 +1,23 @@
+sezione: CAI Bressanone
+titolo: Valle Aurina – Rifugio Giogo Lungo
+data: 2026-07-19
+zona: Valle Aurina
+tipo_percorso: anello
+difficolta: E
+durata: "6:30"
+distanza_km: 15
+salita_m: 980
+discesa_m: 980
+quota_max_m: 2603
+partenza: {nome: Casere, quota_m: 1582, comune: Predoi}
+arrivo: {nome: Casere, quota_m: 1582}
+ora_ritrovo: "07:00"
+mezzi: pullman
+quota_eur: 20
+sentieri: ["11", "12"]
+punti_chiave:
+  - {nome: Casere, quota_m: 1582}
+  - {nome: Röt Alm}
+  - {nome: Rifugio Giogo Lungo, quota_m: 2603}
+  - {nome: Casere, quota_m: 1582}
+note_revisione: 'salita per il sentiero 11 e la Malga Rossa, discesa per la Valle del Vento (12); discesa uguale alla salita perché è un anello; Malga Rossa = Röt Alm nella cartografia'

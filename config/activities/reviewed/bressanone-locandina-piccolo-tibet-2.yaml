@@ -1,0 +1,22 @@
+sezione: CAI Bressanone
+titolo: Piccolo Tibet – Zillertal
+data: 2026-07-26
+zona: Zillertal (Austria)
+tipo_percorso: andata_ritorno
+difficolta: E
+durata: "5:00"
+distanza_km: 13
+salita_m: 560
+discesa_m: 560
+quota_max_m: 1863
+partenza: {nome: Bärenbadalm, quota_m: 1450}
+arrivo: {nome: Bärenbadalm, quota_m: 1450}
+ora_ritrovo: "06:30"
+mezzi: pullman
+quota_eur: 20
+sentieri: []
+punti_chiave:
+  - {nome: Bärenbadalm, quota_m: 1450}
+  - {nome: Zillergründl}
+  - {nome: Hohenaualm, quota_m: 1863}
+note_revisione: 'gita con i soci AVS, in Austria (fuori dall''estratto OSM); facoltativa la Cappella di San Valentino (2275 m, +375 m)'

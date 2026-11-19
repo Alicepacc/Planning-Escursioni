@@ -34,13 +34,16 @@ class DocumentRef:
     guess: str  # classificazione preliminare dal solo nome (vedi classify.py)
 
 
-def sections(pilot_only: bool = True) -> list[dict[str, Any]]:
+def sections(pilot_only: bool = True, only: list[str] | None = None) -> list[dict[str, Any]]:
     config = yaml.safe_load(
         (repo_root() / "config" / "sources" / "cai_sections.yaml").read_text(encoding="utf-8")
     )
     out = []
     for s in config["sections"]:
-        if pilot_only and not s.get("pilot"):
+        if only is not None:
+            if s["slug"] not in only:
+                continue
+        elif pilot_only and not s.get("pilot"):
             continue
         if s.get("site_type", "").startswith("wordpress") and s.get("base_url"):
             out.append(s)
@@ -90,24 +93,42 @@ def list_pdfs(
     return refs
 
 
-def discover(client: PoliteClient, out: Path | None = None, pilot_only: bool = True) -> dict:
+def discover(
+    client: PoliteClient,
+    out: Path | None = None,
+    pilot_only: bool = True,
+    only: list[str] | None = None,
+) -> dict:
+    """Con `only` interroga solo quelle sezioni e le aggiunge all'indice esistente (le altre
+    restano come sono): un blocco nuovo non richiede di rielencare tutte le fonti."""
     out = out or data_dir() / "activities" / "index.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    for s in sections(pilot_only):
+    chosen = sections(pilot_only, only)
+    if only and len(chosen) != len(only):
+        missing = set(only) - {s["slug"] for s in chosen}
+        raise SystemExit(f"sezioni sconosciute o senza WordPress: {', '.join(sorted(missing))}")
+    for s in chosen:
         host = s["base_url"].split("/")[2]
         client.host_intervals.setdefault(host, HOST_INTERVAL_S)
-    docs: list[DocumentRef] = []
-    per_section: dict[str, int] = {}
-    declared: dict[str, int] = {}
-    for s in sections(pilot_only):
+    old: dict[str, Any] = {}
+    if only and out.exists():
+        old = json.loads(out.read_text(encoding="utf-8"))
+    docs: list[dict[str, Any]] = [d for d in old.get("documents", []) if d["section"] not in only]
+    per_section: dict[str, int] = {
+        k: v for k, v in old.get("per_section", {}).items() if not only or k not in only
+    }
+    declared: dict[str, int] = {
+        k: v for k, v in old.get("declared_total", {}).items() if not only or k not in only
+    }
+    for s in chosen:
         found = list_pdfs(client, s, declared)
         per_section[s["slug"]] = len(found)
-        docs.extend(found)
+        docs.extend(asdict(d) for d in found)
     payload = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "per_section": per_section,
         "declared_total": declared,  # X-WP-Total: include allegati non pubblici
-        "documents": [asdict(d) for d in docs],
+        "documents": docs,
     }
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
     return payload
