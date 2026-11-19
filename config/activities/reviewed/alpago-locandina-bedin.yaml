@@ -17,5 +17,5 @@ quota_eur: null
 sentieri: []
 punti_chiave:
   - {nome: Pradimezzo, quota_m: 840}
-  - {nome: Bivacco Bedin, quota_m: 2210}
-note_revisione: 'gruppo giovani; tempo 7 ore più soste; rientro per lo stesso percorso'
+  - {nome: Margherita Bedin, quota_m: 2210}
+note_revisione: 'gruppo giovani; tempo 7 ore più soste; rientro per lo stesso percorso; bivacco col nome della cartografia'

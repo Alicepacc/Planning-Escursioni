@@ -17,8 +17,7 @@ quota_eur: null
 sentieri: []
 punti_chiave:
   - {nome: Passo Gobbera, quota_m: 987}
-  - {nome: Col de la Cros, quota_m: 1083}
   - {nome: Rifugio San Giovanni Gualberto, quota_m: 1565}
   - {nome: Monte Totoga, quota_m: 1705}
   - {nome: Passo Gobbera, quota_m: 987}
-note_revisione: 'commissione TAM; «dislivello complessivo attorno agli 860 metri e cinque ore di sola camminata»; passaggi esposti ma protetti'
+note_revisione: 'commissione TAM; «dislivello complessivo attorno agli 860 metri e cinque ore di sola camminata»; passaggi esposti ma protetti; Col de la Crós non è nella cartografia'

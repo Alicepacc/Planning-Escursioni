@@ -11,6 +11,7 @@ per il ruolo delle locandine nell'app).
 | 1 – SAT Pergine | 17/11/2026 | 8 locandine 2026 | 8 | 8 | 5 |
 | 2 – siti WordPress SAT | 18/11/2026 | 13 PDF di Cavalese, Primiero, Ledro | 18 | 15 | 5 |
 | 3 – sezioni CAI Alto Adige | 19/11/2026 | 20 locandine di Brunico e Bressanone | 15 | 12 | 5 |
+| 4 – CAI Veneto, sezioni dolomitiche | 19/11/2026 | 20 locandine di Belluno, Feltre, Alpago | 18 | 18 | 3 |
 
 Il primo blocco è descritto nel [rapporto della Fase 3](../phase3/README.md).
 
@@ -293,9 +294,82 @@ browser: elenco, schede con e senza traccia, nessun errore.
 | `screenshots/4-senza-traccia-telefono.jpg` | Una scheda senza traccia, prima della fascia di confine |
 | `screenshots/5-spiedo-in-nota-telefono.jpg` | Spiedo in Nota con la traccia ricostruita in Lombardia e le due proposte della sezione |
 
+## Blocco 4 – CAI Veneto, sezioni dolomitiche (19/11/2026)
+
+Candidati: [`config/activities/candidates/2026-11-19-cai-veneto.yaml`](../../config/activities/candidates/2026-11-19-cai-veneto.yaml).
+
+### Cosa è entrato
+
+- **Locandine**: 20 del 2026 dentro l'area, 8 di CAI Belluno, 8 di CAI Feltre e 4 di CAI
+  Alpago. Le 389 «locandine» di CAI Vicenza sono schede delle tappe di un percorso tematico
+  urbano, non gite: escluse.
+- **18 attività riviste.** Escluse le due uscite in mountain bike della commissione di
+  cicloescursionismo di Belluno (Lusia, Sorapis); fuori area Monte Falterona e Delta del Po.
+- **Quote rifatte.** Nella revisione erano sfuggite le quote scritte dopo il regolamento (Ombretta
+  Est, Lastoi de Formin, Puez-Odle, Stellune, Vette Feltrine): le ho corrette prima di misurare.
+
+### Estrazione e dati personali
+
+- **Un blocco in meno.** L'estrazione di una locandina di Alpago restava bloccata per oltre 10
+  minuti: era una regola per gli elenchi di nomi che, sulle righe lunghe in maiuscolo, provava un
+  numero esponenziale di combinazioni. Riscritta, ora impiega 0,3 s; su 17.031 righe dell'archivio
+  cambiano 6 righe, nessuna con nomi.
+- **Nuova opzione.** `extract [id…]` estrae solo i documenti indicati; l'intero archivio si
+  rifà comunque in 1,5 minuti.
+- **Nuovi casi tolti**: nomi dei soci in prosa («curato dai soci Nome Cognome e Nome De
+  Cognome»), «CAPI GITA: COGNOME N.», cognome a capo dopo un incarico.
+
+### Parser a regole
+
+| Insieme | Prima (indipendente) | Dopo |
+|---|---|---|
+| Blocco 4, precisione | **74,6%** | 84,7% |
+| Blocco 4, copertura | **55,8%** | 64,0% |
+| Pilota | 98,1% | 98,1% |
+| Controllo (holdout) | 92,4% | 92,5% |
+| Blocchi 1–3 | 87,6% | 88,6% |
+
+La misura indipendente è vicina a quella del blocco 3 (75,5%): è la stima più onesta per le
+prossime sezioni. Le regole nuove sono generali:
+
+- orario di ritrovo cercato riga per riga («Ore 7:00 Ritrovo», non l'orario del rientro);
+- partenza senza la città della sezione e senza il luogo di partenza del pullman o delle auto;
+- gradi doppi («EE-EEA», «T/E») portati al più alto;
+- «positivo/negativo m N», «Km N» dopo il dislivello, quote in «metri»;
+- anno della data a capo; date delle scadenze d'iscrizione ignorate.
+
+### Ricostruzione
+
+| Esito | Blocco 4 | Tutte le attività (80) |
+|---|---|---|
+| verificata | 3 | 30 |
+| da rivedere | 15 | 46 |
+| fallita (in app senza traccia) | 0 | 4 |
+
+- **Verificate**: Bivacco Bedin, Lago Coldai, Cima delle Stellune.
+- **Da rivedere, per poco**: molte sono appena fuori tolleranza (−10/−13% di distanza: Giau,
+  Taibon, Marcesina, Vette Feltrine, Visentin, Lastoi). Le locandine venete arrotondano
+  («circa 13 km»).
+- **Da rivedere, per i dati**:
+  - Puez-Odle: il dislivello parte dalla seggiovia;
+  - Cima Palombino e Cima Ombretta Est: le cime mancano nella cartografia;
+  - Calà del Sasso: la scalinata non è nel grafo come sentiero;
+  - Monte Totoga: la traccia passa altrove (−55%).
+- **Nomi della cartografia** usati nella revisione: Margherita Bedin, La Casera (Nevegal), Busa de
+  camp, ex Rifugio Brigata Alpina Cadore, Calá del Sasso, il sito archeologico di Mondeval.
+
+### In app
+
+**78 escursioni visibili** (80 schede, 2 itinerari con più proposte); nel filtro «Sezione»
+compaiono CAI Belluno, CAI Feltre e CAI Alpago.
+
+| File | Cosa mostra |
+|---|---|
+| `screenshots/6-stellune-feltre-telefono.jpg` | Cima delle Stellune (CAI Feltre, Lagorai): traccia verificata |
+
 ### Prossimi passi
 
-1. **Blocco 4**: locandine venete, a partire dalle sezioni dolomitiche e da quelle con più gite
-   in montagna (Belluno, Feltre, Alpago, Vicenza, Treviso), con revisione.
+1. Altri blocchi veneti (Treviso, Verona, Rovigo, Montecchio Maggiore, Mirano, Mestre, Asiago),
+   sempre con revisione.
 2. Adapter per i siti SAT non WordPress e per i 6 siti veneti con altri CMS.
 3. Poi la Fase 5, con una sosta per scegliere il backend.

@@ -16,11 +16,11 @@ mezzi: mezzi propri
 quota_eur: 1
 sentieri: []
 punti_chiave:
-  - {nome: Rifugio Casera, quota_m: 1395}
+  - {nome: La Casera, quota_m: 1395}
   - {nome: Casera Erte}
   - {nome: Malga Col Toront, quota_m: 1389}
-  - {nome: Busa da Camp, quota_m: 1543}
+  - {nome: Busa de camp, quota_m: 1543}
   - {nome: Col Visentin, quota_m: 1751}
-  - {nome: Rifugio Brigata Alpina Cadore, quota_m: 1615}
-  - {nome: Rifugio Casera, quota_m: 1395}
-note_revisione: 'escursione del mercoledì; andata per Busa da Camp, ritorno per la Via delle Creste e il Rifugio Brigata Cadore; quota 1 € soci, 13 € non soci'
+  - {nome: ex Rifugio Brigata Alpina Cadore, quota_m: 1615}
+  - {nome: La Casera, quota_m: 1395}
+note_revisione: 'escursione del mercoledì; andata per Busa da Camp, ritorno per la Via delle Creste e il Rifugio Brigata Cadore; quota 1 € soci, 13 € non soci; punti chiave con i nomi della cartografia'
