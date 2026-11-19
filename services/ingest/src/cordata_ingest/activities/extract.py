@@ -16,6 +16,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from html import unescape
 from pathlib import Path
 from typing import Any
 
@@ -568,6 +569,54 @@ def load_text(doc_id: str) -> dict[str, Any]:
     return json.loads((text_dir() / f"{doc_id}.json").read_text(encoding="utf-8"))
 
 
+HTML_DROP = re.compile(
+    r"<(script|style|noscript|nav|header|footer|aside|form|svg|iframe)\b.*?</\1\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+HTML_BLOCK = re.compile(
+    r"<\s*(?:br|/p|/div|/li|/h[1-6]|/tr|/section|/article|p|li|h[1-6])\b[^>]*>", re.I
+)
+
+
+def html_main_text(html: str) -> str:
+    """Testo del corpo di una pagina: `<article>` (il più lungo) o `<main>`, altrimenti `<body>`;
+    senza script, menu, intestazioni e piè di pagina; un a capo per paragrafo."""
+    html = HTML_DROP.sub(" ", html)
+    html = re.sub(r"<!--.*?-->", " ", html, flags=re.DOTALL)
+    parts = re.findall(r"<article\b.*?</article\s*>", html, re.I | re.S)
+    main = max(parts, key=len) if parts else None
+    if main is None:
+        m = re.search(r"<main\b.*?</main\s*>", html, re.I | re.S) or re.search(
+            r"<body\b.*?</body\s*>", html, re.I | re.S
+        )
+        main = m.group(0) if m else html
+    text = HTML_BLOCK.sub("\n", main)
+    text = unescape(re.sub(r"<[^>]+>", " ", text))
+    lines = (re.sub(r"[ \t\u00a0]+", " ", line).strip() for line in text.splitlines())
+    return "\n".join(line for line in lines if line)
+
+
+def extract_html(path: Path) -> dict[str, Any]:
+    """Pagina web di una gita (siti senza locandine): una sola «pagina» di testo ripulito."""
+    raw = path.read_bytes()
+    try:
+        html = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        html = raw.decode("latin-1")
+    clean, removed = sanitize(html_main_text(html))
+    page = {"n": 1, "ocr": False, "images": 0, "columns": 1, "text": clean, "blocks": []}
+    return {
+        "pages": [page],
+        "n_pages": 1,
+        "chars": len(clean),
+        "ocr_pages": [],
+        "max_columns": 1,
+        "producer": "html",
+        "creator": "",
+        "personal_data_removed": removed,
+    }
+
+
 def extract_all(
     base: Path | None = None, out: Path | None = None, ids: list[str] | None = None
 ) -> list[dict[str, Any]]:
@@ -582,7 +631,8 @@ def extract_all(
         if "path" not in entry or (ids and doc_id not in ids):
             continue
         data = {"id": doc_id, "section": entry["section"], "url": entry["url"]}
-        data.update(extract_pdf(base / entry["path"]))
+        path = base / entry["path"]
+        data.update(extract_html(path) if path.suffix == ".html" else extract_pdf(path))
         (out / f"{doc_id}.json").write_text(
             json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8"
         )

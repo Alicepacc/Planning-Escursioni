@@ -37,7 +37,8 @@ def load_candidates(path: Path | None = None) -> list[dict[str, Any]]:
 
 
 def raw_path(candidate: dict[str, Any], base: Path | None = None) -> Path:
-    return (base or raw_dir()) / candidate["section"] / f"{candidate['id']}.pdf"
+    ext = "html" if candidate.get("tipo") == "pagina" else "pdf"  # pagine web delle gite
+    return (base or raw_dir()) / candidate["section"] / f"{candidate['id']}.{ext}"
 
 
 def archive(

@@ -408,3 +408,23 @@ def test_adapter_generico_pagine_gite_e_pdf():
     assert guess_date("https://x.it/a/Gita_17.05.2026.pdf", "") == "2026-05-17"
     assert guess_date("https://x.it/uploads/2026/03/locandina.pdf", "") == "2026-03-01"
     assert guess_date("https://x.it/locandina.pdf", "Gita al lago") == ""
+
+
+def test_estrazione_di_una_pagina_web_di_gita(tmp_path):
+    from cordata_ingest.activities.extract import extract_html
+
+    page = tmp_path / "gita.html"
+    page.write_text(
+        "<html><head><script>var x=1</script></head><body><nav>Home | Gite</nav>"
+        "<article><h1>Gita al Lago Nero</h1><p>Domenica 7 giugno 2026<br>Dislivello 600 m</p>"
+        "<p>Info: Mario Rossi cell. 333 1234567</p></article><footer>© sezione</footer></body></html>",
+        encoding="utf-8",
+    )
+    text = extract_html(page)["pages"][0]["text"]
+    assert text.splitlines()[:3] == [
+        "Gita al Lago Nero",
+        "Domenica 7 giugno 2026",
+        "Dislivello 600 m",
+    ]
+    assert "Home" not in text and "sezione" not in text and "var x" not in text
+    assert "1234567" not in text and "Rossi" not in text
