@@ -12,6 +12,7 @@ per il ruolo delle locandine nell'app).
 | 2 – siti WordPress SAT | 18/11/2026 | 13 PDF di Cavalese, Primiero, Ledro | 18 | 15 | 5 |
 | 3 – sezioni CAI Alto Adige | 19/11/2026 | 20 locandine di Brunico e Bressanone | 15 | 12 | 5 |
 | 4 – CAI Veneto, sezioni dolomitiche | 19/11/2026 | 20 locandine di Belluno, Feltre, Alpago | 18 | 18 | 3 |
+| 5 – siti senza WordPress | 19/11/2026 | programma SAT Mori (pagina web), 2 locandine | 11 | 11 | 1 |
 
 Il primo blocco è descritto nel [rapporto della Fase 3](../phase3/README.md).
 
@@ -393,3 +394,75 @@ collegato.
 **Prossimo passo.** Trattare le pagine delle gite scelte a mano come le locandine: archivio
 privato della pagina, testo del corpo della pagina, stessa rimozione dei dati personali e stesso
 parser.
+
+## Blocco 5 – siti senza WordPress (19/11/2026)
+
+Candidati: [`config/activities/candidates/2026-11-19-siti-senza-wordpress.yaml`](../../config/activities/candidates/2026-11-19-siti-senza-wordpress.yaml).
+
+### Cosa è entrato
+
+- **Pagine web come documenti.** Una pagina scelta a mano (`tipo: pagina`) è salvata in HTML
+  nell'archivio privato. Se ne prende il testo del corpo (`article`/`main`), senza script, menu
+  e piè di pagina, con la stessa rimozione dei dati personali.
+- **11 attività riviste**:
+  - 9 dal programma delle «escursioni della domenica» 2026 di **SAT Mori**, pubblicato come
+    pagina web con campi regolari (tipologia, salita, discesa, sviluppo, tempo, difficoltà);
+  - la locandina di **SAT Trento** «Giro circolare Castelrotto, Tagusa, Tisana»;
+  - una locandina di **CAI Padova** (Primiero, anello da Tonadico).
+- **Escluse**: la giornata Under40 con tre itinerari e i mercatini di Natale.
+- **Rimandato**: il libretto 2026 di SAT Rovereto (32 pagine scansionate), come i libretti di
+  Cavalese.
+- **Dati personali**: il titolo «Ledro Trek Low» era stato tolto come se fosse un nome (tre
+  parole maiuscole). È un eccesso di prudenza: corretto nella revisione.
+
+### Parser
+
+| Insieme | Prima (indipendente) | Dopo |
+|---|---|---|
+| Blocco 5, precisione | **83,3%** | 86,2% |
+| Blocco 5, copertura | **20,8%** | 78,3% |
+| Pilota · controllo · blocchi 1–4 | 98,1% · 92,5% · 87,3% | invariati |
+
+La copertura bassa veniva da un caso nuovo: nei programmi su pagina web la voce comincia dal
+titolo, sopra la data scritta per esteso («Domenica 1 marzo 2026»), e il parser cercava solo
+date come «01/03/2026». Le regole aggiunte:
+
+- la voce comincia fino a due righe sopra la data;
+- il titolo unisce quelle righe;
+- si legge «Tempo: 5 ore e 30».
+
+### Ricostruzione
+
+| Esito | Blocco 5 | Tutte le attività (91) |
+|---|---|---|
+| verificata | 1 | 31 |
+| da rivedere | 7 | 53 |
+| fallita (in app senza traccia) | 3 | 7 |
+
+- **Verificata**: Villamontagna – Cima Calisio – Fornace.
+- **Fallite**:
+  - Sentiero dell'ascolto: il programma nomina solo Pieve Tesino;
+  - Dossobello di dentro e Val Venegia: nessuna partenza dichiarata, e la linea ricostruita era
+    solo un tratto (−85% e −82% di distanza).
+- **Regola nuova**: una traccia con meno della metà della distanza dichiarata, e del dislivello
+  se c'è, è un tratto e non il giro. Non viene mostrata. Tocca solo queste due.
+
+### In app
+
+- **89 escursioni visibili** (91 schede). Nuove sezioni nel filtro: SAT Mori, SAT Trento, CAI
+  Padova.
+- Per le fonti in HTML il link dice «Pagina originale della sezione» invece di «Locandina
+  originale».
+
+| File | Cosa mostra |
+|---|---|
+| `screenshots/7-sat-mori-calisio-telefono.jpg` | Villamontagna – Cima Calisio – Fornace (SAT Mori, dal programma su pagina web) |
+
+### Prossimi passi
+
+1. Le altre pagine delle gite dei siti SAT e veneti: per ognuno serve guardare com'è fatto.
+   - SAT Ton carica il calendario con JavaScript: non è leggibile.
+   - SAT Riva pubblica pagine senza testo nel corpo.
+   - SAT Arco pubblica i programmi del mese come allegati.
+2. I libretti annuali scansionati (SAT Rovereto, Cavalese) e altri blocchi veneti.
+3. Poi la Fase 5, con una sosta per scegliere il backend.

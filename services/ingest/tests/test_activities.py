@@ -260,6 +260,11 @@ def test_ricostruzione_incompatibile_con_la_locandina_non_mostrata():
         == "da_rivedere"
     )
     assert verdict({"distanza": ok, "salita": ok}, 1, 4) == ("auto_ok", None)
+    # molto più corta su distanza e dislivello: è solo un tratto del giro
+    short = {"distanza": {"scarto": -0.85, "ok": False}, "salita": {"scarto": -0.66, "ok": False}}
+    assert verdict(short, 0, 3)[0] == "fallita"
+    # solo il dislivello molto più basso (modello del terreno): resta da rivedere
+    assert verdict({"salita": {"scarto": -0.7, "ok": False}}, 0, 3)[0] == "da_rivedere"
     assert verdict({"distanza": ok, "salita": ok}, 2, 4)[0] == "da_rivedere"
     assert verdict({"anello_chiuso": {"distanza_m": 0, "ok": True}}, 0, 3)[0] == "da_rivedere"
 

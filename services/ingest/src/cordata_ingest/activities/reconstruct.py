@@ -35,6 +35,7 @@ CITED_BUFFER_M = 35.0
 OFF_CITED_FACTOR = "0.25"  # priorità fuori dai sentieri citati
 TOL_DISTANCE = 0.10
 TOL_ASCENT = 0.15
+SHORT_MISMATCH = 0.5  # meno della metà della distanza dichiarata: la linea è solo un tratto
 GROSS_MISMATCH = 1.0  # scarto oltre il quale la ricostruzione non è una traccia plausibile
 TOL_MAX_ELE_M = 50.0
 LOOP_CLOSE_M = 200.0
@@ -770,6 +771,9 @@ def verdict(checks: dict[str, Any], n_missing: int, n_points: int) -> tuple[str,
         # più del doppio su tutto ciò che si può confrontare: la linea passa altrove (zona
         # fuori dai dati, luogo sbagliato) e sulla mappa ingannerebbe
         return "fallita", "traccia incompatibile con la locandina: non mostrata"
+    if "distanza" in checks and all(checks[k]["scarto"] < -SHORT_MISMATCH for k in numeric):
+        # meno della metà della distanza (e del dislivello): un tratto, non il giro
+        return "fallita", "traccia molto più corta della locandina: non mostrata"
     all_ok = all(c["ok"] for c in checks.values())
     # tollerato un solo punto intermedio non trovato, se i numeri tornano
     if all_ok and numeric and (1 - n_missing / n_points >= 0.75 or n_missing <= 1):

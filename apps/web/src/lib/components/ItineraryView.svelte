@@ -324,9 +324,11 @@
 		<p class="link">
 			{#if doc.activity.source_url}
 				<a href={doc.activity.source_url} rel="external noopener" target="_blank"
-					>{doc.activity.source_page
-						? `Locandina originale (pagina ${doc.activity.source_page})`
-						: 'Locandina originale'}</a
+					>{!/\.pdf(?:$|[?#])/i.test(doc.activity.source_url)
+						? 'Pagina originale della sezione'
+						: doc.activity.source_page
+							? `Locandina originale (pagina ${doc.activity.source_page})`
+							: 'Locandina originale'}</a
 				>
 				{#if doc.activity.future}
 					· <a href={doc.activity.source_url} rel="external noopener" target="_blank"
