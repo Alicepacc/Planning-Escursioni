@@ -392,3 +392,19 @@ def test_parser_programmi_con_orari_partenze_in_pullman_e_gradi_doppi():
         "Difficoltà: T/E\nSi sale alla cima del Monte Totoga, a 1705 metri, punto panoramico"
     )
     assert (q["difficolta"], q["quota_max_m"]) == ("E", 1705)
+
+
+def test_adapter_generico_pagine_gite_e_pdf():
+    from cordata_ingest.activities.site_adapter import guess_date, links, list_pages
+
+    home = """<a href="/gite-2026/">Gite 2026</a> <a href="/privacy">Privacy</a>
+    <a href="https://altro.it/gite">Gite di altri</a> <a href="/chi-siamo">Chi siamo</a>
+    <a href='/doc/Programma%202026.pdf'>Programma</a>"""
+    assert list_pages(home, "https://www.sat-esempio.it/") == [
+        "https://www.sat-esempio.it/gite-2026/"
+    ]
+    pdfs = [u for u, _ in links(home, "https://www.sat-esempio.it/") if u.endswith(".pdf")]
+    assert pdfs == ["https://www.sat-esempio.it/doc/Programma%202026.pdf"]
+    assert guess_date("https://x.it/a/Gita_17.05.2026.pdf", "") == "2026-05-17"
+    assert guess_date("https://x.it/uploads/2026/03/locandina.pdf", "") == "2026-03-01"
+    assert guess_date("https://x.it/locandina.pdf", "Gita al lago") == ""

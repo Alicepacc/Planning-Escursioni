@@ -71,7 +71,20 @@ uv run python -m cordata_ingest.activities reconstruct  # tracce (GraphHopper av
 uv run python -m cordata_ingest.activities report       # reports/pilot-<data>/pilot.html
 ```
 
-Nessun crawler periodico: l'estensione a tutte le sezioni aspetta l'approvazione del pilota.
+Nessun crawler periodico: le fonti si allargano a blocchi, con revisione
+([`reports/ingestion`](../../reports/ingestion/README.md)).
+
+```bash
+# siti delle sezioni (solo home e conteggio dei PDF): SAT e CAI Veneto
+uv run python -m cordata_ingest.activities sat-siti
+uv run python -m cordata_ingest.activities cai-veneto-siti
+# metadati di alcune sezioni, aggiunti all'indice: WordPress con l'API dei media, gli altri
+# siti con l'adapter generico (home + al massimo 6 pagine delle gite, solo i link ai PDF)
+uv run python -m cordata_ingest.activities discover --sezioni brunico,sat-ala
+# un blocco: candidati, archivio privato, testo dei soli documenti nuovi
+uv run python -m cordata_ingest.activities archive --candidati ../../config/activities/candidates/<blocco>.yaml
+uv run python -m cordata_ingest.activities extract <id> <id> …
+```
 
 ## Moduli
 

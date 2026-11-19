@@ -19,6 +19,7 @@ from ..http import FetchError, PoliteClient, RobotsDisallowed
 from .classify import classify_name
 
 WP_FIELDS = "id,date,modified,title,source_url,mime_type,link"
+ADAPTER_TYPES = {"sito_proprio", "wordpress_senza_rest"}
 HOST_INTERVAL_S = 2.0
 
 
@@ -45,7 +46,12 @@ def sections(pilot_only: bool = True, only: list[str] | None = None) -> list[dic
                 continue
         elif pilot_only and not s.get("pilot"):
             continue
-        if s.get("site_type", "").startswith("wordpress") and s.get("base_url"):
+        if not s.get("base_url"):
+            continue
+        # i siti senza l'API di WordPress solo su richiesta esplicita (adapter generico)
+        site_type = s.get("site_type", "")
+        api = site_type.startswith("wordpress") and site_type not in ADAPTER_TYPES
+        if api or (only is not None and site_type in ADAPTER_TYPES):
             out.append(s)
     return out
 
@@ -123,7 +129,12 @@ def discover(
     errors: dict[str, str] = {}
     for s in chosen:
         try:
-            found = list_pdfs(client, s, declared)
+            if s.get("site_type") in ADAPTER_TYPES:
+                from .site_adapter import crawl_section
+
+                found = crawl_section(client, s)
+            else:
+                found = list_pdfs(client, s, declared)
         except (FetchError, RobotsDisallowed) as exc:
             # una sezione irraggiungibile non ferma le altre: l'errore resta nell'indice
             errors[s["slug"]] = str(exc)[:200]
