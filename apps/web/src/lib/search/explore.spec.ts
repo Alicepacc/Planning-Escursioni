@@ -95,3 +95,20 @@ describe('filtri di Esplora', () => {
 		expect(removeChip(f, 'maxMinutes').maxMinutes).toBeNull();
 	});
 });
+
+describe('gite senza punto sulla mappa (ADR 0013)', () => {
+	const vicina = item({ id: 'vicina', s: [11.36, 46.5] });
+	const senza = item({ id: 'senza', s: null, nt: true });
+	it('restano nell elenco ma non nel filtro per distanza', () => {
+		expect(filterItems([vicina, senza], EMPTY_FILTERS).map((i) => i.id)).toEqual([
+			'vicina',
+			'senza'
+		]);
+		const near = { ...EMPTY_FILTERS, near: { lon: 11.35, lat: 46.5, km: 10, label: 'qui' } };
+		expect(filterItems([vicina, senza], near).map((i) => i.id)).toEqual(['vicina']);
+	});
+	it('vanno in fondo nell ordine per distanza', () => {
+		const sorted = sortItems([senza, vicina], 'distanza', EMPTY_FILTERS, [11.35, 46.5]);
+		expect(sorted.map((i) => i.id)).toEqual(['vicina', 'senza']);
+	});
+});

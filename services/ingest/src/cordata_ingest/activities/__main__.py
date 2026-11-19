@@ -28,6 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
     sub.add_parser("gazetteer", help="carica in PostGIS i luoghi OSM con nome (geocodifica)")
     sub.add_parser("sat-siti", help="cerca i siti delle sezioni SAT (solo la home di ciascuno)")
+    sub.add_parser("cai-veneto-siti", help="cerca i siti delle sezioni CAI del Veneto (solo home)")
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
     rec.add_argument("ids", nargs="*", help="solo queste attività (default: tutte)")
     rec.add_argument("--solo-parser", action="store_true", help="campi del parser, senza revisione")
@@ -73,6 +74,15 @@ def main(argv: list[str] | None = None) -> int:
             line = f"{slug:28} {r.get('status')} {r.get('host')} wp={r.get('wordpress')}"
             print(f"{line} pdf={r.get('pdf_pubblici')} {r.get('title', '')[:50]}")
         print(f"domini provati: {payload['domini_provati']}")
+    elif args.cmd == "cai-veneto-siti":
+        from .veneto_sites import find_sites as find_veneto
+
+        with PoliteClient(timeout=20, max_retries=0) as client:
+            payload = find_veneto(client)
+        for slug, results in payload["sezioni"].items():
+            for r in results:
+                print(f"{slug:32} wp={r.get('wordpress')} pdf={r.get('pdf_pubblici')} {r['url']}")
+        print(f"indirizzi provati: {payload['indirizzi_provati']}")
     elif args.cmd == "reconstruct":
         from .pilot import run_reconstruction
 

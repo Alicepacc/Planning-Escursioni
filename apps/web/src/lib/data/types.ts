@@ -149,7 +149,10 @@ export interface ItineraryDoc {
 		on_cited_share: number | null;
 	};
 	bbox: [number, number, number, number];
+	/** vuota se il percorso non è stato ricostruito (ADR 0013) */
 	line: [number, number][];
+	/** senza traccia: i punti chiave trovati sulla mappa, partenza per prima */
+	places?: { name: string; lon: number; lat: number }[];
 	profile: Profile;
 	reconstruction: string;
 	attribution: string[];

@@ -43,10 +43,16 @@ PLACE_KINDS = {
 }
 
 
-def season(max_ele: float, difficulty: str | None) -> list[int]:
-    """Mesi consigliati (indicativi) dalla quota massima; le ciaspolate d'inverno."""
+def season(max_ele: float | None, difficulty: str | None, date: str | None = None) -> list[int]:
+    """Mesi consigliati (indicativi) dalla quota massima; le ciaspolate d'inverno. Senza quota
+    (attività senza traccia né quota dichiarata) il mese della gita e i due vicini."""
     if difficulty and difficulty.upper().startswith("EAI"):
         return [12, 1, 2, 3]
+    if max_ele is None:
+        if not date:
+            return list(range(1, 13))
+        month = int(date[5:7])
+        return [(month + k - 1) % 12 + 1 for k in (-1, 0, 1)]
     if max_ele < 1200:
         return [3, 4, 5, 6, 7, 8, 9, 10, 11]
     if max_ele < 1800:
@@ -125,6 +131,11 @@ def _minutes(duration: str | None) -> int | None:
     return int(h) * 60 + int(m)
 
 
+def _start(doc: dict[str, Any]) -> list[float] | None:
+    lon, lat = doc["start"].get("lon"), doc["start"].get("lat")
+    return None if lon is None else [round(lon, 5), round(lat, 5)]
+
+
 def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
     """Attività e itinerari. Se la traccia non è verificata, solo i valori dichiarati: un
     valore calcolato su una traccia forse sbagliata sarebbe un'informazione falsa."""
@@ -147,7 +158,9 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
             value = declared if declared is not None else (computed if ok else None)
             return None if value is None else round(float(value), digits or None)
 
-        stage_names = [s["name"] for s in doc.get("stages") or []]
+        stage_names = [s["name"] for s in doc.get("stages") or []] or [
+            p["name"] for p in doc.get("places") or []
+        ]
         stage_eles = [
             s["declared_ele_m"] for s in doc.get("stages") or [] if s.get("declared_ele_m")
         ]
@@ -168,10 +181,12 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
                 "d": (doc.get("difficulty") or {}).get("cai")
                 or ((doc.get("difficulty") or {}).get("raw") or None),
                 "ty": doc.get("type") or "traversata",
-                "s": [round(doc["line"][0][0], 5), round(doc["line"][0][1], 5)],
+                # partenza: inizio della traccia o, senza traccia (ADR 0013), il primo punto trovato
+                "s": [round(x, 5) for x in doc["line"][0]] if doc["line"] else _start(doc),
                 "b": doc["bbox"],
                 "p": mini_profile(doc["profile"]["points"]) if verified else [],
                 "ok": verified,
+                **({} if doc["line"] else {"nt": True}),
                 # deduplica (§7.5): altre proposte dello stesso itinerario, membri nascosti
                 **({"alt": len(doc["proposals"]) - 1} if doc.get("proposals") else {}),
                 **({"hide": True} if doc.get("canonical") not in (None, doc["id"]) else {}),
@@ -220,7 +235,7 @@ def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
         it["tag"] = sorted(
             tags_from_names(names) if names is not None else tags.get(it["id"], set())
         )
-        it["mo"] = season(it.pop("_season_ele", None) or it["max"], it.get("d"))
+        it["mo"] = season(it.pop("_season_ele", None) or it["max"], it.get("d"), it.get("date"))
         del it["_line"]
     out = data / "esplora"
     out.mkdir(parents=True, exist_ok=True)

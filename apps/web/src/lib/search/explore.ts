@@ -29,12 +29,15 @@ export interface ExploreItem {
 	max: number | null;
 	d: string | null;
 	ty: string;
-	s: LonLat;
+	/** partenza; null se la gita non ha un punto affidabile sulla mappa (ADR 0013) */
+	s: LonLat | null;
 	b: BBox;
 	p: number[];
 	tag: string[];
 	mo: number[];
 	ok?: boolean;
+	/** senza traccia: percorso non ricostruito (ADR 0013) */
+	nt?: boolean;
 	/** deduplica (§7.5): altre proposte dello stesso itinerario; membro non canonico */
 	alt?: number;
 	hide?: boolean;
@@ -198,7 +201,8 @@ export function matches(item: ExploreItem, f: Filters): boolean {
 	if (f.month != null && !item.mo.includes(f.month)) return false;
 	if (f.sections.length && !f.sections.includes(sectionOf(item))) return false;
 	if (f.futureOnly && !item.fut) return false;
-	if (f.near && haversineKm(item.s, [f.near.lon, f.near.lat]) > f.near.km) return false;
+	if (f.near && (!item.s || haversineKm(item.s, [f.near.lon, f.near.lat]) > f.near.km))
+		return false;
 	if (f.area && !intersects(item.b, f.area)) return false;
 	return true;
 }
@@ -225,7 +229,10 @@ export function sortItems(
 	const from = f.near ? ([f.near.lon, f.near.lat] as LonLat) : origin;
 	switch (key) {
 		case 'distanza':
-			if (from) out.sort((a, b) => haversineKm(a.s, from) - haversineKm(b.s, from));
+			if (from) {
+				const dist = (i: ExploreItem) => (i.s ? haversineKm(i.s, from) : Infinity);
+				out.sort((a, b) => dist(a) - dist(b));
+			}
 			break;
 		case 'durata':
 			out.sort((a, b) => (a.min ?? Infinity) - (b.min ?? Infinity));

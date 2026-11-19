@@ -39,7 +39,10 @@
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->
 	<span class="riga1">
 		<span class="tipo">{kind}</span>
-		{#if item.k === 'a' && item.ok === false}<span
+		{#if item.k === 'a' && item.nt}<span
+				class="verifica"
+				title="Percorso non ricostruito: solo i dati della locandina">senza traccia</span
+			>{:else if item.k === 'a' && item.ok === false}<span
 				class="verifica"
 				title="Traccia ricostruita non ancora verificata">da verificare</span
 			>{/if}

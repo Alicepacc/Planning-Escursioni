@@ -15,6 +15,7 @@ ora_ritrovo: "06:30"
 mezzi: pullman
 quota_eur: 20
 sentieri: []
+fuori_area: true  # Zillertal (Austria): i nomi trovati in Italia sono omonimi
 punti_chiave:
   - {nome: Bärenbadalm, quota_m: 1450}
   - {nome: Zillergründl}

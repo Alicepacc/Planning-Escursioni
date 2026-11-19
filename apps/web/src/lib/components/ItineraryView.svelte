@@ -42,6 +42,8 @@
 
 	const isActivity = $derived(doc.kind === 'attivita');
 	const verified = $derived(!doc.verification || doc.verification.status === 'auto_ok');
+	// percorso non ricostruito (ADR 0013): solo i dati della locandina e i punti trovati
+	const hasLine = $derived(doc.line.length >= 2);
 	const d = $derived(doc.declared);
 	const c = $derived(doc.computed);
 
@@ -63,19 +65,25 @@
 	);
 
 	const stageMarkers = $derived(
-		doc.stages.map((s, i) => {
-			const target = s.dist_km * 1000;
-			const p = doc.profile.points.reduce((best, q) =>
-				Math.abs(q[0] - target) < Math.abs(best[0] - target) ? q : best
-			);
-			return { n: i + 1, name: s.name, lon: p[2], lat: p[3], dist_km: s.dist_km };
-		})
+		hasLine
+			? doc.stages.map((s, i) => {
+					const target = s.dist_km * 1000;
+					const p = doc.profile.points.reduce((best, q) =>
+						Math.abs(q[0] - target) < Math.abs(best[0] - target) ? q : best
+					);
+					return { n: i + 1, name: s.name, lon: p[2], lat: p[3], dist_km: s.dist_km };
+				})
+			: (doc.places ?? []).map((p, i) => ({ n: i + 1, ...p, dist_km: 0 }))
 	);
 	// l'ultimo punto coincide con la partenza negli anelli e nelle andate e ritorno
 	const visibleMarkers = $derived(
-		doc.type === 'anello' || doc.type === 'andata_ritorno'
-			? stageMarkers.slice(0, -1)
-			: stageMarkers
+		!hasLine
+			? stageMarkers.filter(
+					(m, i) => i === 0 || i < stageMarkers.length - 1 || m.name !== stageMarkers[0].name
+				)
+			: doc.type === 'anello' || doc.type === 'andata_ritorno'
+				? stageMarkers.slice(0, -1)
+				: stageMarkers
 	);
 
 	const checks = $derived.by(() => {
@@ -126,8 +134,8 @@
 	);
 
 	// come arrivare: coordinate della partenza
-	const startLon = $derived(doc.start.lon ?? doc.line[0][0]);
-	const startLat = $derived(doc.start.lat ?? doc.line[0][1]);
+	const startLon = $derived(doc.start.lon ?? doc.line[0]?.[0] ?? 0);
+	const startLat = $derived(doc.start.lat ?? doc.line[0]?.[1] ?? 0);
 	const coordText = $derived(`${startLat.toFixed(5)}, ${startLon.toFixed(5)}`);
 
 	// sentiero toccato sulla mappa (catasto come livello della mappa, ADR 0012)
@@ -248,7 +256,20 @@
 	<h1>{doc.title}</h1>
 	{#if doc.summary}<p class="sintesi">{doc.summary}</p>{/if}
 
-	{#if !verified}
+	{#if !hasLine}
+		<details class="avviso" open>
+			<summary>Percorso non disponibile sulla mappa</summary>
+			<p>
+				Non è stato possibile ricostruire il percorso dai dati della locandina: sulla mappa ci sono
+				solo la partenza e i punti trovati. Per l'itinerario fa fede la locandina originale.
+			</p>
+			{#if doc.verification?.reasons.length}
+				<ul>
+					{#each doc.verification.reasons as r (r)}<li>{r}</li>{/each}
+				</ul>
+			{/if}
+		</details>
+	{:else if !verified}
 		<details class="avviso" open>
 			<summary>Traccia ricostruita automaticamente, non ancora verificata</summary>
 			<p>
@@ -278,7 +299,7 @@
 			? `${isActivity ? 'Valori della locandina' : 'Valori dichiarati'}${
 					computedFields.length ? `; calcolati sulla traccia: ${computedFields.join(', ')}` : ''
 				}. Tempo netto sulla traccia (modello CAI): ${formatDuration(c.cai_forward_min)}; con soste (+20%) ${formatDuration(c.cai_forward_min * 1.2)}.`
-			: `Valori della locandina${computedFields.length ? `; non dichiarati: ${computedFields.join(', ')}` : ''}. Nessun valore calcolato: la traccia non è ancora verificata.`}
+			: `Valori della locandina${computedFields.length ? `; non dichiarati: ${computedFields.join(', ')}` : ''}. Nessun valore calcolato: ${hasLine ? 'la traccia non è ancora verificata' : 'manca la traccia'}.`}
 	/>
 
 	<section class="attivita">
@@ -351,14 +372,16 @@
 		</section>
 	{/if}
 
-	<section>
-		<h2>Profilo altimetrico</h2>
-		<ElevationProfile
-			points={doc.profile.points}
-			stages={stageMarkers.map((s) => ({ n: s.n, name: s.name, dist_km: s.dist_km }))}
-			bind:index
-		/>
-	</section>
+	{#if hasLine}
+		<section>
+			<h2>Profilo altimetrico</h2>
+			<ElevationProfile
+				points={doc.profile.points}
+				stages={stageMarkers.map((s) => ({ n: s.n, name: s.name, dist_km: s.dist_km }))}
+				bind:index
+			/>
+		</section>
+	{/if}
 
 	{#if doc.stages.length}
 		<section>
@@ -433,35 +456,37 @@
 		</p>
 	</section>
 
-	<section>
-		<h2>Come arrivare</h2>
-		<p>
-			Partenza: <strong>{doc.start.nome || 'inizio della traccia'}</strong> · coordinate {coordText}
-		</p>
-		<p class="link">
-			<a href="geo:{startLat},{startLon}?q={startLat},{startLon}">App di navigazione</a> ·
-			<a
-				href="https://www.google.com/maps/dir/?api=1&destination={startLat},{startLon}"
-				rel="external noopener"
-				target="_blank">Google Maps</a
-			>
-			·
-			<a
-				href="https://maps.apple.com/?daddr={startLat},{startLon}"
-				rel="external noopener"
-				target="_blank">Apple Mappe</a
-			>
-			·
-			<a
-				href="https://www.openstreetmap.org/?mlat={startLat}&mlon={startLon}#map=15/{startLat}/{startLon}"
-				rel="external noopener"
-				target="_blank">OpenStreetMap</a
-			>
-		</p>
-		<p class="nota">Mezzi pubblici: in una fase successiva.</p>
-	</section>
+	{#if hasLine || doc.start.lon != null}
+		<section>
+			<h2>Come arrivare</h2>
+			<p>
+				Partenza: <strong>{doc.start.nome || 'inizio della traccia'}</strong> · coordinate {coordText}
+			</p>
+			<p class="link">
+				<a href="geo:{startLat},{startLon}?q={startLat},{startLon}">App di navigazione</a> ·
+				<a
+					href="https://www.google.com/maps/dir/?api=1&destination={startLat},{startLon}"
+					rel="external noopener"
+					target="_blank">Google Maps</a
+				>
+				·
+				<a
+					href="https://maps.apple.com/?daddr={startLat},{startLon}"
+					rel="external noopener"
+					target="_blank">Apple Mappe</a
+				>
+				·
+				<a
+					href="https://www.openstreetmap.org/?mlat={startLat}&mlon={startLon}#map=15/{startLat}/{startLon}"
+					rel="external noopener"
+					target="_blank">OpenStreetMap</a
+				>
+			</p>
+			<p class="nota">Mezzi pubblici: in una fase successiva.</p>
+		</section>
+	{/if}
 
-	{#if checks.length}
+	{#if hasLine && checks.length}
 		<section class="confronto">
 			<h2>
 				Traccia ricostruita: confronto con {isActivity ? 'la locandina' : 'i dati dichiarati'}
@@ -494,11 +519,15 @@
 		<button type="button" onclick={toggleSave} aria-pressed={saved}
 			>{saved ? '★ Salvato' : '☆ Salva'}</button
 		>
-		<button type="button" onclick={exportGpx}>Esporta GPX</button>
-		<button type="button" onclick={exportKml}>Esporta KML</button>
+		{#if hasLine}
+			<button type="button" onclick={exportGpx}>Esporta GPX</button>
+			<button type="button" onclick={exportKml}>Esporta KML</button>
+		{/if}
 		<button type="button" onclick={share}>Condividi</button>
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- il percorso viene da resolve() -->
-		<a class="bottone" href={plannerHref}>Modifica nel planner</a>
+		{#if hasLine}
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- il percorso viene da resolve() -->
+			<a class="bottone" href={plannerHref}>Modifica nel planner</a>
+		{/if}
 		<a class="bottone" href={resolve('/uscite')}>Organizza uscita</a>
 		{#if shareNote}<span class="nota" role="status">{shareNote}</span>{/if}
 	</section>

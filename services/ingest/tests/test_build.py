@@ -138,3 +138,39 @@ def test_slug_con_dieresi_e_accenti():
     assert slug("Traversata Sarè – Pederü") == "traversata-sare-pederu"
     assert slug("Sentiero attrezzato Günther Messner") == "sentiero-attrezzato-gunther-messner"
     assert slug("Città di Trento") == "citta-di-trento"
+
+
+def test_scheda_di_attivita_senza_traccia():
+    from cordata_ingest.build.activities import activity_document
+
+    act = {
+        "sezione": "CAI Esempio",
+        "titolo": "Gita oltre confine",
+        "data": "2026-07-26",
+        "tipo_percorso": "andata_ritorno",
+        "difficolta": "E",
+        "salita_m": 560,
+        "quota_max_m": 1863,
+        "partenza": {"nome": "Malga"},
+    }
+    track = {
+        "status": "fallita",
+        "reasons": ["punto non trovato: Rifugio", "meno di due punti distinti"],
+        "coords": [],
+        "points": [
+            {"nome": "Malga", "lon": 11.9, "lat": 47.1},
+            {"nome": "Rifugio", "lon": None, "lat": None},
+        ],
+    }
+    doc = activity_document("x", act, track, "https://example.org/l.pdf", None, None)
+    assert doc is not None
+    assert doc["line"] == [] and doc["profile"]["points"] == [] and doc["stages"] == []
+    assert doc["places"] == [{"name": "Malga", "lon": 11.9, "lat": 47.1}]
+    assert (doc["start"]["lon"], doc["start"]["lat"]) == (11.9, 47.1)
+    assert doc["bbox"][0] < 11.9 < doc["bbox"][2]
+    assert doc["computed"]["max_ele_m"] == 1863
+    assert doc["reconstruction"].startswith("Percorso non ricostruito")
+    # senza partenza dichiarata (o fuori area) il punto isolato non va sulla mappa
+    for changed in ({"partenza": None}, {"fuori_area": True}):
+        other = activity_document("x", {**act, **changed}, track, None, None, None)
+        assert other["start"]["lon"] is None and other["places"] == []

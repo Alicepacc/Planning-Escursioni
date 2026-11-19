@@ -85,7 +85,7 @@
 	const results = $derived(sortItems(filterItems(items, filters), sort, filters, origin));
 	const shown = $derived(results.slice(0, visible));
 	const points = $derived<MapPoint[]>(
-		results.map((i) => ({ id: i.id, lon: i.s[0], lat: i.s[1], k: i.k }))
+		results.flatMap((i) => (i.s ? [{ id: i.id, lon: i.s[0], lat: i.s[1], k: i.k }] : []))
 	);
 	const chips = $derived(chipsFor(filters));
 	const activeCount = $derived(chips.length);
@@ -326,7 +326,7 @@
 						{item}
 						href={hrefFor(item)}
 						selected={item.id === selected}
-						distanceKm={origin ? haversineKm(item.s, origin) : null}
+						distanceKm={origin && item.s ? haversineKm(item.s, origin) : null}
 						onfocusitem={(id) => selectItem(id, false)}
 					/>
 				</li>

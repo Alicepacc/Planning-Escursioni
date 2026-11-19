@@ -56,3 +56,11 @@ def test_etichette_dai_nomi_dei_punti_chiave():
 
     assert tags_from_names(["Albergo Monte Baldo", "Rifugio Baita Fos-ce"]) == {"rifugio"}
     assert tags_from_names(["Casere", "Waldner See", "Cima Nassere"]) == {"lago", "cima"}
+
+
+def test_stagione_senza_quota_dal_mese_della_gita():
+    from cordata_ingest.build.explore import season
+
+    assert season(None, "E", "2026-07-26") == [6, 7, 8]
+    assert season(None, "E", "2026-01-10") == [12, 1, 2]
+    assert season(None, None) == list(range(1, 13))

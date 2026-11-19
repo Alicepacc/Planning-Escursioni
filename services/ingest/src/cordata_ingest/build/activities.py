@@ -112,6 +112,12 @@ def equipment(act: dict[str, Any], max_ele: float) -> list[str]:
 
 
 def _status_text(track: dict[str, Any]) -> str:
+    if track["status"] == "fallita":
+        reasons = [r for r in track["reasons"] if not r.startswith("nota:")]
+        return (
+            "Percorso non ricostruito dai dati della locandina: sulla mappa ci sono solo i punti "
+            "trovati. Motivi: " + "; ".join(reasons) + "."
+        )
     if track["status"] == "auto_ok":
         return (
             "Traccia ricostruita automaticamente da OSM e OSM2CAI: distanza, dislivello e quota "
@@ -124,12 +130,26 @@ def _status_text(track: dict[str, Any]) -> str:
     )
 
 
+NO_TRACK_BBOX_PAD = 0.03  # gradi attorno alla partenza, se manca la traccia
+AREA_BBOX = [10.38, 44.79, 13.1, 47.09]  # Trentino-Alto Adige e Veneto, se non c'è alcun punto
+
+
+def _no_track_computed(act: dict[str, Any]) -> dict[str, Any]:
+    """Senza traccia nessun valore è calcolato: zeri che l'app non mostra (traccia non
+    verificata), con la sola quota massima della locandina per la stagione."""
+    keys = ("distance_km", "ascent_m", "descent_m", "min_ele_m", "cai_forward_min")
+    keys += ("cai_backward_min", "din_forward_min", "din_backward_min", "steep_m", "gaps")
+    return {**dict.fromkeys(keys, 0), "max_ele_m": act.get("quota_max_m") or 0, "method": {}}
+
+
 def activity_document(
     activity_id: str, act: dict[str, Any], track: dict[str, Any], url: str | None, conn, dem
 ) -> dict[str, Any]:
-    coords = track["coords"]
-    prof = compute_profile(coords, dem, DEFAULT_PARAMS)
-    computed = computed_payload(prof)
+    """Scheda dell'attività. Con la ricostruzione fallita (ADR 0013) la scheda resta, senza
+    linea né valori calcolati. I punti trovati vanno sulla mappa solo se la locandina indica la
+    partenza e la gita non è segnata fuori area in revisione (`fuori_area`): un punto isolato,
+    senza un secondo che lo confermi, può essere un omonimo lontano."""
+    has_line = track["status"] != "fallita" and len(track.get("coords") or []) >= 2
     waypoints = [
         {
             "nome": p["nome"],
@@ -140,9 +160,27 @@ def activity_document(
         for p in track["points"]
         if p.get("lon") is not None
     ]
+    if not has_line and (not act.get("partenza") or act.get("fuori_area")):
+        waypoints = []
+    places = [{"name": w["nome"], "lon": w["lon"], "lat": w["lat"]} for w in waypoints]
+    if has_line:
+        coords = track["coords"]
+        prof = compute_profile(coords, dem, DEFAULT_PARAMS)
+        computed = computed_payload(prof)
+        xs, ys = [c[0] for c in coords], [c[1] for c in coords]
+    elif waypoints:
+        coords = [[waypoints[0]["lon"], waypoints[0]["lat"]]]
+        prof = None
+        computed = _no_track_computed(act)
+        xs = [w["lon"] for w in waypoints] + [coords[0][0] - NO_TRACK_BBOX_PAD]
+        xs.append(coords[0][0] + NO_TRACK_BBOX_PAD)
+        ys = [w["lat"] for w in waypoints] + [coords[0][1] - NO_TRACK_BBOX_PAD]
+        ys.append(coords[0][1] + NO_TRACK_BBOX_PAD)
+    else:
+        coords, prof, computed = [], None, _no_track_computed(act)
+        xs, ys = AREA_BBOX[::2], AREA_BBOX[1::2]
     if act.get("tipo_percorso") == "andata_ritorno" and waypoints:
         waypoints.append(dict(waypoints[0]))  # ritorno alla partenza
-    xs, ys = [c[0] for c in coords], [c[1] for c in coords]
     start = act.get("partenza") or {}
     diff_raw = act.get("difficolta") or act.get("difficolta_testo")
     declared = {
@@ -167,16 +205,17 @@ def activity_document(
             "quota_m": start.get("quota_m"),
             "comune": start.get("comune") or "",
             **({"ora": act["ora_ritrovo"]} if act.get("ora_ritrovo") else {}),
-            "lon": coords[0][0],
-            "lat": coords[0][1],
+            "lon": coords[0][0] if coords else None,
+            "lat": coords[0][1] if coords else None,
         },
         "difficulty": {"cai": normalize_cai(str(act.get("difficolta") or "")), "raw": diff_raw},
         "declared": declared,
         "computed": computed,
-        "trails": trails_along(conn, coords),
+        "trails": trails_along(conn, coords) if has_line else [],
         "networks": act.get("reti") or [],
         "off_trail": [],
-        "stages": stages(prof, waypoints) if waypoints else [],
+        "stages": stages(prof, waypoints) if prof and waypoints else [],
+        **({} if has_line else {"places": places}),
         "equipment": equipment(act, computed["max_ele_m"]),
         "notes": [],
         "map_reference": "",
@@ -201,8 +240,12 @@ def activity_document(
             "on_cited_share": track.get("on_cited_share"),
         },
         "bbox": [round(min(xs), 5), round(min(ys), 5), round(max(xs), 5), round(max(ys), 5)],
-        "line": simplified_line(coords),
-        "profile": profile_payload(prof),
+        "line": simplified_line(coords) if has_line else [],
+        "profile": (
+            profile_payload(prof)
+            if prof
+            else {"columns": ["dist_m", "ele_m", "lon", "lat", "min"], "points": []}
+        ),
         "reconstruction": _status_text(track),
         "attribution": [
             f"Attività: {act.get('sezione')} "
@@ -273,15 +316,14 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
         if not track_path.exists():
             continue
         track = json.loads(track_path.read_text(encoding="utf-8"))
-        if track.get("status") == "fallita" or len(track.get("coords") or []) < 2:
-            continue
         url = manifest.get(act.get("documento", activity_id), {}).get("url")
         doc = activity_document(activity_id, act, track, url, conn, dem)
         doc["_section"] = act.get("sezione")
         docs.append(doc)
         coords[doc["id"]] = track["coords"]
         statuses[doc["id"]] = track["status"]
-    dedup = link_duplicates(docs, coords)
+    # la deduplica confronta le tracce: le attività senza linea restano a sé
+    dedup = link_duplicates([d for d in docs if d["line"]], coords)
     index = []
     for doc in docs:
         section = doc.pop("_section")
