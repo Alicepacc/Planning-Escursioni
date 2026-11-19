@@ -184,6 +184,17 @@
 		);
 		return `${resolve('/pianifica')}?${planToParams(plan)}`;
 	});
+	// «Organizza un'uscita» precompilata con titolo, scheda e difficoltà
+	const outingHref = $derived.by(() => {
+		const params: [string, string][] = [['titolo', doc.title]];
+		if (typeof location !== 'undefined') {
+			params.push(['da', location.pathname.replace(resolve('/'), '/')]);
+		}
+		const grade = doc.difficulty.cai ?? doc.difficulty.raw;
+		if (grade) params.push(['difficolta', grade]);
+		const query = params.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+		return `${resolve('/uscite/nuova')}?${query}`;
+	});
 	const trackPoints = $derived<TrackPoint[]>(doc.profile.points.map((p) => [p[2], p[3], p[1]]));
 	const sourceText = $derived(`${doc.attribution.join(' · ')} · generato da Cordata`);
 	function exportGpx() {
@@ -530,7 +541,8 @@
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- il percorso viene da resolve() -->
 			<a class="bottone" href={plannerHref}>Modifica nel planner</a>
 		{/if}
-		<a class="bottone" href={resolve('/uscite')}>Organizza uscita</a>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso da resolve() con parametri -->
+		<a class="bottone" href={outingHref}>Organizza uscita</a>
 		{#if shareNote}<span class="nota" role="status">{shareNote}</span>{/if}
 	</section>
 
