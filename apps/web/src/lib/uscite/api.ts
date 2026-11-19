@@ -202,3 +202,22 @@ export const pushKey = () => call<{ chiave: string }>('GET', '/api/notifiche/chi
 export const savePush = (sub: PushSubscriptionJSON) => call('POST', '/api/notifiche', sub);
 export const removePush = (endpoint: string) =>
 	call('POST', '/api/notifiche/rimuovi', { endpoint });
+
+// elenchi: uscite pubbliche dei prossimi 30 giorni (senza accesso) e proposte dei contatti
+export interface UscitaInElenco {
+	id: string;
+	titolo: string;
+	itinerario: string | null;
+	ritrovo_quando: string;
+	ritrovo_luogo: string;
+	ritrovo_lon: number | null;
+	ritrovo_lat: number | null;
+	difficolta: string | null;
+	posti: number | null;
+	confermati: number;
+	stato: 'aperta' | 'rinviata';
+}
+export const publicOutings = () =>
+	call<{ uscite: UscitaInElenco[]; avvertenza: string }>('GET', '/api/uscite/pubbliche');
+export const contactOutings = () =>
+	call<{ uscite: UscitaInElenco[] }>('GET', '/api/uscite/contatti');

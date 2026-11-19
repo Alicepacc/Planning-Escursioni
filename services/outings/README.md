@@ -24,13 +24,15 @@ pnpm run db:migrate:local && pnpm run dev   # API su http://localhost:8787
 | `POST /api/accesso/opzioni` · `…/verifica` | chiunque | accesso con una passkey già registrata |
 | `POST /api/accesso/esci` · `GET /api/io` | con sessione | chiude la sessione · chi sono |
 | `POST /api/uscite` | con sessione | crea un'uscita; risponde con `id` e il segreto `invito` del link |
-| `GET /api/uscite/:id?t=<invito>` | col link (o già iscritti) | pagina invito: dati, posti, stato, avvertenza; i nomi solo all'organizzatore |
+| `GET /api/uscite/:id?t=<invito>` | col link, già iscritti, contatti (se «contatti»), tutti (se pubblica) | pagina invito: dati, posti, stato, avvertenza; i nomi solo all'organizzatore |
 | `POST /api/uscite/:id/partecipa` `{t}` | con sessione e link | confermato o in lista d'attesa |
 | `POST /api/uscite/:id/rinuncia` | iscritti | rinuncia; la lista d'attesa scorre |
 | `POST /api/uscite/:id/stato` | organizzatore | `annullata`, `rinviata` (con `rinviata_a`) o `aperta` |
 | `POST /api/uscite/:id/partecipanti/:utente` | organizzatore | sposta tra confermati e lista d'attesa |
 | `POST /api/uscite/:id/annunci` | organizzatore | bacheca, letta dai partecipanti |
 | `GET /api/uscite` | con sessione | le mie uscite |
+| `GET /api/uscite/pubbliche` | chiunque | uscite pubbliche dei prossimi 30 giorni con il punto di ritrovo (cache 5 minuti); la distanza la calcola l'app |
+| `GET /api/uscite/contatti` | con sessione | uscite future «per i contatti» degli organizzatori con cui si è già usciti |
 | `GET /api/notifiche/chiave` | chiunque | chiave pubblica VAPID per `pushManager.subscribe` (404 se le notifiche non sono attive) |
 | `POST /api/notifiche` · `POST /api/notifiche/rimuovi` | con sessione | registra o toglie l'iscrizione push del browser |
 | `GET /invito/:id?t=<invito>` | chiunque | il link da condividere: pagina HTML con l'anteprima Open Graph (titolo, data, luogo, avvertenza; generica senza link valido) che rimanda alla pagina dell'app. Niente referrer, cache o indicizzazione |

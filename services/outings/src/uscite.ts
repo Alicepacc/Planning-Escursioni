@@ -99,6 +99,9 @@ export function validate(body: NuovaUscita) {
 	if ((lon == null) !== (lat == null) || (lon != null && (Math.abs(lon) > 180 || Math.abs(lat!) > 90))) {
 		throw new HttpError(400, 'Coordinate del ritrovo non valide.');
 	}
+	if (visibilita === 'pubblica' && lon == null) {
+		throw new HttpError(400, 'Per un’uscita pubblica serve il punto di ritrovo sulla mappa.');
+	}
 	const quando = isoDate(body.ritrovo_quando, 'ritrovo_quando', true)!;
 	const entro = isoDate(body.iscrizioni_entro, 'iscrizioni_entro');
 	if (entro && entro > quando) {
@@ -138,8 +141,26 @@ async function iscrizioni(env: Env, id: string): Promise<(Iscrizione & { nome: s
 	return results;
 }
 
-/** Il link d'invito apre la pagina; l'organizzatore e chi è già iscritto la vedono anche senza. */
+/**
+ * Contatti dell'organizzatore (SPEC §5.4): le persone che hanno già partecipato, o si sono
+ * iscritte, a un'altra sua uscita.
+ */
+async function isContact(env: Env, organizer: string, user: string, except: string): Promise<boolean> {
+	const row = await env.DB.prepare(
+		`SELECT 1 FROM partecipanti p JOIN uscite u ON u.id = p.uscita
+		 WHERE u.organizzatore = ? AND p.utente = ? AND u.id != ? LIMIT 1`
+	)
+		.bind(organizer, user, except)
+		.first();
+	return row != null;
+}
+
+/**
+ * Il link d'invito apre la pagina; l'organizzatore e chi è già iscritto la vedono anche senza.
+ * Le uscite pubbliche le vedono tutti, quelle per i contatti anche i contatti.
+ */
 async function canRead(env: Env, row: UscitaRow, token: string | null, user: Utente | null) {
+	if (row.visibilita === 'pubblica') return true;
 	if (token && (await sha256(token)) === row.invito_hash) return true;
 	if (user && user.id === row.organizzatore) return true;
 	if (user) {
@@ -147,11 +168,14 @@ async function canRead(env: Env, row: UscitaRow, token: string | null, user: Ute
 			.bind(row.id, user.id)
 			.first();
 		if (p) return true;
+		if (row.visibilita === 'contatti' && (await isContact(env, row.organizzatore, user.id, row.id))) {
+			return true;
+		}
 	}
 	return false;
 }
 
-export async function create(env: Env, request: Request): Promise<Response> {
+export async function create(env: Env, request: Request, ctx: ExecutionContext): Promise<Response> {
 	const user = await requireUser(env, request);
 	const v = validate(await readJson<NuovaUscita>(request));
 	const id = randomId();
@@ -186,6 +210,25 @@ export async function create(env: Env, request: Request): Promise<Response> {
 			"INSERT INTO partecipanti (uscita, utente, stato, iscritto) VALUES (?, ?, 'confermato', ?)"
 		).bind(id, user.id, nowIso())
 	]);
+	if (v.visibilita === 'contatti') {
+		const { results } = await env.DB.prepare(
+			`SELECT DISTINCT p.utente FROM partecipanti p JOIN uscite u ON u.id = p.uscita
+			 WHERE u.organizzatore = ? AND p.utente != ? AND u.id != ?`
+		)
+			.bind(user.id, user.id, id)
+			.all<{ utente: string }>();
+		ctx.waitUntil(
+			notify(
+				env,
+				results.map((r) => r.utente),
+				{
+					titolo: `Nuova uscita di ${user.nome}`,
+					testo: `${v.titolo} · ${formatRome(v.ritrovo_quando)}`,
+					url: page(env, id)
+				}
+			)
+		);
+	}
 	return json(env, { id, invito }, 201);
 }
 
@@ -413,6 +456,46 @@ export async function mine(env: Env, request: Request): Promise<Response> {
 		 WHERE p.stato != 'rinunciato' ORDER BY u.ritrovo_quando`
 	)
 		.bind(user.id, user.id)
+		.all();
+	return json(env, { uscite: results });
+}
+
+const ELENCO = `SELECT u.id, u.titolo, u.itinerario, u.ritrovo_quando, u.ritrovo_luogo, u.ritrovo_lon,
+	  u.ritrovo_lat, u.difficolta, u.posti, u.stato,
+	  (SELECT COUNT(*) FROM partecipanti p WHERE p.uscita = u.id AND p.stato = 'confermato') AS confermati
+	 FROM uscite u`;
+
+/**
+ * Uscite pubbliche dei prossimi 30 giorni, con il punto di ritrovo. La distanza da chi guarda la
+ * calcola l'app: la posizione non arriva al servizio.
+ */
+export async function publicList(env: Env): Promise<Response> {
+	const now = new Date();
+	const { results } = await env.DB.prepare(
+		`${ELENCO} WHERE u.visibilita = 'pubblica' AND u.stato != 'annullata'
+		   AND u.ritrovo_lon IS NOT NULL AND u.ritrovo_quando BETWEEN ? AND ?
+		 ORDER BY u.ritrovo_quando LIMIT 200`
+	)
+		.bind(now.toISOString(), new Date(now.getTime() + 30 * 24 * 3600_000).toISOString())
+		.all();
+	const res = json(env, { uscite: results, avvertenza: DISCLAIMER });
+	res.headers.set('Cache-Control', 'public, max-age=300');
+	return res;
+}
+
+/** Uscite future «per i contatti» degli organizzatori con cui si è già usciti. */
+export async function contactsList(env: Env, request: Request): Promise<Response> {
+	const user = await requireUser(env, request);
+	const { results } = await env.DB.prepare(
+		`${ELENCO} WHERE u.visibilita = 'contatti' AND u.stato != 'annullata' AND u.ritrovo_quando > ?
+		   AND u.organizzatore != ?
+		   AND u.organizzatore IN (
+		     SELECT o.organizzatore FROM partecipanti p JOIN uscite o ON o.id = p.uscita
+		     WHERE p.utente = ? AND o.id != u.id)
+		   AND NOT EXISTS (SELECT 1 FROM partecipanti q WHERE q.uscita = u.id AND q.utente = ?)
+		 ORDER BY u.ritrovo_quando LIMIT 100`
+	)
+		.bind(nowIso(), user.id, user.id, user.id)
 		.all();
 	return json(env, { uscite: results });
 }

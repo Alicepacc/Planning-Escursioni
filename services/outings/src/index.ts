@@ -10,7 +10,18 @@ import {
 } from './auth';
 import { invitePreview } from './invito';
 import { publicKey, reminders, subscribe, unsubscribe } from './notifiche';
-import { announce, create, join, leave, mine, setParticipant, setStatus, show } from './uscite';
+import {
+	announce,
+	contactsList,
+	create,
+	join,
+	leave,
+	mine,
+	publicList,
+	setParticipant,
+	setStatus,
+	show
+} from './uscite';
 import { HttpError, cors, json, type Env } from './util';
 
 type Handler = (
@@ -41,7 +52,10 @@ const ROUTES: [string, RegExp, Handler][] = [
 	['POST', /^\/api\/notifiche$/, plain(subscribe)],
 	['POST', /^\/api\/notifiche\/rimuovi$/, plain(unsubscribe)],
 	['GET', /^\/api\/uscite$/, plain(mine)],
-	['POST', /^\/api\/uscite$/, plain(create)],
+	['POST', /^\/api\/uscite$/, create],
+	// prima di /api/uscite/:id
+	['GET', /^\/api\/uscite\/pubbliche$/, plain((env) => publicList(env))],
+	['GET', /^\/api\/uscite\/contatti$/, plain(contactsList)],
 	['GET', /^\/api\/uscite\/([\w-]+)$/, plain(show)],
 	['POST', /^\/api\/uscite\/([\w-]+)\/partecipa$/, join],
 	['POST', /^\/api\/uscite\/([\w-]+)\/rinuncia$/, leave],

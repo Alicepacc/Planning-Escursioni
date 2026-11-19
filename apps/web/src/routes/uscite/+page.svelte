@@ -2,19 +2,41 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
+	import OutingList from '#lib/uscite/OutingList.svelte';
 	import PushToggle from '#lib/uscite/PushToggle.svelte';
-	import { SERVICE_ON, logout, me, myOutings, type Utente } from '#lib/uscite/api.ts';
-	import { formatWhen } from '#lib/uscite/local.ts';
+	import {
+		SERVICE_ON,
+		contactOutings,
+		logout,
+		me,
+		myOutings,
+		publicOutings,
+		type UscitaInElenco,
+		type Utente
+	} from '#lib/uscite/api.ts';
+	import { formatWhen, romeDay, weekend } from '#lib/uscite/local.ts';
+	import { haversineKm } from '#lib/search/explore.ts';
 
 	type Mia = Awaited<ReturnType<typeof myOutings>>['uscite'][number];
 	let user = $state<Utente | null>(null);
 	let list = $state<Mia[]>([]);
+	let fromContacts = $state<UscitaInElenco[]>([]);
 	let ready = $state(false);
 	let error = $state('');
+
+	// feed pubblico: la posizione resta nel telefono, la distanza si calcola qui
+	let pubbliche = $state<UscitaInElenco[] | null>(null);
+	let feedError = $state('');
+	let here = $state<[number, number] | null>(null);
+	let locating = $state(false);
+	let geoError = $state('');
+	let soloWeekend = $state(false);
+	let raggio = $state(50);
 
 	async function refresh() {
 		try {
 			list = user ? (await myOutings()).uscite : [];
+			fromContacts = user ? (await contactOutings()).uscite : [];
 		} catch (e) {
 			error = (e as Error).message;
 		}
@@ -24,7 +46,54 @@
 		user = await me();
 		await refresh();
 		ready = true;
+		if (SERVICE_ON) {
+			try {
+				pubbliche = (await publicOutings()).uscite;
+			} catch (e) {
+				feedError = (e as Error).message;
+			}
+		}
 	});
+
+	function distance(u: UscitaInElenco): number | null {
+		if (!here || u.ritrovo_lon == null || u.ritrovo_lat == null) return null;
+		return haversineKm(here, [u.ritrovo_lon, u.ritrovo_lat]);
+	}
+
+	const shown = $derived.by(() => {
+		if (!pubbliche) return [];
+		const [sat, sun] = weekend();
+		let out = pubbliche.filter((u) => {
+			if (soloWeekend) {
+				const day = romeDay(u.ritrovo_quando);
+				if (day < sat || day > sun) return false;
+			}
+			const km = distance(u);
+			return km == null || km <= raggio;
+		});
+		if (here) out = [...out].sort((a, b) => (distance(a) ?? 0) - (distance(b) ?? 0));
+		return out;
+	});
+
+	function locate() {
+		if (!navigator.geolocation) {
+			geoError = 'Posizione non disponibile su questo dispositivo.';
+			return;
+		}
+		locating = true;
+		geoError = '';
+		navigator.geolocation.getCurrentPosition(
+			(pos) => {
+				locating = false;
+				here = [pos.coords.longitude, pos.coords.latitude];
+			},
+			() => {
+				locating = false;
+				geoError = 'Non riesco a leggere la posizione (permesso negato o segnale assente).';
+			},
+			{ enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+		);
+	}
 
 	const STATO: Record<string, string> = {
 		confermato: 'partecipi',
@@ -92,6 +161,54 @@
 		{:else}
 			<p class="nota">Nessuna uscita per ora. Organizzane una da una scheda o dal planner.</p>
 		{/if}
+		{#if fromContacts.length}
+			<h2>Proposte dai tuoi contatti</h2>
+			<p class="nota">Uscite di chi ha già organizzato un’uscita con te.</p>
+			<OutingList uscite={fromContacts} />
+		{/if}
+	{/if}
+
+	{#if SERVICE_ON && ready}
+		<section aria-labelledby="pubbliche">
+			<h2 id="pubbliche">Uscite pubbliche dei prossimi 30 giorni</h2>
+			<div class="filtri">
+				<button type="button" class="chip" onclick={locate} disabled={locating}
+					>{locating
+						? 'Cerco la posizione…'
+						: here
+							? 'Aggiorna la posizione'
+							: 'Vicino a me'}</button
+				>
+				<label class="chip"
+					><input type="checkbox" bind:checked={soloWeekend} /> Questo fine settimana</label
+				>
+				{#if here}
+					<label class="chip"
+						>Entro
+						<select bind:value={raggio}>
+							{#each [10, 25, 50, 100] as km (km)}<option value={km}>{km} km</option>{/each}
+						</select></label
+					>
+				{/if}
+			</div>
+			{#if here}
+				<p class="nota">La posizione resta sul telefono: serve solo per ordinare l’elenco.</p>
+			{/if}
+			{#if geoError}<p class="errore" role="alert">{geoError}</p>{/if}
+			{#if feedError}
+				<p class="errore" role="alert">{feedError}</p>
+			{:else if !pubbliche}
+				<p class="nota">Caricamento…</p>
+			{:else if shown.length}
+				<OutingList uscite={shown} {distance} />
+			{:else}
+				<p class="nota">
+					{pubbliche.length
+						? 'Nessuna uscita pubblica con questi filtri.'
+						: 'Nessuna uscita pubblica in programma per ora.'}
+				</p>
+			{/if}
+		</section>
 	{/if}
 	{#if error}<p class="errore" role="alert">{error}</p>{/if}
 </div>
@@ -142,5 +259,24 @@
 	}
 	.errore {
 		color: #b42318;
+	}
+	.filtri {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0.5rem 0;
+	}
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		min-height: 44px;
+		padding: 0 0.9rem;
+		border-radius: 999px;
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
 	}
 </style>

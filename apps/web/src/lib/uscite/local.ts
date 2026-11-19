@@ -40,3 +40,22 @@ export function rememberInvite(id: string, token: string) {
 export function knownInvite(id: string): string | null {
 	return readInvites()[id] ?? null;
 }
+
+/** Giorno di calendario in Italia (AAAA-MM-GG) di un istante. */
+export function romeDay(iso: string | Date): string {
+	return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Rome' }).format(new Date(iso));
+}
+
+/**
+ * Il fine settimana «di adesso» in Italia: sabato e domenica di questa settimana; se è già
+ * sabato o domenica, quelli in corso.
+ */
+export function weekend(now = new Date()): [string, string] {
+	const today = romeDay(now);
+	const [y, m, d] = today.split('-').map(Number);
+	const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); // 0 domenica … 6 sabato
+	const toSaturday = day === 0 ? -1 : 6 - day;
+	const sat = new Date(Date.UTC(y, m - 1, d + toSaturday));
+	const sun = new Date(Date.UTC(y, m - 1, d + toSaturday + 1));
+	return [sat.toISOString().slice(0, 10), sun.toISOString().slice(0, 10)];
+}

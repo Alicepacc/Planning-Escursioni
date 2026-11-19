@@ -2,7 +2,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { generatedAsset } from '#lib/data/paths.ts';
+	import type { ItineraryDoc } from '#lib/data/types.ts';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
+	import MeetingPoint from '#lib/uscite/MeetingPoint.svelte';
 	import { SERVICE_ON, createOuting, me, type Utente } from '#lib/uscite/api.ts';
 	import { localToIso, rememberInvite } from '#lib/uscite/local.ts';
 
@@ -23,19 +26,40 @@
 	let requisiti = $state('');
 	let attrezzatura = $state('scarponi, giacca antivento, acqua, pranzo al sacco');
 	let note = $state('');
-	let visibilita = $state<'link' | 'pubblica'>('link');
+	let visibilita = $state<'link' | 'contatti' | 'pubblica'>('link');
+	let punto = $state<[number, number] | null>(null);
+	let puntoDaItinerario = $state(false);
 
 	onMount(async () => {
 		const q = new URL(location.href).searchParams;
 		titolo = q.get('titolo') ?? '';
 		itinerario = q.get('da') ?? '';
 		difficolta = q.get('difficolta') ?? '';
+		// da una scheda: il punto di ritrovo parte dalla partenza dell'itinerario (si può spostare)
+		const slug = /^\/attivita\/([\w-]+)$/.exec(itinerario)?.[1];
+		if (slug) {
+			try {
+				const doc = (await (
+					await fetch(generatedAsset(`data/attivita/${slug}.json`))
+				).json()) as ItineraryDoc;
+				if (doc.start.lon != null && doc.start.lat != null) {
+					punto = [doc.start.lon, doc.start.lat];
+					puntoDaItinerario = true;
+				}
+			} catch {
+				// scheda non raggiungibile: il punto si sceglie sulla mappa
+			}
+		}
 		user = await me();
 		ready = true;
 	});
 
 	async function submit(e: SubmitEvent) {
 		e.preventDefault();
+		if (visibilita === 'pubblica' && !punto) {
+			error = 'Per un’uscita pubblica scegli il punto di ritrovo sulla mappa.';
+			return;
+		}
 		busy = true;
 		error = '';
 		try {
@@ -44,6 +68,8 @@
 				itinerario: itinerario || undefined,
 				ritrovo_quando: localToIso(quando),
 				ritrovo_luogo: luogo,
+				ritrovo_lon: punto?.[0],
+				ritrovo_lat: punto?.[1],
 				mezzi: mezzi || undefined,
 				posti,
 				iscrizioni_entro: localToIso(entro) ?? null,
@@ -95,6 +121,13 @@
 					placeholder="es. parcheggio della funivia"
 				/></label
 			>
+			<fieldset>
+				<legend>Ritrovo sulla mappa (serve per le uscite pubbliche)</legend>
+				{#if puntoDaItinerario}
+					<p class="nota">Proposto: la partenza dell’itinerario. Spostalo se vi trovate altrove.</p>
+				{/if}
+				<MeetingPoint bind:point={punto} />
+			</fieldset>
 			<label
 				>Mezzi <input
 					bind:value={mezzi}
@@ -137,8 +170,12 @@
 					><input type="radio" bind:group={visibilita} value="link" /> Solo chi ha il link</label
 				>
 				<label class="scelta"
-					><input type="radio" bind:group={visibilita} value="pubblica" /> Pubblica (comparirà nell’elenco
-					delle uscite vicine, in una fase successiva)</label
+					><input type="radio" bind:group={visibilita} value="contatti" /> I miei contatti (chi è già
+					uscito con te la trova in «Uscite» e riceve un avviso)</label
+				>
+				<label class="scelta"
+					><input type="radio" bind:group={visibilita} value="pubblica" /> Pubblica (compare nell’elenco
+					delle uscite dei prossimi 30 giorni, con il punto di ritrovo)</label
 				>
 			</fieldset>
 			{#if itinerario}

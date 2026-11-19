@@ -17,7 +17,9 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | Anteprima Open Graph e QR code | **fatto**: il link condiviso passa dal servizio (`/invito/:id?t=…`), che dà alle app di messaggistica titolo, data, luogo e avvertenza, poi rimanda alla pagina; senza link valido l'anteprima è generica. Il QR, disegnato nel browser, apre direttamente la pagina |
 | Disclaimer «uscita privata, non organizzata dal CAI» | **fatto**, sulla pagina invito, sul modulo e in «Uscite» |
 | Notifiche push e promemoria | **fatto**: «Attiva le notifiche» in «Uscite» e sulla pagina invito; avvisi per iscrizioni, lista d'attesa, promozioni, annullamenti, rinvii e annunci; promemoria della sera prima con un cron. App installabile (manifest e icone): su iPhone le notifiche arrivano solo dalla schermata Home |
-| Visibilità «contatti» e feed delle uscite pubbliche vicine | da fare |
+| Punto di ritrovo sulla mappa | **fatto**: si tocca la mappa o si usa la propria posizione; da una scheda è proposto alla partenza dell'itinerario |
+| Visibilità «contatti» | **fatto**: chi è già uscito con l'organizzatore (anche solo iscritto) vede l'uscita senza link, la trova tra le «Proposte dai tuoi contatti» e riceve una notifica |
+| Feed «Uscite pubbliche vicino a te» | **fatto** in «Uscite», anche senza account: uscite pubbliche dei prossimi 30 giorni, «Vicino a me» (10–100 km), «Questo fine settimana». La posizione resta sul telefono: il servizio manda l'elenco, la distanza la calcola l'app. Un'uscita pubblica richiede il punto di ritrovo |
 
 **Servizio** (`services/outings`):
 
@@ -28,12 +30,14 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 
 ## Prove
 
-- **17 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
+- **20 test del servizio** nel runtime dei Workers (Miniflare) con D1 e migrazioni: regole dei
   posti, permessi, link d'invito, lista d'attesa, annullamento e rinvio, bacheca, sessioni;
   cifratura push sul vettore dell'Appendice A della RFC 8291 e decifrata come farebbe il
   browser, firma VAPID verificata, iscrizioni scadute (410) cancellate, promemoria del giorno
   prima in ora italiana; anteprima dell'invito (escape dell'HTML, niente dettagli senza link
-  valido, script consentito solo dall'hash nella CSP, uscite annullate).
+  valido, script consentito solo dall'hash nella CSP, uscite annullate); visibilità (feed dei
+  prossimi 30 giorni senza annullate né «contatti», lettura e iscrizione senza link per le
+  pubbliche, regole dei contatti).
 - **Prova end-to-end** (`apps/web/scripts/e2e-uscite.cjs`), senza account: Worker con
   `wrangler dev` e D1 locale, app compilata con `VITE_USCITE_API`, passkey vere su autenticatori
   virtuali di Chromium.
@@ -50,6 +54,16 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
     «Lunedì 12 luglio alle ore 07:00 · Palù del Fersina» e l'avvertenza; l'immagine
     dell'anteprima si carica;
   - aperto nel browser, porta alla pagina dell'uscita.
+- **Prova della visibilità** (`apps/web/scripts/e2e-visibilita.cjs`):
+  - Anna organizza dalla scheda delle Stellune: il punto di ritrovo proposto è la partenza;
+    toccando la mappa si sposta. La pubblica per sabato; ne pubblica un'altra tra due
+    settimane con «Usa la mia posizione» e una terza solo per i contatti.
+  - Bruno, a Feltre e senza account, apre «Uscite»: con «Vicino a me» vede le due pubbliche in
+    ordine di distanza (24 e 32 km); con «Questo fine settimana» ne resta una; quella per i
+    contatti non c'è.
+  - Bruno partecipa a una pubblica creando l'account: da quel momento è un contatto di Anna e
+    trova l'uscita per i contatti tra le sue proposte.
+  - Nessun errore in console.
 - **Prova delle notifiche** (`apps/web/scripts/e2e-notifiche.cjs`) con una chiave VAPID usa e
   getta: Carla organizza e attiva le notifiche, Bruno partecipa, il servizio locale manda una push
   vera attraverso il servizio push di Chrome e il service worker di Carla mostra «Giro del lago di
@@ -68,6 +82,8 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | `screenshots/3-organizzatore-telefono.jpg` | La gestione dell'organizzatrice: partecipanti, bacheca, annulla o rinvia |
 | `screenshots/4-notifica-telefono.jpg` | La pagina dell'uscita con le notifiche attive («Disattiva le notifiche») |
 | `screenshots/5-qr-invito-telefono.jpg` | Il codice QR dell'invito sulla pagina dell'uscita |
+| `screenshots/6-punto-di-ritrovo-telefono.jpg` | Il punto di ritrovo sulla mappa nel modulo, proposto dalla partenza dell'itinerario |
+| `screenshots/7-uscite-pubbliche-telefono.jpg` | Le uscite pubbliche vicine, filtrate per il fine settimana |
 
 ## Per pubblicare il servizio (serve l'account Cloudflare dell'utente)
 
@@ -78,5 +94,5 @@ attivo».
 
 ## Prossimi passi della fase
 
-1. Visibilità «contatti» e feed delle uscite pubbliche vicine.
-2. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare.
+1. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare (serve l'account
+   Cloudflare dell'utente).

@@ -22,6 +22,7 @@ interface Anteprima {
 	ritrovo_quando: string;
 	ritrovo_luogo: string;
 	stato: string;
+	visibilita: string;
 	invito_hash: string;
 }
 
@@ -30,13 +31,14 @@ export async function invitePreview(env: Env, request: Request, id: string): Pro
 	const app = env.APP_URL.replace(/\/$/, '');
 	const target = `${app}/uscita?id=${encodeURIComponent(id)}${t ? `&t=${encodeURIComponent(t)}` : ''}`;
 	const row = await env.DB.prepare(
-		'SELECT titolo, ritrovo_quando, ritrovo_luogo, stato, invito_hash FROM uscite WHERE id = ?'
+		'SELECT titolo, ritrovo_quando, ritrovo_luogo, stato, visibilita, invito_hash FROM uscite WHERE id = ?'
 	)
 		.bind(id)
 		.first<Anteprima>();
 	let title = 'Uscita di gruppo su Cordata';
 	let description = 'Apri il link per vedere i dettagli e partecipare.';
-	if (row && t && (await sha256(t)) === row.invito_hash) {
+	// le uscite pubbliche si leggono anche senza il segreto del link
+	if (row && (row.visibilita === 'pubblica' || (t && (await sha256(t)) === row.invito_hash))) {
 		const prefix = row.stato === 'annullata' ? 'Annullata: ' : row.stato === 'rinviata' ? 'Rinviata: ' : '';
 		const when = formatRome(row.ritrovo_quando);
 		title = prefix + row.titolo;

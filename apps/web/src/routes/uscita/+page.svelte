@@ -80,15 +80,18 @@
 			: (u?.itinerario ?? '')
 	);
 	const inviteUrl = $derived(
-		token && typeof location !== 'undefined'
-			? `${location.origin}${resolve('/uscita')}?id=${encodeURIComponent(id)}&t=${encodeURIComponent(token)}`
+		// le uscite pubbliche si condividono anche senza il segreto del link
+		(token || u?.visibilita === 'pubblica') && typeof location !== 'undefined'
+			? `${location.origin}${resolve('/uscita')}?id=${encodeURIComponent(id)}${token ? `&t=${encodeURIComponent(token)}` : ''}`
 			: ''
 	);
 
 	// il link da condividere passa dal servizio, che mostra l'anteprima nelle app di messaggistica
 	// e rimanda alla pagina; il codice QR punta direttamente alla pagina
 	const shareUrl = $derived(
-		token ? `${API}/invito/${encodeURIComponent(id)}?t=${encodeURIComponent(token)}` : ''
+		token || u?.visibilita === 'pubblica'
+			? `${API}/invito/${encodeURIComponent(id)}${token ? `?t=${encodeURIComponent(token)}` : ''}`
+			: ''
 	);
 
 	async function share() {
@@ -140,7 +143,15 @@
 
 		<dl class="dati">
 			<dt>Ritrovo</dt>
-			<dd>{formatWhen(u.ritrovo_quando)} · {u.ritrovo_luogo}</dd>
+			<dd>
+				{formatWhen(u.ritrovo_quando)} · {u.ritrovo_luogo}{#if u.ritrovo_lon != null && u.ritrovo_lat != null}
+					·
+					<a
+						href={`https://www.openstreetmap.org/?mlat=${u.ritrovo_lat}&mlon=${u.ritrovo_lon}#map=16/${u.ritrovo_lat}/${u.ritrovo_lon}`}
+						target="_blank"
+						rel="noopener noreferrer">punto sulla mappa</a
+					>{/if}
+			</dd>
 			{#if u.mezzi}<dt>Mezzi</dt>
 				<dd>{u.mezzi}</dd>{/if}
 			<dt>Posti</dt>
