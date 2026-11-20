@@ -1,7 +1,7 @@
 # Catalogo Trentino-Alto Adige e Dolomiti: avanzamento
 
 Data: 20/11/2026. Decisioni: [ADR 0015](../../docs/decisions/0015-catalogo-dolomiti-affidabilita-e-ui.md).
-Scarico ed estrazione del testo conclusi; il catalogo si sta rielaborando per intero.
+Scarico, estrazione del testo ed elaborazione del catalogo conclusi per tutti i documenti.
 
 ## Cosa si pubblica
 
@@ -118,7 +118,31 @@ il versante dell'Alpago). Nell'app: **82 escursioni** da 80 in su (5 doppioni fu
 - **Distanze** «km tot.: 11,1 Km», «Km totali: 13 km», «Km e dislivello: 11 km, +1300 m»
   (schede CAI Belluno): senza distanza restava un solo confronto e il punteggio non arrivava a 80.
 
-_Esiti sul lotto completo: in aggiornamento, il catalogo si sta rielaborando sui testi puliti._
+- **Titoli**: una frase della descrizione («Riamo fino a Paneveggio; facendo così…») o il nome
+  di un gruppo («Gruppo Escursionismo») non fanno più da titolo. Il nome del documento sul sito,
+  usato in mancanza di un titolo, tiene solo le parole che il testo pulito della locandina
+  ripete: alcuni nomi di file portano i cognomi degli accompagnatori («Escursionismo
+  Cognome-Cognome Rifugio X»), che così non arrivano all'app.
+
+Esiti sul lotto completo (tutti i documenti con il testo, rielaborati da capo):
+
+| | Documenti | Voci dei programmi |
+|---|---|---|
+| Pubblicabili (da 80) | **164** | **36** |
+| Sotto soglia | 1.751 | 591 |
+| Esclusi (bici, alpinismo, corsi, nessun dato di percorso) | 1.134 | 788 |
+| Programmi e libretti (divisi in voci) | 298 | – |
+| Fuori area | 101 | 18 |
+| **Totale** | **3.448** | **1.433** |
+
+Nell'app: **224** escursioni da 80 in su (181 dal catalogo, le altre rivedute a mano), con
+i doppioni dello stesso percorso fusi in gruppi.
+
+Controllo a campione (`campione-lotto-3.jpg`, 12 a caso tra le nuove): dieci tracce plausibili;
+due dubbie, «Anello di Sanzeno e Santuario di San Romedio» (la traccia non passa chiaramente dal
+santuario) e la traversata verso il rifugio Marinelli (CAI Mestre: la traccia non arriva al
+rifugio, in Carnia). Dieci su dodici è un po' sotto le 9 su 10 della taratura: le voci dei
+programmi e le locandine con pochi numeri sono le più fragili, e sono le prime da guardare.
 
 ## Aperti
 
