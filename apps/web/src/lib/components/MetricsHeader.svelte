@@ -48,45 +48,64 @@
 {#if source}<p class="fonte">{source}</p>{/if}
 
 <style>
+	/* una sola scheda con quattro colonne: numeri grandi, etichette piccole (ADR 0015) */
 	.metriche {
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 0.5rem;
 		margin: 0;
-	}
-	.metriche > div {
 		background: var(--surface);
 		border: 1px solid var(--border);
-		border-radius: 10px;
-		padding: 0.5rem 0.6rem;
+		border-radius: var(--r-md, 14px);
+		padding: 0.7rem 0.2rem;
+	}
+	.metriche > div {
 		min-width: 0;
+		padding: 0 0.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		border-right: 1px solid var(--border);
+	}
+	.metriche > div:last-child {
+		border-right: 0;
 	}
 	dt {
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--muted);
-	}
-	dd {
-		margin: 0.15rem 0 0;
-		font-size: 1.15rem;
-		font-weight: 700;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 0.5rem;
-	}
-	.nota {
+		order: 2;
 		font-size: 0.72rem;
 		color: var(--muted);
 	}
+	dd {
+		order: 1;
+		margin: 0;
+		font: 600 1.15rem/1.15 var(--font-display, serif);
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0 0.35rem;
+	}
+	.nota {
+		order: 3;
+		font-size: 0.66rem;
+		color: var(--muted);
+		line-height: 1.2;
+	}
 	.fonte {
-		margin: 0.35rem 0 0;
-		font-size: 0.8rem;
+		margin: 0.4rem 0 0;
+		font-size: 0.78rem;
 		color: var(--muted);
 	}
-	@media (max-width: 420px) {
+	/* sul telefono due per riga: i numeri restano su una riga */
+	@media (max-width: 480px) {
 		.metriche {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+			row-gap: 0.8rem;
 		}
+		.metriche > div:nth-child(2n) {
+			border-right: 0;
+		}
+	}
+	dd :global(span) {
+		white-space: nowrap;
 	}
 </style>

@@ -8,6 +8,9 @@
 	import ElevationProfile from './ElevationProfile.svelte';
 	import { planFromLine, planToParams } from '../planner/plan';
 	import MetricsHeader from './MetricsHeader.svelte';
+	import Icon from '../ui/Icon.svelte';
+	import DiffPill from '../ui/DiffPill.svelte';
+	import Trust from '../ui/Trust.svelte';
 	import DifficultyBadge from './DifficultyBadge.svelte';
 	import SafetyNote from './SafetyNote.svelte';
 	import { formatDate, formatDuration, formatKm, formatMeters } from '../hiking/format';
@@ -217,6 +220,23 @@
 			'application/vnd.google-earth.kml+xml'
 		);
 	}
+	// indietro come in un'app: alla pagina precedente se c'è, altrimenti alla mappa
+	function back() {
+		if (history.length > 1 && document.referrer.startsWith(location.origin)) history.back();
+		else location.assign(resolve('/mappa'));
+	}
+	// perché la traccia è affidabile: i confronti superati, la fonte e la data
+	const trustText = $derived.by(() => {
+		const ok = checks.filter((r) => r.ok).map((r) => r.label.toLowerCase());
+		const what =
+			ok.length > 1 ? `${ok.slice(0, -1).join(', ')} e ${ok[ok.length - 1]}` : (ok[0] ?? '');
+		const who = isActivity ? doc.activity.organizers.join(', ') : 'la fonte';
+		const when = isActivity && doc.activity.date ? ` (${formatDate(doc.activity.date)})` : '';
+		return what
+			? `${what.charAt(0).toUpperCase()}${what.slice(1)} ${ok.length > 1 ? 'coincidono' : 'coincide'} con la locandina di ${who}${when}; la linea segue i sentieri della carta.`
+			: `La traccia segue i sentieri della carta e i punti della locandina di ${who}${when}.`;
+	});
+
 	async function share() {
 		const data = { title: doc.title, text: doc.summary ?? doc.title, url: location.href };
 		try {
@@ -226,6 +246,7 @@
 			}
 			await navigator.clipboard.writeText(location.href);
 			shareNote = 'Link copiato.';
+			setTimeout(() => (shareNote = ''), 2500);
 		} catch {
 			shareNote = '';
 		}
@@ -242,6 +263,7 @@
 
 <div class="mappa">
 	<MapView
+		padding={{ top: 72, bottom: 48, left: 24, right: 56 }}
 		bbox={doc.bbox}
 		line={doc.line}
 		lineColor="#174ea6"
@@ -257,15 +279,47 @@
 			<TrailInfo ways={trailWays} onclose={() => (trailWays = null)} />
 		</div>
 	{/if}
+	<div class="tondi">
+		<button type="button" class="tondo" aria-label="Indietro" onclick={back}>
+			<Icon name="indietro" size={22} stroke={2.4} />
+		</button>
+		<span></span>
+		<button type="button" class="tondo" aria-label="Condividi" onclick={share}>
+			<Icon name="condividi" size={21} />
+		</button>
+		<button
+			type="button"
+			class="tondo"
+			aria-label={saved ? 'Togli dai salvati' : 'Salva'}
+			aria-pressed={saved}
+			onclick={toggleSave}
+		>
+			<Icon name="salva" size={21} />
+		</button>
+	</div>
 </div>
 
-<article class="pagina">
+<article class="pagina scheda">
 	<p class="tipo">
-		{isActivity ? 'Attività CAI' : 'Itinerario'} · {TYPE_LABEL[doc.type] ?? doc.type}{#if doc.group}
-			· {doc.group}{/if}
+		{[isActivity ? 'Attività CAI' : 'Itinerario', TYPE_LABEL[doc.type] ?? doc.type, doc.group]
+			.filter(Boolean)
+			.join(' · ')}
 	</p>
 	<h1>{doc.title}</h1>
+	<div class="tags">
+		<DiffPill code={doc.difficulty.cai ?? doc.difficulty.raw} label />
+		<Trust ok={hasLine && verified} noTrack={!hasLine} long />
+	</div>
 	{#if doc.summary}<p class="sintesi">{doc.summary}</p>{/if}
+	{#if hasLine && verified}
+		<aside class="fiducia">
+			<span class="scudo"><Icon name="affidabile" size={24} stroke={2.2} /></span>
+			<div>
+				<b>Perché ci fidiamo di questa traccia</b>
+				<p>{trustText}</p>
+			</div>
+		</aside>
+	{/if}
 
 	{#if !hasLine}
 		<details class="avviso" open>
@@ -325,11 +379,13 @@
 			<strong>{formatDate(doc.activity.date)}</strong> · {doc.activity.organizers.join(', ')}
 		</p>
 		<p>
-			Partenza: {doc.start.nome || '–'}{#if doc.start.quota_m}
-				({formatMeters(doc.start.quota_m)}){/if}{#if doc.start.comune},
-				{doc.start.comune}{/if}{#if doc.start.ora}, ritrovo ore {doc.start
-					.ora}{/if}{#if doc.activity.transport}
-				· {doc.activity.transport}{/if}
+			Partenza: {[
+				`${doc.start.nome || '–'}${doc.start.quota_m ? ` (${formatMeters(doc.start.quota_m)})` : ''}`,
+				doc.start.comune,
+				doc.start.ora ? `ritrovo ore ${doc.start.ora}` : ''
+			]
+				.filter(Boolean)
+				.join(', ')}{doc.activity.transport ? ` · ${doc.activity.transport}` : ''}
 		</p>
 		<p class="nota">{doc.activity.signup_note}</p>
 		<p class="link">
@@ -529,24 +585,35 @@
 	{/if}
 
 	<section class="azioni" aria-label="Azioni">
-		<button type="button" onclick={toggleSave} aria-pressed={saved}
-			>{saved ? '★ Salvato' : '☆ Salva'}</button
-		>
 		{#if hasLine}
 			<button type="button" onclick={exportGpx}>Esporta GPX</button>
 			<button type="button" onclick={exportKml}>Esporta KML</button>
 		{/if}
-		<button type="button" onclick={share}>Condividi</button>
 		{#if hasLine}
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- il percorso viene da resolve() -->
 			<a class="bottone" href={plannerHref}>Modifica nel planner</a>
 		{/if}
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso da resolve() con parametri -->
-		<a class="bottone" href={outingHref}>Organizza uscita</a>
-		{#if shareNote}<span class="nota" role="status">{shareNote}</span>{/if}
 	</section>
 
 	<SafetyNote />
+
+	<div class="barra-azioni">
+		{#if shareNote}<p class="toast" role="status">{shareNote}</p>{/if}
+		{#if isActivity && doc.activity.source_url}
+			<!-- link esterno alla locandina della sezione -->
+			<!-- eslint-disable svelte/no-navigation-without-resolve -->
+			<a
+				class="secondario"
+				href={doc.activity.source_url}
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label="Locandina originale della sezione"><Icon name="locandina" size={22} /></a
+			>
+			<!-- eslint-enable svelte/no-navigation-without-resolve -->
+		{/if}
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- outingHref usa resolve() -->
+		<a class="primario" href={outingHref}><Icon name="uscite" size={20} />Organizza uscita</a>
+	</div>
 
 	<footer class="attribuzione">
 		{#each doc.attribution as a (a)}<span>{a}</span>{/each}
@@ -554,10 +621,138 @@
 </article>
 
 <style>
+	/* mappa in alto a tutta larghezza, con i pulsanti tondi; la scheda le sale sopra */
 	.mappa {
 		position: relative;
-		height: 42dvh;
-		min-height: 260px;
+		height: 44dvh;
+		min-height: 280px;
+	}
+	.mappa :global(.legenda),
+	.mappa :global(.maplibregl-ctrl-top-right) {
+		top: calc(env(safe-area-inset-top) + 4rem);
+	}
+	.tondi {
+		position: absolute;
+		top: calc(env(safe-area-inset-top) + 0.7rem);
+		left: 0.9rem;
+		right: 0.9rem;
+		z-index: 4;
+		display: flex;
+		gap: 0.6rem;
+		pointer-events: none;
+	}
+	.tondi span {
+		flex: 1;
+	}
+	.tondo {
+		pointer-events: auto;
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border: 0;
+		border-radius: 50%;
+		background: var(--surface);
+		color: var(--text);
+		box-shadow: 0 2px 10px rgb(0 0 0 / 18%);
+		cursor: pointer;
+	}
+	.tondo[aria-pressed='true'] {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+	.scheda {
+		position: relative;
+		z-index: 2;
+		margin-top: -22px;
+		border-radius: 22px 22px 0 0;
+		background: var(--bg);
+		padding-top: 1.1rem;
+		padding-bottom: 6.5rem;
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		margin: 0.2rem 0 0.8rem;
+	}
+	.fiducia {
+		display: flex;
+		gap: 0.7rem;
+		margin: 0.4rem 0 0.9rem;
+		padding: 0.8rem 0.9rem;
+		border-radius: var(--r-md);
+		background: color-mix(in srgb, var(--ok) 9%, var(--surface));
+		border: 1px solid color-mix(in srgb, var(--ok) 25%, transparent);
+	}
+	.fiducia b {
+		color: var(--ok);
+	}
+	.fiducia p {
+		margin: 0.15rem 0 0;
+		color: var(--muted);
+		font-size: 0.88rem;
+	}
+	.scudo {
+		color: var(--ok);
+	}
+	.barra-azioni {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 30;
+		display: flex;
+		gap: 0.6rem;
+		padding: 0.7rem 1.1rem calc(0.7rem + env(safe-area-inset-bottom));
+		background: color-mix(in srgb, var(--surface) 94%, transparent);
+		backdrop-filter: blur(14px);
+		border-top: 1px solid var(--border);
+	}
+	.barra-azioni a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-height: 50px;
+		border-radius: 14px;
+		font: 600 1rem var(--font-body);
+		text-decoration: none;
+	}
+	.toast {
+		position: absolute;
+		left: 50%;
+		bottom: calc(100% + 0.6rem);
+		transform: translateX(-50%);
+		margin: 0;
+		padding: 0.5rem 0.9rem;
+		border-radius: 999px;
+		background: var(--text);
+		color: var(--bg);
+		font: 600 0.88rem var(--font-body);
+		white-space: nowrap;
+		box-shadow: var(--shadow);
+	}
+	.primario {
+		flex: 1;
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+	.secondario {
+		width: 50px;
+		flex: none;
+		background: var(--chip);
+		color: var(--text);
+	}
+	@media (min-width: 900px) {
+		.barra-azioni {
+			left: 50%;
+			right: auto;
+			transform: translateX(-50%);
+			width: min(52rem, 100%);
+			border-radius: 18px 18px 0 0;
+		}
 	}
 	.info-sentiero {
 		position: absolute;
@@ -575,17 +770,16 @@
 		}
 	}
 	.tipo {
-		margin: 0.5rem 0 0;
-		font-size: 0.8rem;
+		margin: 0;
+		font: 600 0.75rem var(--font-body);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.06em;
 		color: var(--accent);
-		font-weight: 700;
 	}
 	h1 {
-		margin: 0.1rem 0 0.4rem;
-		font-size: 1.45rem;
-		line-height: 1.25;
+		margin: 0.25rem 0 0.4rem;
+		font-size: 1.75rem;
+		line-height: 1.12;
 	}
 	.sintesi {
 		margin: 0 0 0.75rem;
@@ -620,31 +814,48 @@
 	.link a {
 		font-weight: 600;
 	}
+	/* tappe come linea del tempo: numero nel cerchio, linea che le unisce */
 	.tappe {
 		list-style: none;
 		padding: 0;
 		margin: 0;
 		display: grid;
-		gap: 0.3rem;
+		gap: 0;
 	}
 	.tappe li {
+		position: relative;
 		display: grid;
 		grid-template-columns: 1.8rem 1fr;
-		column-gap: 0.5rem;
+		column-gap: 0.7rem;
 		align-items: baseline;
+		padding-bottom: 0.7rem;
+	}
+	.tappe li:not(:last-child)::before {
+		content: '';
+		position: absolute;
+		left: calc(0.8rem - 1px);
+		top: 1.7rem;
+		bottom: 0.1rem;
+		width: 2px;
+		background: var(--border);
 	}
 	.tappe .n {
 		grid-row: span 2;
-		background: #1f2933;
-		color: #fff;
+		background: var(--surface);
+		color: var(--accent);
+		border: 2.5px solid var(--accent);
 		border-radius: 50%;
 		width: 1.6rem;
 		height: 1.6rem;
+		box-sizing: border-box;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		font-weight: 700;
-		font-size: 0.85rem;
+		font-size: 0.78rem;
+	}
+	.tappe .nome {
+		font-weight: 600;
 	}
 	.dati {
 		color: var(--muted);

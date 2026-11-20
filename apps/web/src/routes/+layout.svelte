@@ -27,8 +27,12 @@
 		return [tab.path, ...(tab.also ?? [])].some((p) => here.startsWith(resolve('/') + p.slice(1)));
 	}
 
-	// la mappa occupa tutto lo schermo e ha la sua barra di ricerca
-	const fullBleed = $derived(page.url.pathname.startsWith(resolve('/mappa')));
+	// la mappa e le schede occupano tutto lo schermo; le schede hanno la loro barra delle azioni
+	const here = $derived(page.url.pathname);
+	const isDetail = $derived(
+		['/attivita', '/itinerario'].some((p) => here.startsWith(resolve('/') + p.slice(1)))
+	);
+	const fullBleed = $derived(here.startsWith(resolve('/mappa')) || isDetail);
 </script>
 
 <svelte:head>
@@ -67,7 +71,7 @@
 		{@render children()}
 	</main>
 
-	<nav aria-label="Sezioni principali">
+	<nav aria-label="Sezioni principali" class:nascosta={isDetail}>
 		{#each tabs as tab (tab.path)}
 			<a href={resolve(tab.path)} aria-current={active(tab) ? 'page' : undefined}>
 				<Icon name={tab.icon} size={25} stroke={1.9} />
@@ -219,6 +223,9 @@
 		backdrop-filter: blur(16px);
 		border-top: 1px solid var(--border);
 		padding: 6px 0 env(safe-area-inset-bottom);
+	}
+	nav.nascosta {
+		display: none;
 	}
 	nav a {
 		display: flex;
