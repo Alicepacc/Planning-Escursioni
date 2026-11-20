@@ -5,6 +5,7 @@
 	import { generatedAsset } from '#lib/data/paths.ts';
 	import type { ItineraryDoc } from '#lib/data/types.ts';
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import MeetingPoint from '#lib/uscite/MeetingPoint.svelte';
 	import { SERVICE_ON, createOuting, me, type Utente } from '#lib/uscite/api.ts';
 	import { localToIso, rememberInvite } from '#lib/uscite/local.ts';
@@ -96,12 +97,15 @@
 
 <svelte:head><title>Organizza un’uscita – Cordata</title></svelte:head>
 
-<div class="pagina">
+<div class="pagina nuova">
 	<h1>Organizza un’uscita</h1>
-	<p class="avvertenza">
-		Uscita <strong>privata tra persone</strong>, non organizzata dal CAI: nessuna copertura
-		assicurativa CAI, ognuno partecipa sotto la propria responsabilità.
-	</p>
+	<aside class="avvertenza">
+		<Icon name="affidabile" size={20} />
+		<p>
+			Uscita <strong>privata tra persone</strong>, non organizzata dal CAI: nessuna copertura
+			assicurativa CAI, ognuno partecipa sotto la propria responsabilità.
+		</p>
+	</aside>
 	{#if !SERVICE_ON}
 		<p class="nota" role="status">Il servizio delle uscite non è ancora attivo su questa demo.</p>
 	{:else if !ready}
@@ -110,76 +114,95 @@
 		<AccessPanel why="Per organizzare un’uscita serve un account." onlogin={(u) => (user = u)} />
 	{:else}
 		<form onsubmit={submit}>
-			<label>Titolo <input bind:value={titolo} required maxlength="120" /></label>
-			<label>Ritrovo: data e ora <input type="datetime-local" bind:value={quando} required /></label
-			>
-			<label
-				>Ritrovo: luogo <input
-					bind:value={luogo}
-					required
-					maxlength="200"
-					placeholder="es. parcheggio della funivia"
-				/></label
-			>
-			<fieldset>
-				<legend>Ritrovo sulla mappa (serve per le uscite pubbliche)</legend>
-				{#if puntoDaItinerario}
-					<p class="nota">Proposto: la partenza dell’itinerario. Spostalo se vi trovate altrove.</p>
-				{/if}
+			<section class="gruppo">
+				<h2>Dove e quando</h2>
+				<label>Titolo <input bind:value={titolo} required maxlength="120" /></label>
+				<label
+					>Ritrovo: data e ora <input type="datetime-local" bind:value={quando} required /></label
+				>
+				<label
+					>Ritrovo: luogo <input
+						bind:value={luogo}
+						required
+						maxlength="200"
+						placeholder="es. parcheggio della funivia"
+					/></label
+				>
+				<label
+					>Mezzi <input
+						bind:value={mezzi}
+						maxlength="200"
+						placeholder="auto condivise, treno…"
+					/></label
+				>
+			</section>
+
+			<section class="gruppo">
+				<h2>Ritrovo sulla mappa</h2>
+				<p class="nota">
+					{puntoDaItinerario
+						? 'Proposto: la partenza dell’itinerario. Spostalo se vi trovate altrove.'
+						: 'Serve per le uscite pubbliche: chi cerca vicino a sé la trova.'}
+				</p>
 				<MeetingPoint bind:point={punto} />
-			</fieldset>
-			<label
-				>Mezzi <input
-					bind:value={mezzi}
-					maxlength="200"
-					placeholder="auto condivise, treno…"
-				/></label
-			>
-			<label
-				>Posti (organizzatore compreso) <input
-					type="number"
-					min="1"
-					max="200"
-					bind:value={posti}
-				/></label
-			>
-			<label>Iscrizioni entro <input type="datetime-local" bind:value={entro} /></label>
-			<label
-				>Difficoltà <input
-					bind:value={difficolta}
-					maxlength="20"
-					placeholder="T, E, EE, EEA"
-				/></label
-			>
-			<label
-				>Requisiti <textarea
-					bind:value={requisiti}
-					maxlength="1000"
-					placeholder="allenamento, assenza di vertigini…"></textarea></label
-			>
-			<label
-				>Attrezzatura (separata da virgole) <input
-					bind:value={attrezzatura}
-					maxlength="800"
-				/></label
-			>
-			<label>Note <textarea bind:value={note} maxlength="2000"></textarea></label>
-			<fieldset>
+			</section>
+
+			<section class="gruppo">
+				<h2>Il gruppo</h2>
+				<div class="due">
+					<label
+						>Posti, te compreso <input type="number" min="1" max="200" bind:value={posti} /></label
+					>
+					<label
+						>Difficoltà <input
+							bind:value={difficolta}
+							maxlength="20"
+							placeholder="T, E, EE, EEA"
+						/></label
+					>
+				</div>
+				<label>Iscrizioni entro <input type="datetime-local" bind:value={entro} /></label>
+				<label
+					>Requisiti <textarea
+						bind:value={requisiti}
+						maxlength="1000"
+						placeholder="allenamento, assenza di vertigini…"></textarea></label
+				>
+				<label
+					>Attrezzatura (separata da virgole) <input
+						bind:value={attrezzatura}
+						maxlength="800"
+						placeholder="scarponi, giacca, frontale…"
+					/></label
+				>
+				<label>Note <textarea bind:value={note} maxlength="2000"></textarea></label>
+			</section>
+
+			<fieldset class="gruppo visibilita">
 				<legend>Chi può vederla</legend>
 				<label class="scelta"
-					><input type="radio" bind:group={visibilita} value="link" /> Solo chi ha il link</label
+					><input type="radio" bind:group={visibilita} value="link" />
+					<span><b>Solo chi ha il link</b> <small>lo mandi tu a chi vuoi</small></span></label
 				>
 				<label class="scelta"
-					><input type="radio" bind:group={visibilita} value="contatti" /> I miei contatti (chi è già
-					uscito con te la trova in «Uscite» e riceve un avviso)</label
+					><input type="radio" bind:group={visibilita} value="contatti" />
+					<span
+						><b>I miei contatti</b>
+						<small>(chi è già uscito con te la trova in «Uscite» e riceve un avviso)</small></span
+					></label
 				>
 				<label class="scelta"
-					><input type="radio" bind:group={visibilita} value="pubblica" /> Pubblica (compare nell’elenco
-					delle uscite dei prossimi 30 giorni, con il punto di ritrovo)</label
+					><input type="radio" bind:group={visibilita} value="pubblica" />
+					<span
+						><b>Pubblica</b>
+						<small
+							>(compare nell’elenco delle uscite dei prossimi 30 giorni, con il punto di ritrovo)</small
+						></span
+					></label
 				>
 			</fieldset>
 			{#if itinerario}
-				<p class="nota">Itinerario: {itinerario}</p>
+				<p class="nota">Itinerario collegato: {itinerario}</p>
 			{/if}
 			<button type="submit" disabled={busy}>Crea l’uscita e il link d’invito</button>
 		</form>
@@ -188,61 +211,124 @@
 </div>
 
 <style>
-	.pagina {
+	.nuova {
 		max-width: 40rem;
-		margin: 0 auto;
-		padding: 1rem;
+		padding-bottom: 2rem;
+	}
+	h1 {
+		font-size: 1.8rem;
+		margin: 0.5rem 0 0.8rem;
 	}
 	.avvertenza {
-		border-left: 4px solid #b54708;
-		padding: 0.4rem 0.8rem;
-		background: var(--surface);
+		display: flex;
+		gap: 0.6rem;
+		align-items: flex-start;
+		padding: 0.7rem 0.85rem;
+		border-radius: var(--r-md);
+		background: color-mix(in srgb, var(--rust) 9%, var(--surface));
+		border: 1px solid color-mix(in srgb, var(--rust) 25%, transparent);
+		color: var(--rust);
+	}
+	.avvertenza p {
+		margin: 0;
+		color: var(--text);
+		font-size: 0.85rem;
 	}
 	form {
-		display: flex;
-		flex-direction: column;
-		gap: 0.7rem;
+		display: grid;
+		gap: 0.9rem;
+		margin-top: 1rem;
+	}
+	.gruppo {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 0.9rem 1rem 1rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-lg);
+	}
+	h2,
+	legend {
+		margin: 0;
+		font: 600 1.1rem var(--font-display);
+	}
+	legend {
+		float: left;
+		width: 100%;
+		padding: 0 0 0.2rem;
 	}
 	label {
-		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		font-weight: 600;
-	}
-	label.scelta {
-		flex-direction: row;
-		align-items: center;
-		font-weight: 400;
-		gap: 0.5rem;
+		display: grid;
+		gap: 0.3rem;
+		font-size: 0.9rem;
+		font-weight: 500;
 	}
 	input,
 	textarea {
-		min-height: 44px;
-		padding: 0.3rem 0.6rem;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		font: inherit;
+		width: 100%;
+		padding: 0 0.75rem;
+		font-size: 1rem;
 		font-weight: 400;
 	}
-	input[type='radio'] {
-		min-height: auto;
+	textarea {
+		min-height: 4.5rem;
+		padding: 0.6rem 0.75rem;
 	}
-	fieldset {
+	.due {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: end;
+		gap: 0.6rem;
+	}
+	.scelta {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.65rem;
+		padding: 0.7rem 0.75rem;
 		border: 1px solid var(--border);
-		border-radius: 8px;
+		border-radius: var(--r-md);
+		cursor: pointer;
+	}
+	.scelta:has(input:checked) {
+		border-color: var(--accent);
+		background: var(--brand-soft);
+	}
+	.scelta input {
+		width: 20px;
+		height: 20px;
+		margin: 0.1rem 0 0;
+		flex: none;
+	}
+	.scelta span {
+		display: flex;
+		flex-direction: column;
+	}
+	.scelta b {
+		font-size: 1rem;
+		font-weight: 600;
+	}
+	.scelta small {
+		color: var(--muted);
+		font-weight: 400;
+		font-size: 0.82rem;
 	}
 	button {
-		min-height: 48px;
+		min-height: 54px;
 		border-radius: 999px;
 		border: none;
 		background: var(--accent);
 		color: var(--on-accent);
-		font: inherit;
-		font-weight: 600;
+		font: 600 1.05rem var(--font-body);
 		cursor: pointer;
 	}
+	button:disabled {
+		opacity: 0.6;
+	}
 	.nota {
+		margin: 0;
 		color: var(--muted);
+		font-size: 0.88rem;
 	}
 	.errore {
 		color: #b42318;

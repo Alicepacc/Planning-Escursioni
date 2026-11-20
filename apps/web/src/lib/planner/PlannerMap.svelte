@@ -14,6 +14,8 @@
 		selected: number | null;
 		cursor?: [number, number] | null;
 		focus?: [number, number, number, number] | null;
+		/** margini della mappa per inquadrare il percorso tra la scheda dei numeri e il foglio */
+		padding?: number | { top: number; bottom: number; left: number; right: number };
 		onAdd: (lon: number, lat: number, metersPerPixel: number) => void;
 		onInsert: (leg: number, lon: number, lat: number) => void;
 		onMove: (i: number, lon: number, lat: number, metersPerPixel: number) => void;
@@ -31,6 +33,7 @@
 		selected,
 		cursor = null,
 		focus = null,
+		padding = 32,
 		onAdd,
 		onInsert,
 		onMove,
@@ -258,7 +261,14 @@
 	});
 </script>
 
-<MapView label="Mappa del planner" {cursor} {focus} onReady={setup} legend={['planner']} />
+<MapView
+	label="Mappa del planner"
+	{cursor}
+	{focus}
+	{padding}
+	onReady={setup}
+	legend={['planner']}
+/>
 
 <style>
 	:global(.wp) {

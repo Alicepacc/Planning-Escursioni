@@ -32,8 +32,19 @@
 </script>
 
 <section class="accesso" aria-labelledby="accesso-titolo">
+	<span class="chiave" aria-hidden="true">
+		<svg viewBox="0 0 24 24" width="26" height="26"
+			><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" /><path
+				d="M12 12h9m-3 0v3m-3-3v2"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+			/></svg
+		>
+	</span>
 	<h2 id="accesso-titolo">Accedi</h2>
-	<p>{why}</p>
+	<p class="perche">{why}</p>
 	<p class="nota">
 		Si usa una <strong>passkey</strong>: la crea il tuo dispositivo e la sblocchi con impronta,
 		volto o PIN. Niente email né password. Se perdi tutti i dispositivi con la passkey, l’account
@@ -71,48 +82,61 @@
 
 <style>
 	.accesso {
+		margin-top: 0.9rem;
 		border: 1px solid var(--border);
-		border-radius: 12px;
-		padding: 0.8rem 1rem;
+		border-radius: var(--r-lg);
+		padding: 1.1rem;
 		background: var(--surface);
+		box-shadow: var(--shadow);
+	}
+	.chiave {
+		display: grid;
+		place-items: center;
+		width: 2.8rem;
+		height: 2.8rem;
+		border-radius: 12px;
+		background: var(--brand-soft);
+		color: var(--accent);
 	}
 	h2 {
-		margin: 0 0 0.3rem;
-		font-size: 1.1rem;
+		margin: 0.6rem 0 0.2rem;
+		font-size: 1.3rem;
+	}
+	.perche {
+		margin: 0 0 0.4rem;
+		font-weight: 500;
 	}
 	.nota {
+		margin: 0;
 		color: var(--muted);
-		font-size: 0.9rem;
+		font-size: 0.88rem;
 	}
-	.azioni,
-	form {
-		display: flex;
-		flex-wrap: wrap;
+	.azioni {
+		display: grid;
 		gap: 0.5rem;
-		align-items: center;
-		margin-top: 0.5rem;
+		margin-top: 0.9rem;
+	}
+	form {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 0.9rem;
 	}
 	form label {
-		flex-basis: 100%;
+		font-size: 0.9rem;
+		font-weight: 500;
 	}
 	input {
-		flex: 1;
-		min-width: 12rem;
-		min-height: 44px;
-		padding: 0 0.6rem;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		font: inherit;
+		width: 100%;
+		padding: 0 0.75rem;
 	}
 	button {
-		min-height: 44px;
+		min-height: 48px;
 		padding: 0 1rem;
 		border-radius: 999px;
 		border: 1px solid var(--accent);
 		background: var(--accent);
 		color: var(--on-accent);
-		font: inherit;
-		font-weight: 600;
+		font: 600 1rem var(--font-body);
 		cursor: pointer;
 	}
 	button.secondario {

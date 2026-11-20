@@ -9,6 +9,7 @@
 	import ElevationProfile from '#lib/components/ElevationProfile.svelte';
 	import DifficultyBadge from '#lib/components/DifficultyBadge.svelte';
 	import SafetyNote from '#lib/components/SafetyNote.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import { generatedAsset } from '#lib/data/paths.ts';
 	import { download, fileName, toGpx } from '#lib/export/gpx.ts';
 	import { formatDuration, formatKm, formatMeters } from '#lib/hiking/format.ts';
@@ -453,6 +454,69 @@
 	}
 
 	// --- ciclo di vita ---
+	// foglio degli strumenti come in Mappa: basso (solo gli strumenti), medio o alto
+	type SheetState = 'basso' | 'medio' | 'alto';
+	let sheet = $state<SheetState>('medio');
+	let sheetEl = $state<HTMLElement>();
+	let dragTop = $state<number | null>(null);
+	let dragMoved = false;
+	let wide = $state(false);
+	let viewH = $state(800);
+
+	function cycleSheet() {
+		if (dragMoved) return; // era un trascinamento, non un tocco
+		sheet = sheet === 'medio' ? 'alto' : sheet === 'alto' ? 'basso' : 'medio';
+	}
+
+	function startDrag(e: PointerEvent) {
+		if (!sheetEl?.parentElement) return;
+		const box = sheetEl.parentElement.getBoundingClientRect();
+		const start = e.clientY;
+		const top0 = sheetEl.getBoundingClientRect().top - box.top;
+		dragMoved = false;
+		const move = (ev: PointerEvent) => {
+			const dy = ev.clientY - start;
+			if (Math.abs(dy) > 6) dragMoved = true;
+			dragTop = Math.min(Math.max(top0 + dy, 120), box.height - 90);
+		};
+		const end = () => {
+			window.removeEventListener('pointermove', move);
+			window.removeEventListener('pointerup', end);
+			if (dragTop != null && dragMoved) {
+				const share = dragTop / box.height;
+				sheet = share < 0.35 ? 'alto' : share < 0.72 ? 'medio' : 'basso';
+			}
+			dragTop = null;
+			setTimeout(() => (dragMoved = false), 0);
+		};
+		window.addEventListener('pointermove', move);
+		window.addEventListener('pointerup', end);
+	}
+
+	// un punto scelto o una traccia da importare si vedono nel foglio: se è giù, si alza
+	$effect(() => {
+		if ((selected != null || importing) && sheet === 'basso') sheet = 'medio';
+	});
+
+	// sul telefono il percorso si inquadra tra la scheda dei numeri e il foglio
+	const mapPadding = $derived(
+		wide
+			? 40
+			: {
+					top: 150,
+					bottom: Math.round(viewH * (sheet === 'basso' ? 0.16 : sheet === 'alto' ? 0.6 : 0.45)),
+					left: 30,
+					right: 60
+				}
+	);
+
+	onMount(() => {
+		const mq = window.matchMedia('(min-width: 900px)');
+		wide = mq.matches;
+		viewH = window.innerHeight;
+		mq.addEventListener('change', (e) => (wide = e.matches));
+	});
+
 	onMount(() => {
 		pace = loadPace();
 		savedPlans = savedList().filter((e) => e.key.startsWith('piano:'));
@@ -497,6 +561,7 @@
 
 <div
 	class="planner"
+	data-foglio={sheet}
 	data-points={plan.points.length}
 	data-legs={legs.length}
 	data-busy={computing ? 'true' : 'false'}
@@ -599,6 +664,7 @@
 			{selected}
 			{cursor}
 			{focus}
+			padding={mapPadding}
 			onAdd={addAt}
 			onInsert={insertAt}
 			onMove={moveTo}
@@ -619,12 +685,26 @@
 				il percorso segue i sentieri.
 			</p>
 		{:else if freeMode}
-			<p class="suggerimento libero">✋ A mano libera: i prossimi tratti saranno linee dirette.</p>
+			<p class="suggerimento libero">A mano libera: i prossimi tratti saranno linee dirette.</p>
 		{/if}
 		{#if computing}<p class="calcolo" role="status">Calcolo del percorso…</p>{/if}
 	</div>
 
-	<section class="foglio" aria-label="Strumenti del planner">
+	<section
+		class="foglio"
+		aria-label="Strumenti del planner"
+		style:top={dragTop != null ? `${dragTop}px` : null}
+		bind:this={sheetEl}
+	>
+		<button
+			type="button"
+			class="maniglia"
+			aria-label={sheet === 'alto' ? 'Riduci gli strumenti' : 'Allarga gli strumenti'}
+			onclick={cycleSheet}
+			onpointerdown={startDrag}
+		>
+			<span></span>
+		</button>
 		{#if note}<p class="nota" role="status">{note}</p>{/if}
 		{#if restored && plan.points.length}
 			<p class="ripreso">
@@ -653,36 +733,40 @@
 		{:else}
 			<div class="strumenti" role="toolbar" aria-label="Modifica del percorso">
 				<button type="button" onclick={undo} disabled={depth === 0} title="Annulla (Ctrl+Z)"
-					>↶ <span>Annulla</span></button
+					><Icon name="annulla" size={18} /> <span>Annulla</span></button
 				>
 				<button
 					type="button"
 					onclick={redo}
 					disabled={depth >= maxDepth}
-					title="Ripeti (Ctrl+Maiusc+Z)">↷ <span>Ripeti</span></button
+					title="Ripeti (Ctrl+Maiusc+Z)"
+					><Icon name="ripeti" size={18} /> <span>Ripeti</span></button
 				>
 				<button
 					type="button"
 					onclick={() => act((p) => (loop ? openLoop(p) : closeLoop(p, freeMode ? 'f' : 'r')))}
 					disabled={plan.points.length < 2}
-					aria-pressed={loop}>⟲ {loop ? 'Riapri anello' : 'Chiudi ad anello'}</button
+					aria-pressed={loop}
+					><Icon name="anello" size={18} /> {loop ? 'Riapri anello' : 'Chiudi ad anello'}</button
 				>
 				<button type="button" onclick={() => act(reversePlan)} disabled={plan.points.length < 2}
-					>⇄ Inverti</button
+					><Icon name="inverti" size={18} /> Inverti</button
 				>
 				<button
 					type="button"
 					onclick={() => act((p) => setAr(p, !p.ar))}
 					disabled={plan.points.length < 2 || loop}
-					aria-pressed={plan.ar}>⇆ Andata e ritorno</button
+					aria-pressed={plan.ar}><Icon name="andataritorno" size={18} /> Andata e ritorno</button
 				>
 				<button type="button" onclick={() => (freeMode = !freeMode)} aria-pressed={freeMode}
-					>✋ A mano libera</button
+					><Icon name="matita" size={18} /> A mano libera</button
 				>
 				<button type="button" onclick={addAtCenter} title="Aggiunge un punto al centro della mappa"
-					>＋ Punto al centro</button
+					><Icon name="piu" size={18} /> Punto al centro</button
 				>
-				<button type="button" class="proponi" onclick={openGenerator}>✨ Componi un giro</button>
+				<button type="button" class="proponi" onclick={openGenerator}
+					><Icon name="magia" size={18} /> Componi un giro</button
+				>
 			</div>
 			{#if !plan.points.length}
 				<p class="invito">
@@ -822,7 +906,9 @@
 			{/if}
 
 			<div class="file">
-				<button type="button" onclick={() => fileInput?.click()}>⬆ Importa GPX</button>
+				<button type="button" onclick={() => fileInput?.click()}
+					><Icon name="importa" size={18} /> Importa GPX</button
+				>
 				<input
 					bind:this={fileInput}
 					type="file"
@@ -831,8 +917,12 @@
 					onchange={onFile}
 				/>
 				{#if plan.points.length > 1}
-					<button type="button" onclick={exportGpx} disabled={!legsReady}>⬇ GPX</button>
-					<button type="button" onclick={share}>Condividi</button>
+					<button type="button" onclick={exportGpx} disabled={!legsReady}
+						><Icon name="esporta" size={18} /> GPX</button
+					>
+					<button type="button" onclick={share}
+						><Icon name="condividi" size={18} /> Condividi</button
+					>
 					<button type="button" onclick={toggleSave} aria-pressed={saved}
 						>{saved ? '★ Salvato' : '☆ Salva'}</button
 					>
@@ -867,21 +957,26 @@
 </div>
 
 <style>
+	/* la mappa riempie lo schermo sopra le schede; i numeri galleggiano in alto, gli strumenti
+	   stanno in un foglio che si alza e si abbassa (come in Mappa) */
 	.planner {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: auto minmax(260px, 1fr) auto;
-		height: calc(100dvh - 122px);
-		min-height: 0;
+		position: relative;
+		height: calc(100dvh - 58px - env(safe-area-inset-bottom));
+		overflow: hidden;
 	}
 	.stats {
+		position: absolute;
+		top: calc(env(safe-area-inset-top) + 0.6rem);
+		left: 0.75rem;
+		right: 0.75rem;
+		z-index: 5;
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr) minmax(0, 1fr);
 		gap: 1px;
 		background: var(--border);
-		border-bottom: 1px solid var(--border);
-		position: relative;
-		z-index: 2;
+		border-radius: var(--r-lg);
+		overflow: hidden;
+		box-shadow: 0 4px 18px rgb(0 0 0 / 16%);
 	}
 	.stat {
 		display: flex;
@@ -900,7 +995,8 @@
 		min-width: 0;
 	}
 	.stat b {
-		font-size: 0.95rem;
+		font: 600 0.98rem var(--font-body);
+		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
 	.stat span {
@@ -916,12 +1012,13 @@
 	}
 	.ammessa select {
 		font: inherit;
-		font-weight: 700;
-		font-size: 0.92rem;
+		font-weight: 600;
+		font-size: 0.9rem;
 		min-height: 30px;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--bg);
+		padding: 0 0.4rem;
+		border: 0;
+		border-radius: 999px;
+		background: var(--chip);
 		color: var(--text);
 		max-width: 100%;
 	}
@@ -954,40 +1051,93 @@
 		border-radius: 8px;
 	}
 	.mappa {
-		position: relative;
-		min-height: 0;
+		position: absolute;
+		inset: 0;
+	}
+	/* controlli e legenda della mappa sotto la scheda dei numeri */
+	.mappa :global(.maplibregl-ctrl-top-right),
+	.mappa :global(.legenda) {
+		top: calc(env(safe-area-inset-top) + 7.6rem);
 	}
 	.suggerimento,
 	.calcolo {
 		position: absolute;
 		left: 0.75rem;
-		right: 3.5rem;
-		top: 3.4rem; /* sotto il pulsante della legenda */
+		right: 3.6rem;
+		top: calc(env(safe-area-inset-top) + 10.6rem); /* sotto il pulsante della legenda */
 		margin: 0;
-		padding: 0.5rem 0.75rem;
-		background: color-mix(in srgb, var(--surface) 94%, transparent);
-		border: 1px solid var(--border);
-		border-radius: 10px;
+		padding: 0.55rem 0.8rem;
+		background: color-mix(in srgb, var(--surface) 95%, transparent);
+		border-radius: var(--r-md);
+		box-shadow: var(--shadow);
 		font-size: 0.92rem;
 		pointer-events: none;
 	}
 	.suggerimento.libero {
-		border-color: #a85200;
+		box-shadow:
+			inset 4px 0 0 #a85200,
+			var(--shadow);
 	}
 	.calcolo {
-		top: auto;
-		bottom: 2.5rem;
+		top: calc(env(safe-area-inset-top) + 7.9rem);
+		left: 50%;
 		right: auto;
+		transform: translateX(-50%);
+		white-space: nowrap;
+		padding: 0.35rem 0.8rem;
+		border-radius: 999px;
+		font-size: 0.85rem;
 	}
 	.foglio {
-		max-height: 30dvh;
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 55%;
+		z-index: 4;
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		background: var(--bg);
-		border-top: 1px solid var(--border);
-		padding: 0.6rem 1rem 1rem;
+		border-radius: 22px 22px 0 0;
+		box-shadow: 0 -6px 24px rgb(0 0 0 / 14%);
+		padding: 0 1rem 1rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.65rem;
+		transition: top 0.25s ease;
+	}
+	/* nel foglio che scorre nessun blocco si schiaccia (la riga degli strumenti scorre di lato) */
+	.foglio > :global(*) {
+		flex-shrink: 0;
+	}
+	[data-foglio='alto'] .foglio {
+		top: calc(env(safe-area-inset-top) + 7.2rem);
+	}
+	[data-foglio='basso'] .foglio {
+		top: calc(100% - 5.6rem);
+	}
+	.maniglia {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		flex: none;
+		display: grid;
+		place-items: center;
+		height: 22px;
+		min-height: 22px;
+		margin: 0 -1rem -0.65rem;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: var(--bg);
+		cursor: grab;
+		touch-action: none;
+	}
+	.maniglia span {
+		width: 40px;
+		height: 5px;
+		border-radius: 3px;
+		background: var(--border);
 	}
 	.strumenti,
 	.file,
@@ -1000,42 +1150,48 @@
 	.strumenti {
 		flex-wrap: nowrap;
 		overflow-x: auto;
-		scrollbar-width: thin;
-		margin: -0.6rem -1rem 0;
-		padding: 0.6rem 1rem 0.4rem;
+		scrollbar-width: none;
+		margin: 0 -1rem;
+		padding: 0.4rem 1rem 0.5rem;
 		position: sticky;
-		top: -0.6rem;
+		top: 22px;
 		z-index: 1;
 		background: var(--bg);
-		border-bottom: 1px solid var(--border);
 	}
 	.strumenti button {
 		flex: none;
 	}
 	button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
 		min-height: 44px;
-		padding: 0 0.8rem;
+		padding: 0 0.9rem;
 		border-radius: 999px;
 		border: 1px solid var(--border);
 		background: var(--surface);
 		color: var(--text);
-		font: inherit;
-		font-size: 0.92rem;
+		font: 500 0.92rem var(--font-body);
 		cursor: pointer;
+	}
+	.strumenti button:not(.proponi) {
+		border-color: transparent;
+		background: var(--chip);
 	}
 	button:disabled {
 		opacity: 0.45;
 		cursor: default;
 	}
+	.strumenti button[aria-pressed='true'],
 	button[aria-pressed='true'] {
 		background: var(--accent);
 		border-color: var(--accent);
-		color: var(--surface);
+		color: var(--on-accent);
 	}
 	button.primario {
 		background: var(--accent);
 		border-color: var(--accent);
-		color: var(--surface);
+		color: var(--on-accent);
 		font-weight: 600;
 	}
 	button.elimina {
@@ -1061,7 +1217,7 @@
 	.punto,
 	.import {
 		border: 2px solid #f2b705;
-		border-radius: 12px;
+		border-radius: var(--r-md);
 		background: var(--surface);
 		padding: 0.5rem 0.75rem;
 	}
@@ -1081,13 +1237,7 @@
 	.nome input {
 		flex: 1;
 		min-width: 0;
-		min-height: 44px;
-		font: inherit;
-		padding: 0 0.6rem;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--surface);
-		color: var(--text);
+		padding: 0 0.75rem;
 	}
 	.avvisi {
 		margin: 0;
@@ -1098,11 +1248,11 @@
 		gap: 0.35rem;
 	}
 	.avvisi li {
-		padding: 0.45rem 0.7rem;
+		padding: 0.5rem 0.75rem;
 		border-left: 4px solid #d9a21b;
 		background: var(--surface);
-		border-radius: 0 8px 8px 0;
-		font-size: 0.93rem;
+		border-radius: 0 var(--r-sm) var(--r-sm) 0;
+		font-size: 0.9rem;
 	}
 	.avvisi li.forte {
 		border-left-color: #b3261e;
@@ -1113,12 +1263,18 @@
 		color: var(--muted);
 	}
 	button.proponi {
-		border-color: #7b2cbf;
-		color: #7b2cbf;
+		border-color: var(--accent);
+		background: var(--brand-soft);
+		color: var(--accent);
 		font-weight: 600;
 	}
 	.invito {
 		margin: 0;
+	}
+	.invito .link {
+		display: inline;
+		min-height: 0;
+		padding: 0;
 	}
 	.luoghi h2,
 	.salvati h2 {
@@ -1152,23 +1308,43 @@
 		min-height: 44px;
 		align-items: center;
 	}
+	/* schermi larghi: strumenti a destra, numeri in alto sulla mappa */
 	@media (min-width: 900px) {
-		.planner {
-			grid-template-columns: minmax(0, 1fr) 400px;
-			grid-template-rows: auto minmax(0, 1fr);
-		}
 		.stats {
-			grid-column: 1 / -1;
+			right: calc(420px + 0.75rem);
 			grid-template-columns: repeat(6, minmax(0, 1fr));
 		}
-		.foglio {
-			max-height: none;
-			border-top: 0;
-			border-left: 1px solid var(--border);
+		.mappa {
+			right: 420px;
+		}
+		.mappa :global(.maplibregl-ctrl-top-right),
+		.mappa :global(.legenda) {
+			top: 4.8rem;
+		}
+		.suggerimento {
+			top: 7.8rem;
+		}
+		.calcolo {
+			top: 5rem;
+		}
+		.foglio,
+		[data-foglio='alto'] .foglio,
+		[data-foglio='basso'] .foglio {
+			top: 0;
+			left: auto;
+			width: 420px;
+			box-sizing: border-box;
+			border-radius: 0;
+			box-shadow: -1px 0 0 var(--border);
+			padding-top: 0.6rem;
+		}
+		.maniglia {
+			display: none;
 		}
 		.strumenti {
 			flex-wrap: wrap;
 			overflow: visible;
+			position: static;
 		}
 	}
 </style>

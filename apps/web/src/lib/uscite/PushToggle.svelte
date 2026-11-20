@@ -29,54 +29,97 @@
 </script>
 
 <div class="notifiche">
-	{#if ios}
-		<p class="nota">
-			Su iPhone e iPad le notifiche arrivano solo dopo aver aggiunto Cordata alla schermata Home
-			(Condividi → «Aggiungi a Home»).
-		</p>
-	{:else if stato === 'non-supportate'}
-		<p class="nota">Questo browser non riceve notifiche: ricontrolla la pagina dell’uscita.</p>
-	{:else if stato === 'negate'}
-		<p class="nota">
-			Le notifiche sono bloccate per questo sito: si riattivano dalle impostazioni del browser.
-		</p>
-	{:else if stato}
-		<button type="button" class="secondario" disabled={busy} onclick={toggle}
-			>{stato === 'attive' ? 'Disattiva le notifiche' : 'Attiva le notifiche'}</button
+	<span class="campana" aria-hidden="true">
+		<svg viewBox="0 0 24 24" width="22" height="22"
+			><path
+				d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15ZM10 20.5a2 2 0 0 0 4 0"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.9"
+				stroke-linejoin="round"
+			/></svg
 		>
-		<span class="nota"
-			>{stato === 'attive'
-				? 'Riceverai avvisi su iscrizioni, lista d’attesa, annullamenti, rinvii e il promemoria della sera prima.'
-				: 'Per sapere se un posto si libera, se l’uscita cambia e per il promemoria della sera prima.'}</span
-		>
-	{/if}
-	{#if error}<p class="errore" role="alert">{error}</p>{/if}
+	</span>
+	<div class="testo">
+		{#if ios}
+			<p class="nota">
+				Su iPhone e iPad le notifiche arrivano solo dopo aver aggiunto Cordata alla schermata Home
+				(Condividi → «Aggiungi a Home»).
+			</p>
+		{:else if stato === 'non-supportate'}
+			<p class="nota">Questo browser non riceve notifiche: ricontrolla la pagina dell’uscita.</p>
+		{:else if stato === 'negate'}
+			<p class="nota">
+				Le notifiche sono bloccate per questo sito: si riattivano dalle impostazioni del browser.
+			</p>
+		{:else if stato}
+			<b>{stato === 'attive' ? 'Notifiche attive' : 'Notifiche'}</b>
+			<span class="nota"
+				>{stato === 'attive'
+					? 'Iscrizioni, lista d’attesa, annullamenti, rinvii e il promemoria della sera prima.'
+					: 'Per sapere se un posto si libera, se l’uscita cambia e per il promemoria della sera prima.'}</span
+			>
+			<button type="button" class:attivo={stato === 'attive'} disabled={busy} onclick={toggle}
+				>{stato === 'attive' ? 'Disattiva le notifiche' : 'Attiva le notifiche'}</button
+			>
+		{/if}
+		{#if error}<p class="errore" role="alert">{error}</p>{/if}
+	</div>
 </div>
 
 <style>
 	.notifiche {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		align-items: center;
+		gap: 0.75rem;
+		align-items: flex-start;
 		margin: 0.6rem 0;
+		padding: 0.8rem;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-md);
+	}
+	.campana {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 2.6rem;
+		height: 2.6rem;
+		border-radius: 12px;
+		background: var(--brand-soft);
+		color: var(--accent);
+	}
+	.testo {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.2rem;
+		min-width: 0;
+	}
+	b {
+		font-weight: 600;
 	}
 	button {
-		min-height: 44px;
+		margin-top: 0.4rem;
+		min-height: 40px;
 		padding: 0 1rem;
 		border-radius: 999px;
 		border: 1px solid var(--accent);
-		background: transparent;
-		color: var(--accent);
-		font: inherit;
-		font-weight: 600;
+		background: var(--accent);
+		color: var(--on-accent);
+		font: 600 0.9rem var(--font-body);
 		cursor: pointer;
 	}
+	button.attivo {
+		background: transparent;
+		color: var(--accent);
+	}
 	.nota {
+		margin: 0;
 		color: var(--muted);
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 	}
 	.errore {
+		margin: 0;
 		color: #b42318;
 	}
 </style>

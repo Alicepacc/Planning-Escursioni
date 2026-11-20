@@ -79,7 +79,7 @@
 	.riquadro {
 		position: relative;
 		height: 16rem;
-		border-radius: 8px;
+		border-radius: var(--r-md);
 		overflow: hidden;
 		border: 1px solid var(--border);
 	}

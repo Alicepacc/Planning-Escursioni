@@ -119,7 +119,7 @@ async function personContext(browser) {
 	await anna.page.getByRole('heading', { name: 'Le mie uscite' }).waitFor();
 	console.log(
 		'Le mie uscite (Anna):',
-		(await anna.page.locator('.elenco').innerText()).replace(/\s+/g, ' ')
+		(await anna.page.locator('.mie').innerText()).replace(/\s+/g, ' ')
 	);
 	console.log('errori:', [...anna.errors, ...bruno.errors, ...carla.errors].slice(0, 5));
 	await browser.close();

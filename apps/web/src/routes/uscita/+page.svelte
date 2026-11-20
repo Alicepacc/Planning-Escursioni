@@ -5,6 +5,9 @@
 	import AccessPanel from '#lib/uscite/AccessPanel.svelte';
 	import PushToggle from '#lib/uscite/PushToggle.svelte';
 	import QrCode from '#lib/uscite/QrCode.svelte';
+	import DateBadge from '#lib/ui/DateBadge.svelte';
+	import DiffPill from '#lib/ui/DiffPill.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 	import {
 		API,
 		SERVICE_ON,
@@ -112,6 +115,21 @@
 		}
 	}
 
+	const timeOf = (iso: string) =>
+		new Intl.DateTimeFormat('it-IT', {
+			timeZone: 'Europe/Rome',
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+			hour: '2-digit',
+			minute: '2-digit'
+		}).format(new Date(iso));
+	const STATO_P: Record<string, string> = {
+		confermato: 'confermato',
+		attesa: 'in attesa',
+		rinunciato: 'ha rinunciato'
+	};
+
 	const STATO_MIO: Record<string, string> = {
 		confermato: 'Partecipi: il tuo posto è confermato.',
 		attesa: 'Sei in lista d’attesa: se si libera un posto passi tra i confermati.',
@@ -121,7 +139,7 @@
 
 <svelte:head><title>{u ? `${u.titolo} – Uscita` : 'Uscita'} – Cordata</title></svelte:head>
 
-<div class="pagina">
+<div class="pagina uscita">
 	{#if !SERVICE_ON}
 		<h1>Uscita</h1>
 		<p class="nota" role="status">Il servizio delle uscite non è ancora attivo su questa demo.</p>
@@ -139,56 +157,33 @@
 		{:else if u.stato === 'rinviata'}
 			<p class="stato rinviata" role="status">Uscita rinviata: nuova data qui sotto.</p>
 		{/if}
-		<p class="avvertenza">{u.avvertenza}</p>
 
-		<dl class="dati">
-			<dt>Ritrovo</dt>
-			<dd>
-				{formatWhen(u.ritrovo_quando)} · {u.ritrovo_luogo +
-					(u.ritrovo_lon != null && u.ritrovo_lat != null
-						? ' · '
-						: '')}{#if u.ritrovo_lon != null && u.ritrovo_lat != null}<a
-						href={`https://www.openstreetmap.org/?mlat=${u.ritrovo_lat}&mlon=${u.ritrovo_lon}#map=16/${u.ritrovo_lat}/${u.ritrovo_lon}`}
-						target="_blank"
-						rel="noopener noreferrer">punto sulla mappa</a
-					>{/if}
-			</dd>
-			{#if u.mezzi}<dt>Mezzi</dt>
-				<dd>{u.mezzi}</dd>{/if}
-			<dt>Posti</dt>
-			<dd>
-				{seatsText}
-			</dd>
-			{#if u.iscrizioni_entro}<dt>Iscrizioni entro</dt>
-				<dd>{formatWhen(u.iscrizioni_entro)}</dd>{/if}
-			{#if u.difficolta}<dt>Difficoltà</dt>
-				<dd>{u.difficolta}</dd>{/if}
-			{#if u.requisiti}<dt>Requisiti</dt>
-				<dd>{u.requisiti}</dd>{/if}
-			{#if u.attrezzatura.length}
-				<dt>Attrezzatura</dt>
-				<dd>
-					<ul class="checklist">
-						{#each u.attrezzatura as a (a)}<li>
-								<label><input type="checkbox" /> {a}</label>
-							</li>{/each}
-					</ul>
-				</dd>
-			{/if}
-			{#if u.note}<dt>Note</dt>
-				<dd>{u.note}</dd>{/if}
-			{#if u.itinerario}
-				<dt>Itinerario</dt>
-				<dd>
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso interno salvato dall'organizzatore, con resolve() -->
-					<a href={itineraryHref}>apri la scheda o il piano</a>
-				</dd>
-			{/if}
-		</dl>
+		<div class="quando">
+			<DateBadge iso={u.ritrovo_quando} />
+			<span class="testo">
+				<b>{timeOf(u.ritrovo_quando)}</b>
+				<span
+					>{u.ritrovo_luogo +
+						(u.ritrovo_lon != null && u.ritrovo_lat != null
+							? ' · '
+							: '')}{#if u.ritrovo_lon != null && u.ritrovo_lat != null}<a
+							href={`https://www.openstreetmap.org/?mlat=${u.ritrovo_lat}&mlon=${u.ritrovo_lon}#map=16/${u.ritrovo_lat}/${u.ritrovo_lon}`}
+							target="_blank"
+							rel="noopener noreferrer">punto sulla mappa</a
+						>{/if}</span
+				>
+			</span>
+		</div>
+
+		<div class="posti">
+			<Icon name="uscite" size={20} />
+			<span>{seatsText}</span>
+			{#if u.difficolta}<DiffPill code={u.difficolta} />{/if}
+		</div>
 
 		<section class="azioni" aria-label="Partecipazione">
 			{#if u.mio_stato && u.mio_stato !== 'rinunciato' && !u.sono_organizzatore}
-				<p role="status">{STATO_MIO[u.mio_stato]}</p>
+				<p class="mio {u.mio_stato}" role="status">{STATO_MIO[u.mio_stato]}</p>
 				<button
 					type="button"
 					class="secondario"
@@ -222,7 +217,9 @@
 				{/if}
 			{/if}
 			{#if inviteUrl}
-				<button type="button" class="secondario" onclick={share}>Condividi il link d’invito</button>
+				<button type="button" class="secondario" onclick={share}
+					><Icon name="condividi" size={18} /> Condividi il link d’invito</button
+				>
 				<details class="qr">
 					<summary>Mostra il codice QR</summary>
 					<QrCode text={inviteUrl} label={`Codice QR dell’invito a ${u.titolo}`} />
@@ -230,6 +227,57 @@
 				</details>
 			{/if}
 		</section>
+		{#if notice}<p class="ok" role="status">{notice}</p>{/if}
+		{#if error}<p class="errore" role="alert">{error}</p>{/if}
+
+		<aside class="avvertenza">
+			<Icon name="affidabile" size={20} />
+			<p>{u.avvertenza}</p>
+		</aside>
+
+		<h2>Dettagli</h2>
+		<dl class="dati">
+			{#if u.mezzi}<div>
+					<dt>Mezzi</dt>
+					<dd>{u.mezzi}</dd>
+				</div>{/if}
+			{#if u.iscrizioni_entro}<div>
+					<dt>Iscrizioni entro</dt>
+					<dd>{formatWhen(u.iscrizioni_entro)}</dd>
+				</div>{/if}
+			{#if u.requisiti}<div>
+					<dt>Requisiti</dt>
+					<dd>{u.requisiti}</dd>
+				</div>{/if}
+			{#if u.note}<div>
+					<dt>Note</dt>
+					<dd>{u.note}</dd>
+				</div>{/if}
+			{#if u.attrezzatura.length}
+				<div>
+					<dt>Attrezzatura</dt>
+					<dd>
+						<ul class="checklist">
+							{#each u.attrezzatura as a (a)}<li>
+									<label><input type="checkbox" /> {a}</label>
+								</li>{/each}
+						</ul>
+					</dd>
+				</div>
+			{/if}
+			{#if u.itinerario}
+				<div>
+					<dt>Itinerario</dt>
+					<dd>
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso interno salvato dall'organizzatore, con resolve() -->
+						<a href={itineraryHref}>Apri la scheda o il piano</a>
+					</dd>
+				</div>
+			{/if}
+			{#if !u.mezzi && !u.iscrizioni_entro && !u.requisiti && !u.note && !u.attrezzatura.length && !u.itinerario}
+				<div><dd class="nota">Nessun altro dettaglio dall’organizzatore.</dd></div>
+			{/if}
+		</dl>
 
 		{#if u.sono_organizzatore || u.mio_stato === 'confermato' || u.mio_stato === 'attesa'}
 			<PushToggle />
@@ -251,10 +299,19 @@
 				<ul class="partecipanti">
 					{#each u.partecipanti ?? [] as p (p.utente)}
 						<li>
-							<span>{p.nome} · {p.stato}</span>
+							<span class="iniziale" aria-hidden="true">{p.nome.slice(0, 1).toUpperCase()}</span>
+							<span class="chi"
+								><b>{p.nome}</b>
+								<small
+									>{p.utente === u.organizzatore
+										? 'organizza'
+										: (STATO_P[p.stato] ?? p.stato)}</small
+								></span
+							>
 							{#if p.utente !== u.organizzatore && p.stato === 'attesa'}
 								<button
 									type="button"
+									class="piccolo"
 									disabled={busy}
 									onclick={() =>
 										act(
@@ -265,7 +322,7 @@
 							{:else if p.utente !== u.organizzatore && p.stato === 'confermato'}
 								<button
 									type="button"
-									class="secondario"
+									class="piccolo secondario"
 									disabled={busy}
 									onclick={() =>
 										act(
@@ -289,7 +346,18 @@
 					<button type="submit" disabled={busy || !annuncio.trim()}>Pubblica</button>
 				</form>
 				<h3>Annulla o rinvia</h3>
+				<label class="campo"
+					>Nuova data <input type="datetime-local" bind:value={nuovaData} /></label
+				>
 				<div class="riga">
+					<button
+						type="button"
+						class="secondario"
+						disabled={busy || !nuovaData}
+						onclick={() =>
+							act(() => setOutingStatus(id, 'rinviata', localToIso(nuovaData)), 'Uscita rinviata.')}
+						>Rinvia</button
+					>
 					{#if u.stato !== 'annullata'}
 						<button
 							type="button"
@@ -306,164 +374,302 @@
 							>Riapri</button
 						>
 					{/if}
-					<label class="inline"
-						>Nuova data <input type="datetime-local" bind:value={nuovaData} /></label
-					>
-					<button
-						type="button"
-						class="secondario"
-						disabled={busy || !nuovaData}
-						onclick={() =>
-							act(() => setOutingStatus(id, 'rinviata', localToIso(nuovaData)), 'Uscita rinviata.')}
-						>Rinvia</button
-					>
 				</div>
 				<p class="nota">
 					Chi ha attivato le notifiche riceve un avviso per annullamenti, rinvii e annunci.
 				</p>
 			</section>
 		{/if}
-		{#if notice}<p class="ok" role="status">{notice}</p>{/if}
-		{#if error}<p class="errore" role="alert">{error}</p>{/if}
 	{/if}
 </div>
 
 <style>
-	.pagina {
+	.uscita {
 		max-width: 46rem;
-		margin: 0 auto;
-		padding: 1rem;
+		padding-bottom: 2rem;
 	}
 	.tipo {
-		color: var(--accent);
-		font-weight: 700;
+		margin: 0.6rem 0 0.2rem;
+		color: var(--rust);
+		font: 600 0.75rem var(--font-body);
 		text-transform: uppercase;
-		font-size: 0.85rem;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.06em;
 	}
-	.avvertenza {
-		border-left: 4px solid #b54708;
-		padding: 0.4rem 0.8rem;
-		background: var(--surface);
+	h1 {
+		font-size: 1.8rem;
+		margin: 0 0 0.8rem;
+	}
+	h2 {
+		font-size: 1.2rem;
+		margin: 1.5rem 0 0.6rem;
+	}
+	h3 {
+		font: 600 0.95rem var(--font-body);
+		margin: 1.1rem 0 0.4rem;
 	}
 	.stato {
-		font-weight: 700;
-		padding: 0.4rem 0.8rem;
-		border-radius: 8px;
+		font-weight: 600;
+		padding: 0.55rem 0.8rem;
+		border-radius: var(--r-sm);
+		margin: 0 0 0.8rem;
 	}
 	.annullata {
-		background: #fee4e2;
-		color: #912018;
+		background: color-mix(in srgb, #b42318 14%, var(--surface));
+		color: #b42318;
 	}
 	.rinviata {
-		background: #fef0c7;
-		color: #93370d;
+		background: color-mix(in srgb, var(--rust) 14%, var(--surface));
+		color: var(--rust);
 	}
-	.dati {
-		display: grid;
-		grid-template-columns: max-content 1fr;
-		gap: 0.3rem 1rem;
+	.quando,
+	.posti,
+	.dati,
+	.organizzatore,
+	.annunci li {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-md);
 	}
-	dt {
-		font-weight: 700;
-	}
-	dd {
-		margin: 0;
-	}
-	.checklist {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-	.azioni,
-	.riga {
+	.quando {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: 0.85rem;
 		align-items: center;
+		padding: 0.8rem;
+	}
+	.quando .testo {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		min-width: 0;
+	}
+	.quando b {
+		font-weight: 600;
+	}
+	.quando b::first-letter {
+		text-transform: uppercase;
+	}
+	.quando span span {
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+	.posti {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-top: 0.5rem;
+		padding: 0.65rem 0.8rem;
+		color: var(--accent);
+	}
+	.posti span {
+		flex: 1;
+		color: var(--text);
+		font-size: 0.92rem;
+	}
+	.azioni {
+		display: grid;
+		gap: 0.5rem;
 		margin: 1rem 0;
 	}
+	.mio {
+		margin: 0;
+		padding: 0.7rem 0.85rem;
+		border-radius: var(--r-md);
+		font-weight: 600;
+		background: color-mix(in srgb, var(--ok) 14%, var(--surface));
+		color: var(--ok);
+	}
+	.mio.attesa {
+		background: color-mix(in srgb, var(--rust) 14%, var(--surface));
+		color: var(--rust);
+	}
 	button {
-		min-height: 44px;
-		padding: 0 1rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		min-height: 48px;
+		padding: 0 1.1rem;
 		border-radius: 999px;
 		border: 1px solid var(--accent);
 		background: var(--accent);
 		color: var(--on-accent);
-		font: inherit;
-		font-weight: 600;
+		font: 600 1rem var(--font-body);
 		cursor: pointer;
 	}
 	button.grande {
-		min-height: 52px;
-		font-size: 1.15rem;
-		padding: 0 2rem;
+		min-height: 54px;
+		font-size: 1.1rem;
 	}
 	button.secondario {
 		background: transparent;
 		color: var(--accent);
 	}
-	.qr {
-		width: 100%;
-	}
-	.qr summary {
-		padding: 0.7rem 0;
-		color: var(--accent);
-		font-weight: 600;
-		cursor: pointer;
-	}
-	.qr :global(svg) {
-		margin: 0.4rem 0;
-		padding: 0.5rem;
-		border: 1px solid var(--border);
-		border-radius: 8px;
+	button.piccolo {
+		min-height: 40px;
+		padding: 0 0.85rem;
+		font-size: 0.88rem;
 	}
 	button.pericolo {
 		background: #b42318;
 		border-color: #b42318;
+		color: #fff;
 	}
 	button:disabled {
 		opacity: 0.6;
 	}
+	.qr summary {
+		padding: 0.6rem 0;
+		color: var(--accent);
+		font-weight: 600;
+		cursor: pointer;
+		text-align: center;
+	}
+	.qr :global(svg) {
+		display: block;
+		margin: 0.4rem auto;
+		padding: 0.6rem;
+		background: #fff;
+		border-radius: var(--r-md);
+	}
+	.qr .nota {
+		text-align: center;
+	}
+	.avvertenza {
+		display: flex;
+		gap: 0.6rem;
+		align-items: flex-start;
+		padding: 0.7rem 0.85rem;
+		border-radius: var(--r-md);
+		background: color-mix(in srgb, var(--rust) 9%, var(--surface));
+		border: 1px solid color-mix(in srgb, var(--rust) 25%, transparent);
+		color: var(--rust);
+	}
+	.avvertenza p {
+		margin: 0;
+		color: var(--text);
+		font-size: 0.85rem;
+	}
+	.dati {
+		margin: 0;
+		padding: 0 0.85rem;
+	}
+	.dati > div {
+		padding: 0.65rem 0;
+		border-bottom: 1px solid var(--border);
+	}
+	.dati > div:last-child {
+		border-bottom: 0;
+	}
+	dt {
+		color: var(--muted);
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+	dd {
+		margin: 0.1rem 0 0;
+	}
+	.checklist {
+		list-style: none;
+		padding: 0;
+		margin: 0.2rem 0 0;
+		display: grid;
+		gap: 0.1rem;
+	}
+	.checklist label {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		min-height: 40px;
+	}
+	.checklist input {
+		width: 20px;
+		height: 20px;
+	}
+	.annunci {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+		gap: 0.5rem;
+	}
+	.annunci li {
+		padding: 0.7rem 0.85rem;
+		border-left: 4px solid var(--accent);
+	}
 	.organizzatore {
-		border-top: 1px solid var(--border);
-		margin-top: 1rem;
+		margin-top: 1.5rem;
+		padding: 0.2rem 1rem 1rem;
+	}
+	.organizzatore h2 {
+		margin-top: 0.9rem;
 	}
 	.partecipanti {
 		list-style: none;
 		padding: 0;
+		margin: 0;
 	}
 	.partecipanti li {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		gap: 0.5rem;
-		padding: 0.3rem 0;
+		gap: 0.65rem;
+		padding: 0.5rem 0;
 		border-bottom: 1px solid var(--border);
 	}
-	form {
+	.partecipanti li:last-child {
+		border-bottom: 0;
+	}
+	.iniziale {
+		display: grid;
+		place-items: center;
+		width: 2.2rem;
+		height: 2.2rem;
+		border-radius: 50%;
+		background: var(--brand-soft);
+		color: var(--accent);
+		font-weight: 700;
+	}
+	.chi {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
 	}
-	textarea,
-	input[type='datetime-local'] {
-		min-height: 44px;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		font: inherit;
-		padding: 0.3rem 0.6rem;
+	.chi small {
+		color: var(--muted);
 	}
-	.inline {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
+	form {
+		display: grid;
+		gap: 0.45rem;
+	}
+	form label,
+	.campo {
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
+	textarea {
+		min-height: 5rem;
+	}
+	.campo {
+		display: grid;
+		gap: 0.3rem;
+	}
+	.campo input {
+		padding: 0 0.7rem;
+	}
+	.riga {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem;
+		margin-top: 0.6rem;
 	}
 	.nota {
 		color: var(--muted);
+		font-size: 0.88rem;
 	}
 	.ok {
-		color: #067647;
+		color: var(--ok);
+		font-weight: 600;
 	}
 	.errore {
 		color: #b42318;

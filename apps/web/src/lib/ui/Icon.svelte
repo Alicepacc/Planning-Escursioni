@@ -34,7 +34,20 @@
 		locandina: [{ d: 'M6 3h8l4 4v14H6Z' }, { d: 'M14 3v4h4M9 12h6M9 16h6' }],
 		calendario: [{ d: 'M4 6h16v14H4Z' }, { d: 'M4 10h16M8 3v4M16 3v4' }],
 		freccia: [{ d: 'm9 5 7 7-7 7' }],
-		chiudi: [{ d: 'M6 6l12 12M18 6 6 18' }]
+		chiudi: [{ d: 'M6 6l12 12M18 6 6 18' }],
+		annulla: [{ d: 'M9 14 4 9l5-5' }, { d: 'M4 9h10.5a5.5 5.5 0 0 1 0 11H11' }],
+		ripeti: [{ d: 'm15 14 5-5-5-5' }, { d: 'M20 9H9.5a5.5 5.5 0 0 0 0 11H13' }],
+		anello: [{ d: 'M20 12a8 8 0 1 1-2.3-5.6' }, { d: 'M20 4v4h-4' }],
+		inverti: [{ d: 'M7 4 3 8l4 4M3 8h14' }, { d: 'm17 12 4 4-4 4M21 16H7' }],
+		andataritorno: [{ d: 'M4 9h15l-3.5-3.5' }, { d: 'M20 15H5l3.5 3.5' }],
+		matita: [{ d: 'M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19Z' }, { d: 'm14 6.5 3.5 3.5' }],
+		piu: [{ d: 'M12 5v14M5 12h14' }],
+		magia: [
+			{ d: 'M11 3.5l1.6 4.4 4.4 1.6-4.4 1.6L11 15.5l-1.6-4.4L5 9.5l4.4-1.6Z' },
+			{ d: 'M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z' }
+		],
+		importa: [{ d: 'M12 15V4M7.5 8.5 12 4l4.5 4.5' }, { d: 'M5 14v6h14v-6' }],
+		esporta: [{ d: 'M12 4v11M7.5 10.5 12 15l4.5-4.5' }, { d: 'M5 14v6h14v-6' }]
 	} satisfies Record<string, Shape[]>;
 	export type IconName = keyof typeof ICONS;
 	export const iconShapes = (name: IconName): Shape[] => ICONS[name];

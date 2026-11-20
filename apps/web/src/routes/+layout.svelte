@@ -28,12 +28,14 @@
 		return [tab.path, ...(tab.also ?? [])].some((p) => here.startsWith(resolve('/') + p.slice(1)));
 	}
 
-	// la mappa e le schede occupano tutto lo schermo; le schede hanno la loro barra delle azioni
+	// mappa, planner e schede occupano tutto lo schermo; le schede hanno la loro barra delle azioni
 	const here = $derived(page.url.pathname);
 	const isDetail = $derived(
 		['/attivita', '/itinerario'].some((p) => here.startsWith(resolve('/') + p.slice(1)))
 	);
-	const fullBleed = $derived(here.startsWith(resolve('/mappa')) || isDetail);
+	const fullBleed = $derived(
+		['/mappa', '/pianifica'].some((p) => here.startsWith(resolve('/') + p.slice(1))) || isDetail
+	);
 </script>
 
 <svelte:head>
