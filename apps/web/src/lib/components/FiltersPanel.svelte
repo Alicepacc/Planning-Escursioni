@@ -310,6 +310,7 @@
 		border-top: 1px solid var(--border);
 		border-bottom: none;
 		gap: 0.75rem;
+		padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
 	}
 	h2 {
 		margin: 0;
