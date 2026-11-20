@@ -235,8 +235,8 @@
 		min-height: 48px;
 		border-radius: 999px;
 		border: none;
-		background: var(--accent, #1f6f43);
-		color: #fff;
+		background: var(--accent);
+		color: var(--on-accent);
 		font: inherit;
 		font-weight: 600;
 		cursor: pointer;

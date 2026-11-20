@@ -13,6 +13,7 @@ const SHOTS =
 		require('path').join(__dirname, '../../../reports/phase5/screenshots')) + '/';
 async function personContext(browser) {
 	const ctx = await browser.newContext({ ...devices['Pixel 7'] });
+	await ctx.addInitScript(() => localStorage.setItem('cordata.primo-avvio', 'visto'));
 	const page = await ctx.newPage();
 	const cdp = await ctx.newCDPSession(page);
 	await cdp.send('WebAuthn.enable');

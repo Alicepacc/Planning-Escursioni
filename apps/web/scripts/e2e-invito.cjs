@@ -18,6 +18,7 @@ const SHOT =
 	// headless completo: la versione ridotta di Chromium nega sempre i permessi delle notifiche
 	const browser = await chromium.launch({ channel: 'chromium' });
 	const ctx = await browser.newContext({ ...devices['Pixel 7'], timezoneId: 'Europe/Rome' });
+	await ctx.addInitScript(() => localStorage.setItem('cordata.primo-avvio', 'visto'));
 	await ctx.grantPermissions(['clipboard-read', 'clipboard-write', 'notifications'], {
 		origin: BASE
 	});

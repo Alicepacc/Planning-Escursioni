@@ -363,12 +363,12 @@
 	.toggle button[aria-pressed='true'] {
 		background: var(--accent);
 		border-color: var(--accent);
-		color: #fff;
+		color: var(--on-accent);
 	}
 	.primario {
 		background: var(--accent) !important;
 		border-color: var(--accent) !important;
-		color: #fff;
+		color: var(--on-accent);
 		font-weight: 700;
 		flex: 1;
 	}

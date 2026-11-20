@@ -8,6 +8,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import { t, type MessageKey } from '#lib/i18n/index.ts';
 	import Icon, { type IconName } from '#lib/ui/Icon.svelte';
+	import Welcome from '#lib/ui/Welcome.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -70,6 +71,8 @@
 	<main>
 		{@render children()}
 	</main>
+
+	<Welcome />
 
 	<nav aria-label="Sezioni principali" class:nascosta={isDetail}>
 		{#each tabs as tab (tab.path)}
@@ -160,6 +163,35 @@
 	}
 	:global(a) {
 		color: var(--accent);
+	}
+	/* campi dei moduli: stessi colori, bordi e altezze in tutte le pagine, anche al buio.
+	   Con :where() la specificità è zero: gli stili delle singole pagine restano più forti */
+	:global(:where(input:not([type='radio'], [type='checkbox'], [type='range']), select, textarea)) {
+		background: var(--surface);
+		color: var(--text);
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		font: inherit;
+		min-height: 44px;
+		box-sizing: border-box;
+	}
+	:global(:where(textarea)) {
+		padding: 0.6rem 0.75rem;
+	}
+	:global(:where(input, textarea)::placeholder) {
+		color: var(--muted);
+	}
+	:global(:where(fieldset)) {
+		border: 1px solid var(--border);
+		border-radius: var(--r-md);
+		background: var(--surface);
+	}
+	:global(:where(legend)) {
+		font-weight: 600;
+		padding: 0 0.3rem;
+	}
+	:global(:where(input[type='radio'], input[type='checkbox'])) {
+		accent-color: var(--accent);
 	}
 	:global(:focus-visible) {
 		outline: 3px solid var(--rust);

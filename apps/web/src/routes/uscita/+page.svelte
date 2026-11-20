@@ -335,7 +335,7 @@
 		padding: 1rem;
 	}
 	.tipo {
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 		font-weight: 700;
 		text-transform: uppercase;
 		font-size: 0.85rem;
@@ -387,9 +387,9 @@
 		min-height: 44px;
 		padding: 0 1rem;
 		border-radius: 999px;
-		border: 1px solid var(--accent, #1f6f43);
-		background: var(--accent, #1f6f43);
-		color: #fff;
+		border: 1px solid var(--accent);
+		background: var(--accent);
+		color: var(--on-accent);
 		font: inherit;
 		font-weight: 600;
 		cursor: pointer;
@@ -401,14 +401,14 @@
 	}
 	button.secondario {
 		background: transparent;
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 	}
 	.qr {
 		width: 100%;
 	}
 	.qr summary {
 		padding: 0.7rem 0;
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 		font-weight: 600;
 		cursor: pointer;
 	}

@@ -108,16 +108,16 @@
 		min-height: 44px;
 		padding: 0 1rem;
 		border-radius: 999px;
-		border: 1px solid var(--accent, #1f6f43);
-		background: var(--accent, #1f6f43);
-		color: #fff;
+		border: 1px solid var(--accent);
+		background: var(--accent);
+		color: var(--on-accent);
 		font: inherit;
 		font-weight: 600;
 		cursor: pointer;
 	}
 	button.secondario {
 		background: transparent;
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 	}
 	button:disabled {
 		opacity: 0.6;

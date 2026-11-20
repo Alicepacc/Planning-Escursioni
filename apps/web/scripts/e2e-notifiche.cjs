@@ -12,6 +12,7 @@ const { chromium, devices } = require('playwright');
 // CORDATA_URL per provare la demo pubblicata (es. https://alicepacc.github.io/Planning-Escursioni)
 const BASE = process.env.CORDATA_URL ?? 'http://localhost:4173';
 async function person(ctx) {
+	await ctx.addInitScript(() => localStorage.setItem('cordata.primo-avvio', 'visto'));
 	await ctx.grantPermissions(['notifications'], { origin: BASE });
 	const page = ctx.pages()[0] ?? (await ctx.newPage());
 	const cdp = await ctx.newCDPSession(page);
@@ -39,6 +40,7 @@ async function signup(page, nome) {
 		channel: 'chromium',
 		...devices['Pixel 7']
 	});
+	await cctx.addInitScript(() => localStorage.setItem('cordata.primo-avvio', 'visto'));
 	const carla = await person(cctx);
 	await carla.goto(BASE + '/uscite/nuova');
 	await signup(carla, 'Carla');

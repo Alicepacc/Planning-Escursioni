@@ -28,6 +28,7 @@ async function person(browser, geo) {
 		timezoneId: 'Europe/Rome',
 		...(geo ? { geolocation: geo, permissions: ['geolocation'] } : {})
 	});
+	await ctx.addInitScript(() => localStorage.setItem('cordata.primo-avvio', 'visto'));
 	const page = await ctx.newPage();
 	const errors = [];
 	page.on('pageerror', (e) => errors.push(e.message));

@@ -93,7 +93,7 @@
 		border: none;
 		padding: 0;
 		min-height: 44px;
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 		text-decoration: underline;
 		font: inherit;
 		cursor: pointer;

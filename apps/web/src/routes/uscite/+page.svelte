@@ -243,15 +243,15 @@
 		min-height: 44px;
 		padding: 0 1rem;
 		border-radius: 999px;
-		background: var(--accent, #1f6f43);
-		color: #fff;
+		background: var(--accent);
+		color: var(--on-accent);
 		font-weight: 600;
 		text-decoration: none;
 	}
 	.link {
 		background: none;
 		border: none;
-		color: var(--accent, #1f6f43);
+		color: var(--accent);
 		text-decoration: underline;
 		font: inherit;
 		cursor: pointer;
