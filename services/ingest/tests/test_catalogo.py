@@ -156,3 +156,40 @@ def test_partenza_con_due_candidati_nello_stesso_punto():
 
     # «Rifugio Ai» non dà un nome valido, la parola maiuscola sì: nessun errore di confronto
     assert _first_name("Rifugio Ai", None) in (None, "Rifugio Ai", "Ai")
+
+
+def test_frasi_e_nomi_di_gruppo_non_sono_titoli():
+    from cordata_ingest.activities.catalog import choose_title
+
+    track = {
+        "points": [
+            {"nome": "Paneveggio", "lon": 11.7, "quota_osm": 1520},
+            {"nome": "Lago Bocche", "lon": 11.8, "quota_osm": 2210},
+        ]
+    }
+    for prose in (
+        "Riamo fino a Paneveggio; facendo così un giro ad anello",
+        "Questo è il terzo ed ultimo appuntamento del ciclo",
+        "Gruppo Escursionismo",
+        "Ai tratti erbosi che con-ducono al rifugio",
+    ):
+        assert choose_title(prose, None, track) == "Lago Bocche da Paneveggio"
+    assert choose_title("Le malghe e i laghi del Lagorai", None, track) == (
+        "Le malghe e i laghi del Lagorai"
+    )
+
+
+def test_nome_del_file_senza_cognomi():
+    from cordata_ingest.activities.catalog import choose_title
+
+    text = "Si sale al rifugio Papa per il sentiero delle gallerie. Accompagnatori: [nome rimosso]"
+    # i cognomi nel nome del file non sono nel testo pulito: cadono
+    assert choose_title(
+        "Gruppo Escursionismo", "Escursionismo Rossi-Bianchi Rifugio Papa", None, text
+    ) == ("Rifugio Papa")
+    # abbreviazioni sciolte; senza un nome proprio nel testo si passa alla traccia
+    assert choose_title(None, "6- Rif. Papa", None, text) == "Rifugio Papa"
+    track = {"points": [{"nome": "Passo Pian delle Fugazze", "lon": 11.2, "quota_osm": 1162}]}
+    assert choose_title(None, "Monte-Zolera-21-Giugno-2023", track, text) == (
+        "Passo Pian delle Fugazze"
+    )

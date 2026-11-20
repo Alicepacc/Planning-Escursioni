@@ -20,6 +20,7 @@ import html
 import json
 import re
 import time
+import unicodedata
 from pathlib import Path
 from typing import Any
 
@@ -119,7 +120,165 @@ def _site_title(raw: str | None) -> str | None:
     return t if len(re.findall(r"[A-Za-zÀ-ÿ]{3,}", t)) >= 1 and len(t) >= 4 else None
 
 
-def choose_title(parsed: str | None, site: str | None, track: dict[str, Any] | None) -> str:
+PROSE_WORDS = re.compile(
+    r"(?i)\b(?:è|sono|facendo|faremo|saliremo|scenderemo|arriveremo|partiremo|raggiungeremo|"
+    r"percorreremo|conducono|questo|questa|nostra|nostro|vi|ci|che)\b"
+)
+GENERIC_TITLE = re.compile(
+    r"(?i)^(?:gruppo\s+(?:escursionism\w*|senior\w*|giovani|alpinismo\w*|famiglie)|"
+    r"commissione|sezione|alpinismo giovanile|escursionismo|programma|attivit[àa]|calendario|"
+    r"libretto|notiziario|gita sociale|uscita sociale)\b"
+)
+
+
+def _not_a_title(t: str) -> bool:
+    """Una frase della descrizione («Riamo fino a Paneveggio; facendo così…») o il nome di un
+    gruppo («Gruppo Escursionismo») presi per titolo."""
+    # le quote tra parentesi non contano come parole: «Lago di Erdemolo (2036 m) e …»
+    words = re.sub(r"\([^)]*\)", " ", t).split()
+    return (
+        ";" in t
+        or bool(re.search(r"[a-zà-ÿ]-\s?[a-zà-ÿ]{3,}", t))  # parola spezzata a capo: «con-ducono»
+        or len(words) > 12
+        or (len(words) >= 5 and bool(PROSE_WORDS.search(t)))
+        or (len(words) >= 4 and t.rstrip().endswith("."))
+        or (len(words) <= 3 and bool(GENERIC_TITLE.match(t)))
+    )
+
+
+def _fold(word: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFKD", word.lower()) if not unicodedata.combining(c)
+    )
+
+
+SITE_ABBREV = (
+    (r"\bM\.\s?te\b\.?|\bM\.(?=\s?[A-ZÀ-Ý])", "Monte"),
+    (r"\bRif\.", "Rifugio"),
+    (r"\bF\.\s?lla\b\.?", "Forcella"),
+    (r"\bP\.\s?so\b\.?", "Passo"),
+    (r"\bM\.\s?ga\b\.?", "Malga"),
+    (r"\bBiv\.", "Bivacco"),
+)
+# parole di tipo: non sono nomi propri, restano anche se il testo non le ripete
+TYPE_WORDS = {
+    "monte",
+    "monti",
+    "cima",
+    "cime",
+    "rifugio",
+    "rifugi",
+    "lago",
+    "laghi",
+    "passo",
+    "forcella",
+    "malga",
+    "malghe",
+    "bivacco",
+    "ferrata",
+    "sentiero",
+    "anello",
+    "giro",
+    "traversata",
+    "val",
+    "valle",
+    "croda",
+    "col",
+    "punta",
+    "piz",
+    "cresta",
+    "sella",
+    "ciaspolata",
+    "notturna",
+    "alta",
+    "via",
+    "altopiano",
+    "gruppo",
+    "baita",
+    "casera",
+    "forte",
+}
+MONTHS = {
+    "gennaio",
+    "febbraio",
+    "marzo",
+    "aprile",
+    "maggio",
+    "giugno",
+    "luglio",
+    "agosto",
+    "settembre",
+    "ottobre",
+    "novembre",
+    "dicembre",
+}
+SMALL = {
+    "di",
+    "de",
+    "da",
+    "del",
+    "dei",
+    "della",
+    "delle",
+    "degli",
+    "e",
+    "al",
+    "alla",
+    "ai",
+    "a",
+    "ad",
+    "in",
+    "con",
+    "per",
+    "sul",
+    "sulla",
+    "nel",
+    "nella",
+    "dal",
+    "dalla",
+    "il",
+    "lo",
+    "la",
+    "le",
+}
+
+
+def _site_words_in_text(title: str, text: str | None) -> str | None:
+    """Il nome del documento sul sito, con le sole parole che compaiono anche nel testo pulito
+    della locandina (oltre alle parole di tipo: monte, rifugio, anello…). I nomi dei file a
+    volte portano i cognomi degli accompagnatori («Rizzotti-Paier Rifugio Papa»): il testo li ha
+    già tolti, quindi qui cadono anche dal titolo."""
+    if text is None:
+        return None
+    for pattern, full in SITE_ABBREV:
+        title = re.sub(pattern, full + " ", title)
+    known = {_fold(w) for w in re.findall(r"[A-Za-zÀ-ÿ'’]+", text)}
+    kept = []
+    for w in re.split(r"[\s\-–—]+", title):
+        f = _fold(w.strip("'’.,"))
+        if not f or re.search(r"\d", w) or f in MONTHS:
+            continue
+        if f in SMALL or f in TYPE_WORDS or f in known:
+            kept.append(w.strip(".,"))
+    while kept and _fold(kept[0]) in {"escursionismo", "attivita", "gita"}:
+        kept.pop(0)
+    # «Monte ZERVOI» → «Monte Zervoi» (le sigle corte restano)
+    kept = [w.capitalize() if w.isupper() and len(w) > 3 else w for w in kept]
+    while kept and _fold(kept[-1]) in SMALL:
+        kept.pop()
+    # serve almeno un nome proprio, non solo «Monte» o «Ferrata»
+    if not any(_fold(w) not in TYPE_WORDS | SMALL for w in kept):
+        return None
+    out = " ".join(kept)
+    return out if re.search(r"[A-Za-zÀ-ÿ]{4}", out) else None
+
+
+def choose_title(
+    parsed: str | None,
+    site: str | None,
+    track: dict[str, Any] | None,
+    text: str | None = None,
+) -> str:
     """Titolo della scheda: quello della locandina se è un titolo vero, altrimenti il nome del
     documento sul sito, altrimenti la meta più alta e la partenza della traccia."""
     t = (parsed or "").strip().strip('“”"')
@@ -134,12 +293,24 @@ def choose_title(parsed: str | None, site: str | None, track: dict[str, Any] | N
         return x[:1].upper() + x[1:]
 
     # un titolo vero ha almeno una parola di quattro lettere
-    if t and len(t) <= 90 and not BAD_TITLE.search(t) and re.search(r"[A-Za-zÀ-ÿ]{4}", t):
+    if (
+        t
+        and len(t) <= 90
+        and not BAD_TITLE.search(t)
+        and not _not_a_title(t)
+        and re.search(r"[A-Za-zÀ-ÿ]{4}", t)
+    ):
         return cap(_smart_case(t))
     st = _site_title(site)
+    st = _site_words_in_text(st, text) if st else None
     if st and st.islower():
         st = _smart_case(st.upper())  # «col margherita» → «Col Margherita»
-    if st and not BAD_TITLE.search(st) and re.search(r"[A-Za-zÀ-ÿ]{4}", st):
+    if (
+        st
+        and not BAD_TITLE.search(st)
+        and not _not_a_title(st)
+        and re.search(r"[A-Za-zÀ-ÿ]{4}", st)
+    ):
         return cap(_smart_case(st))
     pts = [p for p in (track or {}).get("points") or [] if p.get("lon") is not None]
     if pts:
@@ -331,7 +502,7 @@ def _reconstruct_and_score(
     track = result_dict(reconstruct(conn, dem, doc_id, activity))
     track["seconds"] = round(time.perf_counter() - t0, 1)
     record["ricostruzione"] = {k: track[k] for k in ("status", "reasons", "checks")}
-    activity["titolo"] = choose_title(values.get("titolo"), entry.get("titolo_sito"), track)
+    activity["titolo"] = choose_title(values.get("titolo"), entry.get("titolo_sito"), track, text)
     inside = bool(track.get("coords")) and in_area(track["coords"])
     record["area"] = inside
     s = score(track, fields)
@@ -347,6 +518,42 @@ def _reconstruct_and_score(
     else:
         record["esito"] = f"sotto soglia ({s['punteggio']})"
     return record
+
+
+def retitle() -> dict[str, int]:
+    """Ricalcola i titoli dei record già elaborati (campi della locandina, nome del documento
+    sul sito, traccia salvata) senza ricostruire nulla. Restituisce quanti titoli cambiano."""
+    index = data_dir() / "activities" / "index.json"
+    site_titles = (
+        {d["url"]: d.get("title") for d in json.loads(index.read_text("utf-8"))["documents"]}
+        if index.exists()
+        else {}
+    )
+    changed = kept = 0
+    for path in sorted((catalog_dir() / "record").glob("*.json")):
+        record = json.loads(path.read_text("utf-8"))
+        activity = record.get("attivita")
+        fields = record.get("campi")
+        if not activity or not isinstance(fields, dict):
+            continue
+        track_path = catalog_dir() / "tracce" / f"{record['id']}.json"
+        track = json.loads(track_path.read_text("utf-8")) if track_path.exists() else None
+        # le voci dei programmi non hanno il nome del sito (è quello del libretto)
+        site = None if "--" in record["id"] else site_titles.get(record["url"])
+        text_path = data_dir() / "activities" / "text" / f"{record['id'].split('--')[0]}.json"
+        text = (
+            "\n".join(p["text"] for p in json.loads(text_path.read_text("utf-8"))["pages"])
+            if text_path.exists()
+            else None
+        )
+        title = choose_title((fields.get("titolo") or {}).get("value"), site, track, text)
+        if title != activity.get("titolo"):
+            activity["titolo"] = title
+            path.write_text(json.dumps(record, ensure_ascii=False, indent=1), "utf-8")
+            changed += 1
+        else:
+            kept += 1
+    return {"cambiati": changed, "uguali": kept}
 
 
 def run(limit: int | None = None, only_new: bool = True) -> dict[str, int]:

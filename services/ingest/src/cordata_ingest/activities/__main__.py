@@ -44,6 +44,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     cat.add_argument("--limite", type=int, help="al massimo N documenti nuovi")
     cat.add_argument("--tutti", action="store_true", help="rielabora anche quelli già fatti")
+    cat.add_argument(
+        "--titoli", action="store_true", help="solo i titoli, dai record e dalle tracce salvati"
+    )
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
     rec.add_argument("ids", nargs="*", help="solo queste attività (default: tutte)")
     rec.add_argument("--solo-parser", action="store_true", help="campi del parser, senza revisione")
@@ -126,9 +129,12 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"{slug:32} wp={r.get('wordpress')} pdf={r.get('pdf_pubblici')} {r['url']}")
         print(f"indirizzi provati: {payload['indirizzi_provati']}")
     elif args.cmd == "catalogo":
-        from .catalog import run
+        from .catalog import retitle, run
 
-        print(run(limit=args.limite, only_new=not args.tutti))
+        if args.titoli:
+            print(retitle())
+        else:
+            print(run(limit=args.limite, only_new=not args.tutti))
     elif args.cmd == "reconstruct":
         from .pilot import run_reconstruction
 
