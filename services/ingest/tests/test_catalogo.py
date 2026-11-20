@@ -100,3 +100,37 @@ def test_date_di_un_programma():
     # un elenco di sole date uno sotto l'altro non sono voci
     lista = [(1, "12/01/2026\n18/01/2026\n25/01/2026\n")]
     assert programme_dates(lista, 2026) == []
+
+
+def test_elenco_delle_tappe_dopo_itinerario():
+    from cordata_ingest.activities.itinerary import extract_points, list_points
+
+    names = lambda t: [p["nome"] for p in list_points(t)]  # noqa: E731
+    assert names("Itinerario: Casotto, Belfiore, Luserna, Longhi, Casotto.\nRitrovo: ore 7") == [
+        "Casotto",
+        "Belfiore",
+        "Luserna",
+        "Longhi",
+        "Casotto",
+    ]
+    # sentieri tolti, «M.» è monte, il punto dell'abbreviazione non chiude l'elenco
+    assert names(
+        "Itinerario: Bosco Chiesanuova vicino loc Scandole, sentiero E5, M. Tomba, "
+        "sentiero 255, Bosco Chiesanuova.\nRitrovo"
+    ) == ["Bosco Chiesanuova", "Monte Tomba", "Bosco Chiesanuova"]
+    # quota tra parentesi, nomi «di sopra» interi, numeri dei sentieri non sono quote
+    got = list_points(
+        "Itinerario: Malga Cagnon di sopra – sent.439 forcella Nuvolau (2400 m) – Monte Conca."
+    )
+    assert [(p["nome"], p["quota_m"]) for p in got] == [
+        ("Malga Cagnon di sopra", None),
+        ("Forcella Nuvolau", 2400),
+        ("Monte Conca", None),
+    ]
+    # indicazioni stradali e prosa non sono elenchi di tappe
+    assert names("Percorso: Autostrada A27 fino a Pian di Vedoia, direzione Longarone") == []
+    assert names("Itinerario: si sale per il bosco fitto fino alla forcella e poi si scende.") == []
+    # l'elenco vale più della prosa ed è un anello se torna alla partenza
+    out = extract_points("Itinerario: Casotto, Belfiore, Luserna, Casotto.\nNote: pranzo al sacco")
+    assert [p["nome"] for p in out["punti"]] == ["Casotto", "Belfiore", "Luserna"]
+    assert out["anello"]

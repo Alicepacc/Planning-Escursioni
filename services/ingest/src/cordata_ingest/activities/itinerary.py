@@ -355,6 +355,104 @@ def title_points(title: str | None, home: str | None = None) -> list[str]:
     return out if len(out) >= 2 else []
 
 
+# «Itinerario: Casotto, Belfiore, Luserna, Longhi, Casotto.»: l'elenco delle tappe in ordine.
+# Non le indicazioni stradali («Percorso: autostrada A27 fino a…») né la prosa.
+LIST_LABEL = re.compile(
+    r"(?im)^[ \t]*(?:itinerario|percorso|tappe|tragitto)"
+    r"(?![ \t]+(?:stradale|in auto|auto|in pullman|pullman|per arrivare|di avvicinamento))"
+    r"[^:\n]{0,25}:[ \t]*"
+)
+ROAD = re.compile(
+    r"(?i:\b(?:autostrad\w*|uscit\w*|casello|statale|tangenziale|superstrada|km|direzione|"
+    r"pullman|auto)\b)|\b(?:S[SRP][ \t]?\d+|A\d{1,2})\b"
+)
+FIELD_STOP = re.compile(
+    r"(?im)^[ \t]*(?:ritrovo|partenza|attrezzatura|materiali|note|accompagnator\w*|"
+    r"iscrizion\w*|difficolt\w*|grado|dislivell\w*|tempo|durata|lunghezza|quota|"
+    r"equipaggiamento|pranzo|rientro|mezzi|costo)\b"
+)
+LIST_SPLIT = re.compile(r"\s*(?:[,;→>]|->|\s[-–—]+\s*|\s*[-–—]+\s|\s/\s)\s*|\s+e\s+(?=[A-ZÀ-Ý])")
+TRAIL_REF = re.compile(
+    r"(?i)^(?:(?:sent(?:iero|\.)?|segnavia|sv\.?|n\.)\s*[\w.]+|[A-Z]?\d+[A-Za-z]?|E\d+)$"
+)
+LIST_CUT = re.compile(
+    r"\s+(?:vicino|presso|lungo|verso|per|con|e ritorno|loc\.?|località)(?=\s|$).*$",
+    re.I,
+)
+TRAIL_IN_ITEM = re.compile(
+    r"(?i)\b(?:sent(?:iero|ieri|\.)?|segnavia|sv\.)\s*(?:n\.?\s*)?[A-Z]?\d+\w*"
+)
+_Q = r"\d{1,2}[.\s]?\d{3}|\d{3,4}"
+# quota tra parentesi, dopo «m» o «quota», o seguita da «m»
+LIST_ELEVATION = re.compile(
+    rf"\(\s*(?:m\.?|mt\.?|quota)?\s*(?P<q1>{_Q})\s*(?:m|mt|metri)?\.?\s*(?:s\.?l\.?m\.?)?\s*\)"
+    rf"|\b(?:m\.?|mt\.?|quota)\s*(?P<q2>{_Q})\b"
+    rf"|\b(?P<q3>{_Q})\s*(?:m|mt|metri)\b"
+)
+CAP_PHRASE = re.compile(rf"{_WORD}(?:\s+(?:{_CONNECT}\s+)?{_WORD}){{0,3}}")
+
+
+def list_points(text: str) -> list[dict[str, Any]]:
+    """Tappe dall'elenco dopo «Itinerario:» o «Percorso:», se è davvero un elenco di luoghi."""
+    for m in LIST_LABEL.finditer(text):
+        rest = text[m.end() : m.end() + 400]
+        stop = FIELD_STOP.search(rest)
+        if stop:
+            rest = rest[: stop.start()]
+        # fine dell'elenco: il primo punto che non chiude un'abbreviazione («M. Tomba», «sent.»)
+        for end in re.finditer(r"\.(?:\s|$)", rest):
+            word = re.search(r"(\w+)$", rest[: end.start()])
+            if not word or len(word.group(1)) > 3 or word.group(1).isdigit():
+                rest = rest[: end.start()]
+                break
+        rest = " ".join(rest.split())
+        if not rest or ROAD.search(rest):
+            continue
+        items = [i.strip(" .:") for i in LIST_SPLIT.split(rest) if i and i.strip(" .:")]
+        if len(items) < 2 or sum(len(i.split()) > 6 for i in items) > 1:
+            continue  # prosa, non elenco
+        out: list[dict[str, Any]] = []
+        for item in items:
+            # i numeri dei sentieri dentro la voce («sent.439 forcella Nuvolau») non sono quote
+            item = TRAIL_IN_ITEM.sub(" ", item).strip()
+            item = re.sub(r"^e\s+", "", item)
+            if not item or TRAIL_REF.match(item):
+                continue  # un sentiero, non un luogo
+            ele = None
+            em = LIST_ELEVATION.search(item)
+            if em:
+                value = int(
+                    re.sub(r"[.\s]", "", em.group("q1") or em.group("q2") or em.group("q3"))
+                )
+                ele = value if 200 <= value <= 4000 else None
+                item = (item[: em.start()] + item[em.end() :]).strip()
+            item = LIST_CUT.sub("", item)
+            item = re.sub(r"(?i)^(?:loc\.?|località|fraz\.?|frazione)\s+", "", item)
+            item = re.sub(r"^M\.\s*(?=[A-ZÀ-Ý])", "Monte ", item)
+            if item.isupper():
+                item = item.title()
+            names: list[str | None]
+            if item[:1].isupper():
+                kind = NAME_AFTER_KIND.match(item)
+                names = [
+                    _clean_name(kind.group("kind"), kind.group("name"))
+                    if kind and kind.end() == len(item)
+                    else _clean_name(None, item)
+                ]
+            else:
+                # «via ferrata Ra Gusela», «risalita del torrente Rujo»: i nomi dentro
+                names = [
+                    _clean_name(k.group("kind"), k.group("name"))
+                    for k in NAME_AFTER_KIND.finditer(item)
+                ] or [_clean_name(None, c.group(0)) for c in CAP_PHRASE.finditer(item)]
+            for name in names:
+                if name and len(name.split()) <= 5:
+                    out.append({"nome": name, "quota_m": ele})
+        if len({_norm(p["nome"]) for p in out}) >= 2 and len(out) >= len(items) / 2:
+            return out
+    return []
+
+
 def extract_points(text: str, home: str | None = None, title: str | None = None) -> dict[str, Any]:
     """Punti del percorso in ordine, con la quota se il testo la dà, e se è un anello."""
     body = route_text(text)
@@ -410,4 +508,20 @@ def extract_points(text: str, home: str | None = None, title: str | None = None)
         if len(points) >= MAX_POINTS:
             break
     loop = bool(LOOP.search(body))
+    # l'elenco delle tappe, quando c'è, vale più dei luoghi trovati nella prosa
+    listed = list_points(text)
+    if listed:
+        if home:
+            listed = [p for p in listed if _norm(p["nome"]) != _norm(home)] or listed
+        if len(listed) > 2 and _norm(listed[0]["nome"]) == _norm(listed[-1]["nome"]):
+            loop = True
+        if declared and all(_norm(p["nome"]) != _norm(declared) for p in listed):
+            listed = [{"nome": declared, "quota_m": None}, *listed]
+        points = []
+        seen = set()
+        for p in listed:
+            if _norm(p["nome"]) not in seen:
+                seen.add(_norm(p["nome"]))
+                points.append(p)
+        points = points[:MAX_POINTS]
     return {"punti": points, "anello": loop, "testo": body}
