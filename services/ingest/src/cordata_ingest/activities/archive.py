@@ -83,5 +83,9 @@ def archive(
         except FetchError as exc:
             entry["error"] = exc.reason
         manifest[c["id"]] = entry
-        manifest_path.write_text(json.dumps(manifest, indent=1, ensure_ascii=False), "utf-8")
+        # scrittura atomica: chi legge il manifest mentre lo scarico va avanti (l'estrazione del
+        # testo) non trova mai un file a metà
+        tmp = manifest_path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(manifest, indent=1, ensure_ascii=False), "utf-8")
+        tmp.replace(manifest_path)
     return manifest

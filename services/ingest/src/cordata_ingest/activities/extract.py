@@ -16,6 +16,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from html import unescape
 from pathlib import Path
 from typing import Any
@@ -636,7 +637,14 @@ def extract_all(
     base = base or raw_dir()
     out = out or text_dir()
     out.mkdir(parents=True, exist_ok=True)
-    manifest = json.loads((base / "manifest.json").read_text(encoding="utf-8"))
+    for attempt in range(5):  # il manifest può essere in scrittura dallo scarico
+        try:
+            manifest = json.loads((base / "manifest.json").read_text(encoding="utf-8"))
+            break
+        except json.JSONDecodeError:
+            if attempt == 4:
+                raise
+            time.sleep(2)
     results = []
     for doc_id, entry in manifest.items():
         if "path" not in entry or (ids and doc_id not in ids):
