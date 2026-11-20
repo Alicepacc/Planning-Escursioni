@@ -4,7 +4,15 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
-		<meta name="theme-color" content="#1f5f3f" />
+		<meta name="theme-color" content="#f4efe5" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#151a17" media="(prefers-color-scheme: dark)" />
+		<script>
+			// tema scelto nel profilo (chiaro/scuro), applicato prima del disegno per non lampeggiare
+			try {
+				var tema = localStorage.getItem('cordata.tema');
+				if (tema === 'light' || tema === 'dark') document.documentElement.dataset.theme = tema;
+			} catch (e) {}
+		</script>
 		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<link rel="apple-touch-icon" href="%sveltekit.assets%/icons/apple-touch-icon.png" />
 		%sveltekit.head%

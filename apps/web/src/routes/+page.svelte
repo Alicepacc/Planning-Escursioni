@@ -1,562 +1,293 @@
 <script lang="ts">
-	// Esplora (SPEC §5.1): mappa + lista sincronizzate, ricerca (luoghi, nomi e frasi in italiano),
-	// preset rapidi, filtri come chip modificabili, ordinamento, «Cerca in quest'area».
-	import { onMount, tick } from 'svelte';
-	import { resolve } from '$app/paths';
+	// Scopri (ADR 0015): la pagina iniziale. Ricerca, scorciatoie verso la mappa già filtrata,
+	// avviso di primo uso sull'affidabilità, gite CAI in programma e itinerari verificati.
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { generatedAsset } from '#lib/data/paths.ts';
-	import MapView from '#lib/map/MapView.svelte';
-	import ResultCard from '#lib/components/ResultCard.svelte';
-	import TrailInfo from '#lib/components/TrailInfo.svelte';
-	import FiltersPanel from '#lib/components/FiltersPanel.svelte';
-	import {
-		EMPTY_FILTERS,
-		PRESETS,
-		chipsFor,
-		filterItems,
-		haversineKm,
-		removeChip,
-		sectionsIn,
-		sortItems,
-		textScore,
-		type BBox,
-		type Chip,
-		type ExploreIndex,
-		type ExploreItem,
-		type Filters,
-		type SortKey
-	} from '#lib/search/explore.ts';
-	import { parseQuery, resolvePlace, type PlaceRow } from '#lib/search/nl.ts';
-	import type { MapPoint, TrailWayProps } from '#lib/data/types.ts';
+	import type { ExploreIndex, ExploreItem } from '#lib/search/explore.ts';
+	import HikeCard from '#lib/ui/HikeCard.svelte';
+	import HikeRow from '#lib/ui/HikeRow.svelte';
+	import Icon from '#lib/ui/Icon.svelte';
 
-	const PAGE = 40;
-	const PLACE_KIND: Record<string, string> = {
-		c: 'cima',
-		r: 'rifugio',
-		b: 'bivacco',
-		l: 'lago',
-		p: 'paese',
-		f: 'frazione',
-		s: 'passo/forcella',
-		v: 'valle',
-		g: 'ghiacciaio'
-	};
-
-	let items = $state<ExploreItem[]>([]);
+	const WELCOME_KEY = 'cordata.benvenuto';
+	let items = $state<ExploreItem[] | null>(null);
 	let loadError = $state('');
-	let places = $state<PlaceRow[] | null>(null);
-	let filters = $state<Filters>({ ...EMPTY_FILTERS });
-	let sort = $state<SortKey>('rilevanza');
 	let query = $state('');
-	let notes = $state<string[]>([]);
-	let selected = $state<string | null>(null);
-	let showFilters = $state(false);
-	let visible = $state(PAGE);
-	let mapBBox = $state<BBox | null>(null);
-	let movedByUser = $state(false);
-	let focus = $state<BBox | null>(null);
-	/** tratti di sentiero toccati sulla mappa: se ne mostrano le informazioni (ADR 0012) */
-	let trailWays = $state<TrailWayProps[] | null>(null);
+	let welcome = $state(false);
+
+	const hour = new Date().getHours();
+	const greeting = hour < 12 ? 'Buongiorno' : hour < 18 ? 'Buon pomeriggio' : 'Buonasera';
+	const weekday = new Date().getDay();
+	const headline =
+		weekday >= 4 || weekday === 0
+			? 'Dove andiamo questo fine settimana?'
+			: 'Dove andiamo la prossima volta?';
+
+	const SHORTCUTS = [
+		{ label: 'Vicino a me', query: 'vicino=1' },
+		{ label: 'Mezza giornata', query: 'preset=mezza' },
+		{ label: 'Laghi', query: 'preset=laghi' },
+		{ label: 'Cime', query: 'preset=cima' },
+		{ label: 'Panoramiche', query: 'preset=panorama' },
+		{ label: 'Con bambini', query: 'preset=bambini' }
+	];
 
 	onMount(async () => {
 		try {
+			welcome = localStorage.getItem(WELCOME_KEY) !== 'visto';
+		} catch {
+			welcome = true;
+		}
+		try {
 			const res = await fetch(generatedAsset('data/esplora/index.json'));
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
-			items = ((await res.json()) as ExploreIndex).items;
+			items = ((await res.json()) as ExploreIndex).items.filter((i) => !i.hide);
 		} catch (err) {
-			loadError = `Elenco delle escursioni non disponibile (${err instanceof Error ? err.message : err}).`;
+			loadError = `Escursioni non disponibili (${err instanceof Error ? err.message : err}).`;
 		}
 	});
 
-	async function loadPlaces(): Promise<PlaceRow[]> {
-		if (places) return places;
-		try {
-			const res = await fetch(generatedAsset('data/esplora/luoghi.json'));
-			places = res.ok ? ((await res.json()).places as PlaceRow[]) : [];
-		} catch {
-			places = [];
-		}
-		return places;
-	}
-
-	const origin = $derived<[number, number] | null>(
-		filters.near ? [filters.near.lon, filters.near.lat] : null
+	const upcoming = $derived(
+		(items ?? [])
+			.filter((i) => i.fut && i.date)
+			.sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
+			.slice(0, 10)
 	);
-	const results = $derived(sortItems(filterItems(items, filters), sort, filters, origin));
-	const shown = $derived(results.slice(0, visible));
-	const points = $derived<MapPoint[]>(
-		results.flatMap((i) => (i.s ? [{ id: i.id, lon: i.s[0], lat: i.s[1], k: i.k }] : []))
+	const picks = $derived(
+		(items ?? [])
+			.filter((i) => i.ok && !i.fut)
+			.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+			.slice(0, 6)
 	);
-	const chips = $derived(chipsFor(filters));
-	const activeCount = $derived(chips.length);
-
-	// suggerimenti mentre si scrive: luoghi ed escursioni
-	const suggestions = $derived.by(() => {
-		const q = query.trim();
-		if (q.length < 2) return [];
-		const out: { label: string; detail: string; action: () => void }[] = [];
-		const lower = q.toLowerCase();
-		if (places) {
-			const seen: Record<string, true> = {};
-			for (const p of places) {
-				if (out.length >= 5) break;
-				if (!p[0].toLowerCase().includes(lower)) continue;
-				const key = `${p[0]}|${p[1]}`;
-				if (seen[key]) continue;
-				seen[key] = true;
-				out.push({
-					label: p[0],
-					detail: `${PLACE_KIND[p[1]] ?? 'luogo'}${p[4] ? ` · ${p[4]} m` : ''}`,
-					action: () => choosePlace(p)
-				});
-			}
-		}
-		const matching = items.filter((i) => !i.hide && textScore(i, q) === 1).slice(0, 5);
-		for (const i of matching)
-			// eslint-disable-next-line svelte/no-navigation-without-resolve -- hrefFor usa resolve()
-			out.push({ label: i.t, detail: i.src, action: () => goto(hrefFor(i)) });
-		return out;
-	});
+	const count = $derived(items?.length ?? 0);
 
 	function hrefFor(item: ExploreItem): string {
-		if (item.k === 'a') return resolve('/attivita/[id]', { id: item.id });
-		if (item.k === 'i') return resolve('/itinerario/[slug]', { slug: item.id });
-		return resolve('/sentiero/[id]', { id: item.id });
+		return item.k === 'a'
+			? resolve('/attivita/[id]', { id: item.id })
+			: resolve('/itinerario/[slug]', { slug: item.id });
 	}
 
-	function aroundBBox(lon: number, lat: number, km: number): BBox {
-		const dLat = km / 111;
-		const dLon = km / (111 * Math.cos((lat * Math.PI) / 180));
-		return [lon - dLon, lat - dLat, lon + dLon, lat + dLat];
+	function dismiss() {
+		welcome = false;
+		try {
+			localStorage.setItem(WELCOME_KEY, 'visto');
+		} catch {
+			// spazio locale non disponibile: l'avviso riappare alla prossima visita
+		}
 	}
 
-	function choosePlace(p: PlaceRow, km = 10) {
-		filters = { ...filters, near: { lon: p[2], lat: p[3], label: p[0], km }, area: null };
-		focus = aroundBBox(p[2], p[3], km);
-		query = '';
-		visible = PAGE;
-	}
-
-	async function submitSearch(e: SubmitEvent) {
+	function search(e: SubmitEvent) {
 		e.preventDefault();
-		const text = query.trim();
-		if (!text) return;
-		const before = JSON.stringify(filters);
-		const r = parseQuery(text, filters);
-		const nextNotes = [...r.unsupported];
-		let next = r.filters;
-		if (r.place) {
-			const found = resolvePlace(r.place.query, await loadPlaces());
-			if (found) {
-				next = {
-					...next,
-					near: { lon: found[2], lat: found[3], label: found[0], km: r.place.km },
-					area: null
-				};
-				focus = aroundBBox(found[2], found[3], r.place.km);
-				if (r.place.approx) nextNotes.push(r.place.approx);
-			} else nextNotes.push(`Luogo «${r.place.query}» non trovato nell'area pilota.`);
-		}
-		if (JSON.stringify(next) === before && !r.place) {
-			// nessun filtro riconosciuto: è una ricerca per nome (luogo o proposta)
-			const place = resolvePlace(text, await loadPlaces());
-			const named = items.some((i) => textScore(i, text) === 1);
-			if (!named && place) {
-				choosePlace(place);
-				return;
-			}
-			next = { ...next, text };
-		}
-		filters = next;
-		notes = nextNotes;
-		query = '';
-		visible = PAGE;
-	}
-
-	function togglePreset(id: string) {
-		const preset = PRESETS.find((p) => p.id === id)!;
-		if (preset.active(filters)) {
-			const reset: Record<string, Chip['key'][]> = {
-				mezza: ['maxMinutes'],
-				intera: ['maxMinutes'],
-				bambini: ['maxMinutes', 'maxUp', 'diff:T', 'diff:E'],
-				panorama: ['tag:panorama'],
-				laghi: ['tag:lago'],
-				cima: ['tag:cima']
-			};
-			filters = reset[id].reduce((f, key) => removeChip(f, key), filters);
-		} else filters = preset.apply(filters);
-		visible = PAGE;
-	}
-
-	function removeFilter(key: Chip['key']) {
-		filters = removeChip(filters, key);
-		if (key === 'near' || key === 'text') notes = [];
-		visible = PAGE;
-	}
-
-	function searchHere() {
-		if (!mapBBox) return;
-		filters = { ...filters, area: mapBBox, near: null };
-		movedByUser = false;
-		visible = PAGE;
-	}
-
-	async function selectItem(id: string, scroll = true) {
-		selected = id;
-		const i = results.findIndex((r) => r.id === id);
-		if (i >= visible) visible = i + 1;
-		if (!scroll) return;
-		await tick();
-		document
-			.querySelector(`.lista [data-id="${CSS.escape(id)}"]`)
-			?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-	}
-
-	function onTrailClick(ways: TrailWayProps[]) {
-		trailWays = ways;
+		const q = query.trim();
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso da resolve() con parametri
+		goto(`${resolve('/mappa')}${q ? `?q=${encodeURIComponent(q)}` : ''}`);
 	}
 </script>
 
-<svelte:head>
-	<title>Esplora – Cordata</title>
-	<meta
-		name="description"
-		content="Escursioni delle sezioni CAI e SAT in Trentino-Alto Adige e Dolomiti venete, dalle loro locandine: filtri, mappa dei sentieri e schede."
-	/>
-</svelte:head>
+<svelte:head><title>Cordata – escursioni in Trentino-Alto Adige e Dolomiti</title></svelte:head>
 
-<div class="esplora">
-	<div class="mappa">
-		<MapView
-			label="Mappa delle escursioni"
-			legend={['escursioni']}
-			{points}
-			{selected}
-			{focus}
-			onPointClick={(id) => selectItem(id)}
-			onMoveEnd={(b, byUser) => {
-				mapBBox = b;
-				if (byUser) movedByUser = true;
-			}}
-			{onTrailClick}
+<div class="pagina scopri">
+	<p class="hello">{greeting}</p>
+	<h1>{headline}</h1>
+
+	<form class="search" role="search" onsubmit={search}>
+		<Icon name="cerca" size={20} />
+		<input
+			type="search"
+			bind:value={query}
+			placeholder="Cima, rifugio, valle o «facile con lago»"
+			aria-label="Cerca un'escursione"
+			enterkeyhint="search"
 		/>
-		{#if movedByUser}
-			<button type="button" class="qui" onclick={searchHere}>Cerca in quest'area</button>
-		{/if}
-		{#if trailWays}
-			<div class="info-sentiero">
-				<TrailInfo ways={trailWays} onclose={() => (trailWays = null)} />
+	</form>
+
+	<nav class="chips" aria-label="Scorciatoie">
+		{#each SHORTCUTS as s (s.label)}
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso da resolve() con parametri -->
+			<a class="chip" href={`${resolve('/mappa')}?${s.query}`}>{s.label}</a>
+		{/each}
+	</nav>
+
+	{#if welcome}
+		<aside class="welcome">
+			<span class="shield"><Icon name="affidabile" size={30} stroke={2.2} /></span>
+			<div>
+				<b>Solo escursioni affidabili</b>
+				<p>
+					Le gite vengono dalle locandine delle sezioni CAI. La traccia la ricostruiamo noi e la
+					confrontiamo con la locandina: pubblichiamo solo quelle che coincidono.
+				</p>
+				<div class="actions">
+					<a href={resolve('/fonti')}>Come funziona</a>
+					<button type="button" onclick={dismiss}>Ho capito</button>
+				</div>
 			</div>
+		</aside>
+	{/if}
+
+	{#if loadError}
+		<p class="errore" role="alert">{loadError}</p>
+	{:else if !items}
+		<p class="nota">Caricamento…</p>
+	{:else}
+		{#if upcoming.length}
+			<section aria-labelledby="programma">
+				<div class="sec">
+					<h2 id="programma">In programma con il CAI</h2>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- percorso da resolve() con parametri -->
+					<a href={`${resolve('/mappa')}?futuro=1`}>Vedi tutte</a>
+				</div>
+				<div class="carousel">
+					{#each upcoming as item (item.id)}<HikeCard {item} href={hrefFor(item)} />{/each}
+				</div>
+			</section>
 		{/if}
-	</div>
+		<section aria-labelledby="itinerari">
+			<div class="sec">
+				<h2 id="itinerari">Itinerari verificati</h2>
+				<a href={resolve('/mappa')}>Tutte le {count}</a>
+			</div>
+			{#each picks as item (item.id)}<HikeRow {item} href={hrefFor(item)} />{/each}
+		</section>
+	{/if}
 
-	<section class="pannello-lista" aria-label="Escursioni">
-		<form class="cerca" role="search" onsubmit={submitSearch}>
-			<label class="sr" for="q">Cerca un luogo o descrivi la gita</label>
-			<input
-				id="q"
-				type="search"
-				bind:value={query}
-				onfocus={loadPlaces}
-				placeholder="Luogo, gita o «anello di 4 ore con un lago»"
-				autocomplete="off"
-				enterkeyhint="search"
-			/>
-			<button type="submit">Cerca</button>
-			{#if suggestions.length}
-				<ul class="suggerimenti" role="listbox" aria-label="Suggerimenti">
-					{#each suggestions as s, i (i)}
-						<li role="option" aria-selected="false">
-							<button type="button" onclick={s.action}
-								><strong>{s.label}</strong> <span>{s.detail}</span></button
-							>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-		</form>
-
-		<div class="preset" role="group" aria-label="Preset rapidi">
-			{#each PRESETS as p (p.id)}
-				<button type="button" aria-pressed={p.active(filters)} onclick={() => togglePreset(p.id)}
-					>{p.label}</button
-				>
-			{/each}
-		</div>
-
-		<div class="attivi">
-			<button type="button" class="filtri" onclick={() => (showFilters = true)}>
-				Filtri{#if activeCount}
-					({activeCount}){/if}
-			</button>
-			{#each chips as chip (chip.key)}
-				<button
-					type="button"
-					class="chip"
-					onclick={() => removeFilter(chip.key)}
-					aria-label="Togli il filtro {chip.label}">{chip.label} ✕</button
-				>
-			{/each}
-		</div>
-		{#each notes as n (n)}<p class="nota">{n}</p>{/each}
-
-		<div class="intestazione">
-			<p aria-live="polite">
-				{#if loadError}{loadError}{:else if !items.length}Carico le escursioni…{:else}<strong
-						>{results.length}</strong
-					>
-					{results.length === 1 ? 'escursione' : 'escursioni'} delle sezioni CAI{/if}
-			</p>
-			<label
-				>Ordina <select bind:value={sort}>
-					<option value="rilevanza">rilevanza</option>
-					<option value="distanza" disabled={!origin}>distanza</option>
-					<option value="durata">durata</option>
-					<option value="dislivello">dislivello</option>
-					<option value="data">data</option>
-				</select></label
-			>
-		</div>
-
-		<ul class="lista">
-			{#each shown as item (item.id)}
-				<li>
-					<ResultCard
-						{item}
-						href={hrefFor(item)}
-						selected={item.id === selected}
-						distanceKm={origin && item.s ? haversineKm(item.s, origin) : null}
-						onfocusitem={(id) => selectItem(id, false)}
-					/>
-				</li>
-			{/each}
-		</ul>
-		{#if results.length > visible}
-			<button type="button" class="altri" onclick={() => (visible += PAGE)}
-				>Mostra altre {Math.min(PAGE, results.length - visible)}</button
-			>
-		{/if}
-		<p class="fonti">
-			Escursioni: sintesi delle locandine delle sezioni CAI e SAT, con link agli originali; tracce
-			ricostruite (tratteggiate se non verificate). Mappa: sentieri del catasto CAI (OSM2CAI) e ©
-			OpenStreetMap (ODbL); tocca un sentiero per vederne le informazioni. <a
-				href={resolve('/fonti')}>Fonti e licenze</a
-			>
-		</p>
-	</section>
+	<p class="fonti">
+		Dati aperti: OpenStreetMap, catasto sentieri CAI (INFOMONT), locandine delle sezioni CAI.
+		<a href={resolve('/fonti')}>Fonti e licenze</a>
+	</p>
 </div>
 
-{#if showFilters}
-	<button
-		type="button"
-		class="velo"
-		aria-label="Chiudi i filtri"
-		onclick={() => (showFilters = false)}
-	></button>
-	<FiltersPanel
-		bind:filters
-		count={results.length}
-		sections={sectionsIn(items)}
-		onclose={() => (showFilters = false)}
-	/>
-{/if}
-
 <style>
-	.info-sentiero {
-		position: absolute;
-		left: 0.6rem;
-		right: 3.4rem;
-		bottom: 2rem;
-		max-height: calc(100% - 3rem);
+	.scopri {
+		padding-bottom: 2rem;
+	}
+	.hello {
+		margin: 0.6rem 0 0.15rem;
+		color: var(--muted);
+	}
+	h1 {
+		font-size: 1.95rem;
+		margin: 0;
+		max-width: 22rem;
+	}
+	.search {
 		display: flex;
-		z-index: 3;
+		align-items: center;
+		gap: 0.6rem;
+		height: 3.1rem;
+		margin: 1rem 0 0.75rem;
+		padding: 0 0.9rem;
+		border-radius: 16px;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		box-shadow: var(--shadow);
+		color: var(--muted);
 	}
-	@media (min-width: 900px) {
-		.info-sentiero {
-			right: auto;
-			width: 360px;
-		}
-	}
-	.esplora {
-		display: grid;
-		/* minmax(0, …): la riga dei preset scorre in orizzontale invece di allargare la pagina */
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: 44dvh auto;
-	}
-	@media (min-width: 900px) {
-		.esplora {
-			grid-template-rows: none;
-			grid-template-columns: 420px minmax(0, 1fr);
-			/* intestazione (≈ 65 px) e barra di navigazione (≈ 57 px) del layout */
-			height: calc(100dvh - 122px);
-		}
-		.pannello-lista {
-			order: -1;
-			overflow-y: auto;
-			min-height: 0;
-		}
-	}
-	.mappa {
-		position: relative;
-		min-height: 260px;
-	}
-	.qui {
-		position: absolute;
-		top: 0.75rem;
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 2;
-		min-height: 44px;
-		padding: 0 1rem;
-		border-radius: 999px;
-		border: none;
-		background: var(--accent);
-		color: #fff;
-		font: inherit;
-		font-weight: 700;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-		cursor: pointer;
-	}
-	.pannello-lista {
-		padding: 0.75rem 1rem 1.5rem;
-		min-width: 0;
-	}
-	.cerca {
-		position: relative;
-		display: flex;
-		gap: 0.5rem;
-	}
-	.cerca input {
+	.search input {
 		flex: 1;
 		min-width: 0;
-		min-height: 44px;
-		padding: 0 0.8rem;
-		border: 1px solid var(--border);
-		border-radius: 10px;
-		font: inherit;
-		background: var(--surface);
-		color: inherit;
+		border: 0;
+		background: transparent;
+		color: var(--text);
+		font: 400 1rem var(--font-body);
+		outline: none;
+		height: 100%;
 	}
-	.cerca > button,
-	.filtri,
-	.altri {
-		min-height: 44px;
-		padding: 0 1rem;
-		border-radius: 10px;
-		border: 1px solid var(--border);
-		background: var(--surface);
-		color: inherit;
-		font: inherit;
-		font-weight: 600;
-		cursor: pointer;
-	}
-	.suggerimenti {
-		position: absolute;
-		top: calc(100% + 4px);
-		left: 0;
-		right: 0;
-		z-index: 20;
-		list-style: none;
-		margin: 0;
-		padding: 0.25rem;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: 10px;
-		box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-	}
-	.suggerimenti button {
-		width: 100%;
-		text-align: left;
-		min-height: 44px;
-		border: none;
-		background: none;
-		color: inherit;
-		font: inherit;
-		padding: 0.3rem 0.5rem;
-		cursor: pointer;
-		border-radius: 8px;
-	}
-	.suggerimenti button:hover {
-		background: color-mix(in srgb, var(--accent) 10%, transparent);
-	}
-	.suggerimenti span {
-		color: var(--muted);
-		font-size: 0.85rem;
-	}
-	.preset,
-	.attivi {
+	.chips {
 		display: flex;
-		gap: 0.4rem;
+		gap: 0.5rem;
 		overflow-x: auto;
-		padding: 0.6rem 0 0.1rem;
+		margin: 0 -1.1rem;
+		padding: 0 1.1rem 0.2rem;
 		scrollbar-width: none;
 	}
-	.attivi {
-		flex-wrap: wrap;
-		overflow: visible;
-	}
-	.preset button,
 	.chip {
 		flex: none;
-		min-height: 40px;
+		display: inline-flex;
+		align-items: center;
+		height: 2.4rem;
 		padding: 0 0.85rem;
 		border-radius: 999px;
-		border: 1px solid var(--border);
-		background: var(--surface);
-		color: inherit;
-		font: inherit;
-		font-size: 0.92rem;
+		background: var(--chip);
+		color: var(--text);
+		font: 500 0.9rem var(--font-body);
+		text-decoration: none;
+	}
+	.chip:first-child {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+	.welcome {
+		display: flex;
+		gap: 0.8rem;
+		margin-top: 1rem;
+		padding: 0.95rem;
+		border-radius: var(--r-lg);
+		background: var(--brand-soft);
+	}
+	.shield {
+		color: var(--accent);
+	}
+	.welcome p {
+		margin: 0.15rem 0 0.5rem;
+		font-size: 0.88rem;
+	}
+	.actions {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+	.actions a,
+	.actions button {
+		font: 600 0.9rem var(--font-body);
+		min-height: 44px;
+		display: inline-flex;
+		align-items: center;
+	}
+	.actions a {
+		text-decoration: none;
+	}
+	.actions button {
+		border: 0;
+		background: none;
+		color: var(--muted);
+		padding: 0;
 		cursor: pointer;
 	}
-	.preset button[aria-pressed='true'],
-	.chip {
-		background: color-mix(in srgb, var(--accent) 14%, var(--surface));
-		border-color: var(--accent);
-	}
-	.intestazione {
+	.sec {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
-		gap: 0.5rem;
-		margin-top: 0.5rem;
+		align-items: baseline;
+		margin: 1.5rem 0 0.6rem;
 	}
-	.intestazione select {
-		min-height: 40px;
-		font: inherit;
+	.sec h2 {
+		font-size: 1.3rem;
+		margin: 0;
 	}
-	.lista {
-		list-style: none;
-		padding: 0;
-		margin: 0.25rem 0 0;
-		display: grid;
-		gap: 0.6rem;
+	.sec a {
+		font: 600 0.9rem var(--font-body);
+		text-decoration: none;
 	}
-	.altri {
-		width: 100%;
-		margin-top: 0.75rem;
+	.carousel {
+		display: flex;
+		gap: 0.75rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		margin: 0 -1.1rem;
+		padding: 0 1.1rem 0.4rem;
+		scroll-padding: 0 1.1rem;
+		scrollbar-width: none;
 	}
 	.nota,
 	.fonti {
 		color: var(--muted);
-		font-size: 0.85rem;
-		margin: 0.4rem 0 0;
 	}
 	.fonti {
-		margin-top: 1rem;
+		margin-top: 2rem;
+		font-size: 0.8rem;
 	}
-	.velo {
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.35);
-		border: none;
-		z-index: 40;
-	}
-	.sr {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip: rect(0 0 0 0);
+	.errore {
+		color: #b42318;
 	}
 </style>

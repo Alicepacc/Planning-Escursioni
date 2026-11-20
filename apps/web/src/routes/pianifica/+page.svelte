@@ -686,8 +686,8 @@
 			</div>
 			{#if !plan.points.length}
 				<p class="invito">
-					Non sai dove andare? Guarda le <a href={resolve('/')}>escursioni delle sezioni CAI</a>,
-					oppure
+					Non sai dove andare? Guarda le <a href={resolve('/mappa')}>escursioni delle sezioni CAI</a
+					>, oppure
 					<button type="button" class="link" onclick={openGenerator}
 						>componi un giro automaticamente</button
 					>.

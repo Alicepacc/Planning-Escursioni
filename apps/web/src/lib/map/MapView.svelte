@@ -46,6 +46,8 @@
 		onReady?: (map: MlMap, lib: typeof import('maplibre-gl')) => void;
 		/** sezioni della legenda oltre a sentieri e luoghi */
 		legend?: ('escursioni' | 'percorso' | 'planner')[];
+		/** margini per inquadrare (per esempio sopra un foglio che copre la parte bassa della mappa) */
+		padding?: number | { top: number; bottom: number; left: number; right: number };
 	}
 
 	let {
@@ -63,7 +65,8 @@
 		onMoveEnd,
 		focus = null,
 		onReady,
-		legend = []
+		legend = [],
+		padding = 32
 	}: Props = $props();
 
 	let container: HTMLDivElement;
@@ -140,7 +143,7 @@
 				container,
 				style,
 				bounds,
-				fitBoundsOptions: { padding: 32 },
+				fitBoundsOptions: { padding },
 				attributionControl: false,
 				maxPitch: 60
 			});
@@ -265,7 +268,7 @@
 
 	// inquadratura richiesta dalla pagina
 	$effect(() => {
-		if (ready && map && focus) map.fitBounds(focus, { padding: 40, maxZoom: 14, duration: 600 });
+		if (ready && map && focus) map.fitBounds(focus, { padding, maxZoom: 14, duration: 600 });
 	});
 
 	// traccia evidenziata

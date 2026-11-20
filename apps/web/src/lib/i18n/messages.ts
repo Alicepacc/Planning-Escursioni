@@ -7,6 +7,8 @@ const it = {
 	'app.name': 'Cordata',
 	'app.tagline': 'Escursioni in montagna, con dati aperti',
 	'nav.explore': 'Esplora',
+	'nav.discover': 'Scopri',
+	'nav.map': 'Mappa',
 	'nav.plan': 'Pianifica',
 	'nav.outings': 'Uscite',
 	'nav.profile': 'Profilo',
@@ -25,6 +27,8 @@ export type MessageKey = keyof typeof it;
 const de: Partial<Record<MessageKey, string>> = {
 	'app.tagline': 'Bergwanderungen mit offenen Daten',
 	'nav.explore': 'Entdecken',
+	'nav.discover': 'Entdecken',
+	'nav.map': 'Karte',
 	'nav.plan': 'Planen',
 	'nav.outings': 'Touren',
 	'nav.profile': 'Profil',
@@ -35,6 +39,8 @@ const de: Partial<Record<MessageKey, string>> = {
 const en: Partial<Record<MessageKey, string>> = {
 	'app.tagline': 'Mountain hikes, built on open data',
 	'nav.explore': 'Explore',
+	'nav.discover': 'Discover',
+	'nav.map': 'Map',
 	'nav.plan': 'Plan',
 	'nav.outings': 'Outings',
 	'nav.profile': 'Profile',

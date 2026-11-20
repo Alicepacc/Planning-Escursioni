@@ -124,6 +124,29 @@ def tags_from_names(names: list[str]) -> set[str]:
     return out
 
 
+def silhouette(line: list[list[float]], max_points: int = 40) -> list[list[float]]:
+    """Traccia semplificata per le miniature delle schede (forma del giro, non navigazione)."""
+    from shapely.geometry import LineString
+
+    if len(line) < 2:
+        return []
+    geom = LineString([(p[0], p[1]) for p in line])
+    # senza preservare la topologia: le andate e ritorno si sovrappongono a sé stesse e con la
+    # topologia preservata non si semplificherebbero mai
+    tolerance = 0.0004
+    simple = geom.simplify(tolerance, preserve_topology=False)
+    for _ in range(25):
+        if len(simple.coords) <= max_points:
+            break
+        tolerance *= 1.6
+        simple = geom.simplify(tolerance, preserve_topology=False)
+    coords = list(simple.coords)
+    if len(coords) > max_points:  # ultima difesa: campionamento regolare
+        step = len(coords) / max_points
+        coords = [coords[int(i * step)] for i in range(max_points - 1)] + [coords[-1]]
+    return [[round(x, 4), round(y, 4)] for x, y in coords]
+
+
 def _minutes(duration: str | None) -> int | None:
     if not duration:
         return None
@@ -185,6 +208,7 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
                 "s": [round(x, 5) for x in doc["line"][0]] if doc["line"] else _start(doc),
                 "b": doc["bbox"],
                 "p": mini_profile(doc["profile"]["points"]) if verified else [],
+                "ln": silhouette(doc["line"]) if doc["line"] else [],
                 "ok": verified,
                 **({} if doc["line"] else {"nt": True}),
                 # deduplica (§7.5): altre proposte dello stesso itinerario, membri nascosti
@@ -247,6 +271,7 @@ def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
             "min": "tempo in minuti (dichiarato o calcolato, senza soste)",
             "mo": "mesi consigliati, indicativi (dalla quota massima)",
             "p": f"mini-profilo: {PROFILE_SAMPLES} quote equidistanti",
+            "ln": "forma della traccia per le miniature (al massimo 40 punti, lon/lat)",
             "tag": "luoghi OSM vicini alla traccia",
         },
         "items": items,

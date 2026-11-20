@@ -1,4 +1,5 @@
-// Scala di difficoltà CAI: sempre lettera + colore, mai solo colore (SPEC §9.6).
+// Scala di difficoltà CAI: sempre lettera + colore, mai solo colore (SPEC §9.6). Colori come le
+// piste da sci (ADR 0015): T verde, E blu, EE rosso, EEA nero, EAI viola.
 import type { CaiScale } from '../data/types';
 
 export interface ScaleInfo {
@@ -15,34 +16,34 @@ export const CAI_SCALES: Record<CaiScale, ScaleInfo> = {
 		label: 'Turistico',
 		description:
 			'Stradine, mulattiere o sentieri comodi e ben evidenti, senza problemi di orientamento.',
-		color: '#2f7a4f'
+		color: '#2e7d32'
 	},
 	E: {
 		code: 'E',
 		label: 'Escursionistico',
 		description:
 			'Sentieri o tracce su terreno vario; servono allenamento, senso di orientamento e calzature adatte.',
-		color: '#c0392b'
+		color: '#1f6fb2'
 	},
 	EE: {
 		code: 'EE',
 		label: 'Escursionisti esperti',
 		description:
 			'Terreno impegnativo: pendii ripidi, tratti rocciosi o ghiaioni. Servono passo sicuro, assenza di vertigini ed esperienza.',
-		color: '#6a3fb5'
+		color: '#c62828'
 	},
 	EEA: {
 		code: 'EEA',
 		label: 'Esperti con attrezzatura',
 		description: 'Percorsi attrezzati o vie ferrate: servono imbrago, set da ferrata e casco.',
-		color: '#1f2933'
+		color: '#1e1e1e'
 	},
 	EAI: {
 		code: 'EAI',
 		label: 'Escursionismo in ambiente innevato',
 		description:
 			'Itinerari con racchette da neve su terreno innevato: servono ARTVA, pala e sonda e la lettura del bollettino valanghe.',
-		color: '#1d5f8f'
+		color: '#6a4fb3'
 	}
 };
 
