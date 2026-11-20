@@ -348,6 +348,9 @@ def parse_distance(doc: Doc) -> Field:
         ),
         (r"(?:sviluppo|distanza)(?:\s+totale)?\s*:?\s*(?:km\.?\s*)(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"(\d{1,2}(?:[.,]\d{1,2})?)\s*km\s*(?:di\s*)?(?:distanza|sviluppo)", 0.85),
+        # schede CAI Belluno: «km tot.: 11.1 Km», «Km totali: 13 km», «Km e dislivello: 11 km…»
+        (r"\bkm\.?\s*(?:tot\.?|totali|complessivi)\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)\b", 0.85),
+        (r"\bkm e dislivell\w*\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)\s*km", 0.9),
         (r"dislivell[^\n]*\bkm\.?\s*(\d{1,2}(?:[.,]\d{1,2})?)\b", 0.8),
         (r"^km\s*:?\s*(\d{1,2}(?:[.,]\d{1,2})?)", 0.9),
         (r"^sviluppo$", 0.0),
@@ -388,6 +391,13 @@ def parse_elevation_gain(doc: Doc) -> tuple[Field, Field]:
             val = _num(m.group(1))
             return Field(val, 0.9, _cite(line), page), Field(val, 0.9, _cite(line), page)
     up = down = None
+    # «Km e dislivello: 11 km, +1300 m» (schede CAI Belluno)
+    hit = doc.find(
+        rf"\bkm e dislivell\w*\s*:?\s*\d{{1,2}}(?:[.,]\d{{1,2}})?\s*km\s*,?\s*\+?\s*{v}\s*m"
+    )
+    if hit:
+        m, page, line = hit
+        return Field(_num(m.group(1)), 0.85, _cite(line), page), Field(None, 0.0)
     # nei programmi: «700 md+», «921 md-», «D+ 2400m», «DISL. m. 900 ca»
     md_up = (
         doc.find(rf"\+?\s*{v}\s*md\+")

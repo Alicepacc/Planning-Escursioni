@@ -134,3 +134,13 @@ def test_elenco_delle_tappe_dopo_itinerario():
     out = extract_points("Itinerario: Casotto, Belfiore, Luserna, Casotto.\nNote: pranzo al sacco")
     assert [p["nome"] for p in out["punti"]] == ["Casotto", "Belfiore", "Luserna"]
     assert out["anello"]
+
+
+def test_distanza_e_salita_nelle_schede_cai_belluno():
+    from cordata_ingest.activities.parse import Doc, parse_distance, parse_elevation_gain
+
+    doc = Doc([(1, "Difficoltà: E\nkm tot.: 11.1 Km\nDislivello tot.: +1100m")])
+    assert parse_distance(doc).value == 11.1
+    doc = Doc([(1, "Km e dislivello: 11 km, +1300 m\nGalleria (disl. 120m - lunghezza 500m)")])
+    assert parse_distance(doc).value == 11
+    assert parse_elevation_gain(doc)[0].value == 1300
