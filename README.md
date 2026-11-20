@@ -4,7 +4,8 @@ Progressive Web App mobile-first per programmare escursioni in montagna con soli
 proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite di gruppo, meteo
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
-**Stato: Fase 5 (uscite di gruppo) completata e pubblicata il 20/11/2026.** Pilota della
+**Stato: Fase 5 (uscite di gruppo) completata e pubblicata il 20/11/2026; Fase 6 in pausa per
+il catalogo Dolomiti e Prealpi e il rifacimento della UI ([ADR 0015](docs/decisions/0015-catalogo-dolomiti-affidabilita-e-ui.md)).** Pilota della
 Fase 2 approvato il 16/11/2026. In corso i blocchi di ingestion delle locandine (89 escursioni
 in app). Demo: <https://alicepacc.github.io/Planning-Escursioni/>; servizio delle uscite:
 `https://cordata-uscite.cordata.workers.dev`.
