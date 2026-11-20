@@ -4,6 +4,7 @@ python -m cordata_ingest.activities discover   # metadati dei PDF delle sezioni 
 python -m cordata_ingest.activities archive    # scarica i candidati del pilota
 python -m cordata_ingest.activities extract    # testo (OCR se serve), dati personali rimossi
 python -m cordata_ingest.activities gazetteer  # luoghi OSM con nome per la geocodifica
+python -m cordata_ingest.activities prefiltro  # dal titolo, i documenti da scaricare (ADR 0015)
 """
 
 from __future__ import annotations
@@ -25,9 +26,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     arc = sub.add_parser("archive", help="scarica i PDF candidati nell'archivio privato")
     arc.add_argument("--candidati", type=Path, help="file YAML dei candidati (default: pilota)")
+    arc.add_argument(
+        "--riprendi", action="store_true", help="salta i documenti già scaricati senza errori"
+    )
     ext = sub.add_parser("extract", help="estrae il testo dei PDF archiviati")
     ext.add_argument("ids", nargs="*", help="solo questi documenti (default: tutti)")
     sub.add_parser("gazetteer", help="carica in PostGIS i luoghi OSM con nome (geocodifica)")
+    pre = sub.add_parser(
+        "prefiltro", help="sceglie dal titolo i documenti da scaricare per il catalogo (ADR 0015)"
+    )
+    pre.add_argument("--out", type=Path, help="file YAML dei candidati (default: in data/)")
     sub.add_parser("sat-siti", help="cerca i siti delle sezioni SAT (solo la home di ciascuno)")
     sub.add_parser("cai-veneto-siti", help="cerca i siti delle sezioni CAI del Veneto (solo home)")
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
@@ -51,9 +59,34 @@ def main(argv: list[str] | None = None) -> int:
         from .archive import archive, load_candidates
 
         with PoliteClient(timeout=60) as client:
-            manifest = archive(client, load_candidates(args.candidati))
+            manifest = archive(client, load_candidates(args.candidati), resume=args.riprendi)
         errors = {k: v["error"] for k, v in manifest.items() if "error" in v}
         print(f"{len(manifest)} documenti, {len(errors)} errori", errors or "")
+    elif args.cmd == "prefiltro":
+        import json
+
+        import yaml
+
+        from ..config import data_dir
+        from .archive import raw_dir
+        from .prefilter import build_names, candidates
+
+        index = json.loads((data_dir() / "activities" / "index.json").read_text(encoding="utf-8"))
+        manifest_path = raw_dir() / "manifest.json"
+        already = (
+            {v["url"] for v in json.loads(manifest_path.read_text(encoding="utf-8")).values()}
+            if manifest_path.exists()
+            else set()
+        )
+        inside, outside = build_names()
+        items, counts = candidates(index, already, inside, outside)
+        out = args.out or data_dir() / "activities" / "candidati-catalogo.yaml"
+        out.write_text(
+            "# Candidati del catalogo (ADR 0015), dal prefiltro sul titolo: dentro e incerti.\n"
+            + yaml.safe_dump({"candidates": items}, allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+        print(counts, f"da scaricare: {len(items)}", out)
     elif args.cmd == "extract":
         from .extract import extract_all
 

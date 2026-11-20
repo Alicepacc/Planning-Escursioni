@@ -42,7 +42,10 @@ def raw_path(candidate: dict[str, Any], base: Path | None = None) -> Path:
 
 
 def archive(
-    client: PoliteClient, candidates: list[dict[str, Any]], base: Path | None = None
+    client: PoliteClient,
+    candidates: list[dict[str, Any]],
+    base: Path | None = None,
+    resume: bool = False,
 ) -> dict[str, Any]:
     """Scarica i candidati nell'archivio privato e aggiorna il manifest."""
     base = base or raw_dir()
@@ -55,6 +58,10 @@ def archive(
         client.host_intervals.setdefault(urlsplit(c["url"]).netloc, HOST_INTERVAL_S)
     for c in candidates:
         dest = raw_path(c, base)
+        done = manifest.get(c["id"], {})
+        # ripresa di uno scarico interrotto: quello che c'è già non si richiede
+        if resume and dest.exists() and "error" not in done and done.get("url") == c["url"]:
+            continue
         entry: dict[str, Any] = {
             "section": c["section"],
             "url": c["url"],

@@ -8,9 +8,9 @@ la maggior parte della sua traccia o, senza traccia, la partenza e i punti chiav
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
-from typing import Iterable
 
 from shapely.geometry import Point, shape
 from shapely.prepared import prep
