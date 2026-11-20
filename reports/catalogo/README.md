@@ -135,7 +135,7 @@ Esiti sul lotto completo (tutti i documenti con il testo, rielaborati da capo):
 | Fuori area | 101 | 18 |
 | **Totale** | **3.448** | **1.433** |
 
-Nell'app: **224** escursioni da 80 in su (181 dal catalogo, le altre rivedute a mano), con
+Nell'app: **228** escursioni da 80 in su (185 dal catalogo, le altre rivedute a mano), con
 i doppioni dello stesso percorso fusi in gruppi.
 
 Controllo a campione (`campione-lotto-3.jpg`, 12 a caso tra le nuove): dieci tracce plausibili;
