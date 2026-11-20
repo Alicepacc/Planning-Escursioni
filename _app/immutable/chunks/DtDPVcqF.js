@@ -1,0 +1,1 @@
+function e(){if(typeof document>`u`)return 0;let e=document.createElement(`div`);e.style.cssText=`position:absolute;visibility:hidden;padding-top:env(safe-area-inset-top)`,document.body.appendChild(e);let t=parseFloat(getComputedStyle(e).paddingTop)||0;return e.remove(),t}export{e as t};

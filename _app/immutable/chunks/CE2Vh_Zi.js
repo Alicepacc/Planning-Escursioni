@@ -1,0 +1,1 @@
+import{t as e}from"./CfPUzq0R.js";import"./CztO_25Y.js";function t(t){return e(t.replace(/^\//,``))}export{t};

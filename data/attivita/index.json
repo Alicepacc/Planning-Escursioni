@@ -1,0 +1,1826 @@
+[
+ {
+  "id": "2026-08-01-escursione-al-bivacco-bedin-alpago",
+  "title": "Escursione al Bivacco Bedin",
+  "section": "CAI Alpago",
+  "date": "2026-08-01",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-20-anello-rifugio-fonda-savio-e-forcella-rinbianco-alpago",
+  "title": "Anello Rifugio Fonda Savio e Forcella Rinbianco",
+  "section": "CAI Alpago",
+  "date": "2026-06-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-26-anello-dei-4-rifugi-alpago",
+  "title": "Anello dei 4 rifugi",
+  "section": "CAI Alpago",
+  "date": "2026-09-26",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-27-escursioni-in-val-ombretta-alpago",
+  "title": "Escursioni in Val Ombretta",
+  "section": "CAI Alpago",
+  "date": "2026-06-27",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-10-rifugio-bianchet-al-pian-dei-gat-belluno",
+  "title": "Rifugio Bianchet al Pian dei Gat",
+  "section": "CAI Belluno",
+  "date": "2026-09-10",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-04-26-corno-di-tres-traversata-da-favogna-di-sopra-al-rifugio-sore-bressanone",
+  "title": "Corno di Tres – traversata da Favogna di Sopra al Rifugio Sores",
+  "section": "CAI Bressanone",
+  "date": "2026-04-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-12-ferrata-piz-da-peres-bressanone",
+  "title": "Ferrata Piz da Peres",
+  "section": "CAI Bressanone",
+  "date": "2026-07-12",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-19-valle-aurina-rifugio-giogo-lungo-bressanone",
+  "title": "Valle Aurina – Rifugio Giogo Lungo",
+  "section": "CAI Bressanone",
+  "date": "2026-07-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-04-bec-de-roces-e-lago-di-boe-brunico",
+  "title": "Bec de Roces e Lago di Boè",
+  "section": "CAI Brunico",
+  "date": "2026-10-04",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-11-traversata-sare-pederu-dolomiti-di-fanes-brunico",
+  "title": "Traversata Sarè – Pederü (Dolomiti di Fanes)",
+  "section": "CAI Brunico",
+  "date": "2026-10-11",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-09-chiusa-albions-gudon-brunico",
+  "title": "Chiusa – Albions – Gudon",
+  "section": "CAI Brunico",
+  "date": "2026-09-09",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-30-taibon-agordino-giro-ad-anello-feltre",
+  "title": "Taibon Agordino – giro ad anello",
+  "section": "CAI Feltre",
+  "date": "2026-09-30",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-14-col-visentin-feltre",
+  "title": "Col Visentin",
+  "section": "CAI Feltre",
+  "date": "2026-10-14",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-11-08-alle-pendici-delle-vette-feltrine-feltre",
+  "title": "Alle pendici delle Vette Feltrine",
+  "section": "CAI Feltre",
+  "date": "2026-11-08",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-23-lastoi-de-formin-traversata-da-ponte-rucurto-a-santa-fosca-feltre",
+  "title": "Lastoi de Formin – traversata da Ponte Rucurto a Santa Fosca",
+  "section": "CAI Feltre",
+  "date": "2026-08-23",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-26-puez-odle-traversata-da-la-villa-a-longiaru-feltre",
+  "title": "Puez-Odle – traversata da La Villa a Longiarù",
+  "section": "CAI Feltre",
+  "date": "2026-07-26",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-20-salita-alla-cima-delle-stellune-feltre",
+  "title": "Salita alla cima delle Stellune",
+  "section": "CAI Feltre",
+  "date": "2026-09-20",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-05-15-cima-nara-sat-cavalese",
+  "title": "Cima Nara",
+  "section": "SAT Cavalese",
+  "date": "2022-05-15",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-05-31-giro-dei-5-laghi-sat-ledrense",
+  "title": "Giro dei 5 laghi",
+  "section": "SAT Ledrense",
+  "date": "2026-05-31",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-13-giro-dei-laghi-del-cevedale-sat-ledrense",
+  "title": "Giro dei laghi del Cevedale",
+  "section": "SAT Ledrense",
+  "date": "2026-09-13",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-09-14-gita-giovanile-monte-altissimo-sat-ledrense",
+  "title": "Gita giovanile – Monte Altissimo",
+  "section": "SAT Ledrense",
+  "date": "2025-09-14",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-09-28-gita-sociale-carega-sat-ledrense",
+  "title": "Gita sociale – Carega",
+  "section": "SAT Ledrense",
+  "date": "2025-09-28",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-01-villamontagna-cima-calisio-lago-di-santa-colomba-fornace-sat-mori",
+  "title": "Villamontagna, Cima Calisio, Lago di Santa Colomba, Fornace",
+  "section": "SAT Mori",
+  "date": "2026-03-01",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-28-san-martino-di-castrozza-rifugio-velo-della-madonna-sat-mori",
+  "title": "San Martino di Castrozza – Rifugio Velo della Madonna",
+  "section": "SAT Mori",
+  "date": "2026-06-28",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-26-cadini-di-misurina-sat-mori",
+  "title": "Cadini di Misurina",
+  "section": "SAT Mori",
+  "date": "2026-07-26",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-04-cima-di-san-cassiano-sat-pergine",
+  "title": "Cima di San Cassiano",
+  "section": "SAT Pergine",
+  "date": "2026-10-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-09-cima-vermoi-sat-pergine",
+  "title": "Cima Vermoi",
+  "section": "SAT Pergine",
+  "date": "2026-08-09",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-18-laghi-di-san-giuliano-sat-pergine",
+  "title": "Laghi di San Giuliano",
+  "section": "SAT Pergine",
+  "date": "2026-10-18",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-05-17-monte-altissimo-di-nago-e-rifugio-damiano-chiesa-sat-pergine",
+  "title": "Monte Altissimo di Nago e Rifugio Damiano Chiesa",
+  "section": "SAT Pergine",
+  "date": "2026-05-17",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-06-monte-mulaz-traversata-da-passo-valles-a-passo-rolle-sat-pergine",
+  "title": "Monte Mulaz – traversata da Passo Valles a Passo Rolle",
+  "section": "SAT Pergine",
+  "date": "2026-09-06",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-12-odle-di-eores-sentiero-attrezzato-gunther-messner-sat-pergine",
+  "title": "Odle di Eores – sentiero attrezzato Günther Messner",
+  "section": "SAT Pergine",
+  "date": "2026-07-12",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-08-ciaspolata-al-rifugio-vallaccia-bolzano",
+  "title": "Ciaspolata al Rifugio Vallaccia",
+  "section": "CAI Bolzano",
+  "date": "2026-03-08",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-04-12-sentiero-rogge-di-sluderno-con-visita-al-castel-coira-e-abba-bolzano",
+  "title": "Sentiero rogge di Sluderno con visita al Castel Coira e Abbazia di Monte Maria",
+  "section": "CAI Bolzano",
+  "date": "2026-04-12",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-04-26-il-cammino-delle-terre-sospese-tappa-1-bolzano",
+  "title": "Il Cammino delle Terre Sospese – Tappa 1",
+  "section": "CAI Bolzano",
+  "date": "2026-04-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-26-anello-waldnersee-bolzano",
+  "title": "Anello Waldnersee",
+  "section": "CAI Bolzano",
+  "date": "2026-07-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-23-laghi-di-sopranes-bolzano",
+  "title": "Laghi di Sopranes",
+  "section": "CAI Bolzano",
+  "date": "2026-08-23",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-09-escursione-rifugio-pio-xi-palla-bianca-bressanone",
+  "title": "Escursione Rifugio Pio XI – Palla Bianca",
+  "section": "CAI Bressanone",
+  "date": "2026-08-09",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-12-escursione-lago-della-selva-bressanone",
+  "title": "Escursione Lago della Selva",
+  "section": "CAI Bressanone",
+  "date": "2026-09-12",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-18-escursione-corno-nero-bressanone",
+  "title": "Escursione Corno Nero",
+  "section": "CAI Bressanone",
+  "date": "2026-10-18",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2020-07-19-val-orsera-forcella-segura-val-campelle-sat-borgo-valsugana",
+  "title": "Val Orsera – Forcella Segura – Val Campelle",
+  "section": "SAT Borgo Valsugana",
+  "date": "2020-07-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-10-25-lago-di-erdemolo-e-rifugio-sette-selle-sat-trento",
+  "title": "Lago di Erdemolo e Rifugio Sette Selle",
+  "section": "SAT Trento",
+  "date": "2020-10-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2020-07-26-malga-pra-dal-giovo-cima-bedole-sat-spormaggiore",
+  "title": "Malga Prà dal Giovo – Cima Bedolè",
+  "section": "SAT Spormaggiore",
+  "date": "2020-07-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-il-perimetro-del-trentino-tappa-30-alb-monte-baldo-baita-fos-sat-trekking-del-1",
+  "title": "Il Perimetro del Trentino – Tappa 30 • Alb. Monte Baldo – Baita Fos-ce",
+  "section": "SAT (trekking del 150°)",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2018-06-24-alpinismo-giovanile-cima-nuvolau-mt-2575-alpago",
+  "title": "Alpinismo Giovanile Cima Nuvolau mt 2’575",
+  "section": "CAI Alpago",
+  "date": "2018-06-24",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2022-04-24-col-de-moi-e-bivacco-dei-loff-alpago",
+  "title": "Col de Moi e Bivacco dei Loff",
+  "section": "CAI Alpago",
+  "date": "2022-04-24",
+  "status": "auto_ok",
+  "canonical": "2022-05-22-col-de-moi-e-bivacco-dei-loff-alpago"
+ },
+ {
+  "id": "2022-05-22-col-de-moi-e-bivacco-dei-loff-alpago",
+  "title": "Col de Moi e Bivacco dei Loff",
+  "section": "CAI Alpago",
+  "date": "2022-05-22",
+  "status": "auto_ok",
+  "canonical": "2022-05-22-col-de-moi-e-bivacco-dei-loff-alpago"
+ },
+ {
+  "id": "2022-09-17-rifugio-faloria-da-rio-gere-alpago",
+  "title": "Rifugio Faloria da Rio Gere",
+  "section": "CAI Alpago",
+  "date": "2022-09-17",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2019-08-24-cima-tofana-di-rozes-mt-3225-alpago",
+  "title": "Cima Tofana di Rozes (mt. 3225)",
+  "section": "CAI Alpago",
+  "date": "2019-08-24",
+  "status": "auto_ok",
+  "canonical": "2019-08-24-cima-tofana-di-rozes-mt-3225-alpago"
+ },
+ {
+  "id": "2018-08-25-cima-tofana-di-rozes-mt-3225-alpago",
+  "title": "Cima Tofana di Rozes (mt. 3225)",
+  "section": "CAI Alpago",
+  "date": "2018-08-25",
+  "status": "auto_ok",
+  "canonical": "2019-08-24-cima-tofana-di-rozes-mt-3225-alpago"
+ },
+ {
+  "id": "2017-03-16-ferrata-strobel-alpago",
+  "title": "Ferrata Strobel",
+  "section": "CAI Alpago",
+  "date": "2017-03-16",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2017-09-17-giro-ad-anello-sullaltipiano-di-asiago-monte-zebio-alpago",
+  "title": "Giro ad anello sull’Altipiano di Asiago – Monte Zebio",
+  "section": "CAI Alpago",
+  "date": "2017-09-17",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2019-02-23-escursione-notturna-rifugio-bristot-al-nevegal-alpago",
+  "title": "Escursione notturna: Rifugio Bristot al Nevegal",
+  "section": "CAI Alpago",
+  "date": "2019-02-23",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-faverghera-alpago",
+  "title": "Faverghera",
+  "section": "CAI Alpago",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-con-minori-e-genitori-al-lago-di-limo-alpago",
+  "title": "Con minori e genitori al lago di Limo",
+  "section": "CAI Alpago",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2017-06-25-su-anticima-monte-pelf-mt-2450-gruppo-schiara-alpago",
+  "title": "Su Anticima Monte PELF mt.2450 (gruppo Schiara)",
+  "section": "CAI Alpago",
+  "date": "2017-06-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-09-04-attraversata-cembra-lago-santo-salorno-appiano",
+  "title": "Attraversata Cembra - Lago Santo - Salorno",
+  "section": "CAI Appiano",
+  "date": "2025-09-04",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-04-dalla-capanna-alpina-al-lago-lagazuoi-val-badia-appiano",
+  "title": "Dalla Capanna Alpina al Lago Lagazuoi / Val Badia",
+  "section": "CAI Appiano",
+  "date": "2026-07-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-05-antermoia-utia-de-pecol-val-badia-appiano",
+  "title": "Antermoia Utia de Pecol Val Badia",
+  "section": "CAI Appiano",
+  "date": "2026-09-05",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-19-sentiero-glaciologico-val-martello-appiano",
+  "title": "Sentiero Glaciologico Val Martello",
+  "section": "CAI Appiano",
+  "date": "2026-09-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2021-11-14-forra-del-lupo-asiago",
+  "title": "Forra del Lupo",
+  "section": "CAI Asiago",
+  "date": "2021-11-14",
+  "status": "auto_ok",
+  "canonical": "2023-11-12-forra-del-lupo-asiago"
+ },
+ {
+  "id": "2021-11-28-forra-del-lupo-asiago",
+  "title": "Forra del Lupo",
+  "section": "CAI Asiago",
+  "date": "2021-11-28",
+  "status": "auto_ok",
+  "canonical": "2023-11-12-forra-del-lupo-asiago"
+ },
+ {
+  "id": "2021-08-08-rifugio-antermoia-2496m-asiago",
+  "title": "Rifugio Antermoia – 2496m",
+  "section": "CAI Asiago",
+  "date": "2021-08-08",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-06-05-sasso-rosso-lagorai-asiago",
+  "title": "Sasso Rosso - Lagorai",
+  "section": "CAI Asiago",
+  "date": "2022-06-05",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2022-10-22-parco-naturale-paneveggio-asiago",
+  "title": "Parco Naturale Paneveggio",
+  "section": "CAI Asiago",
+  "date": "2022-10-22",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2022-11-13-marronata-sezionale-asiago",
+  "title": "Marronata sezionale",
+  "section": "CAI Asiago",
+  "date": "2022-11-13",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2023-05-07-waalweg-di-caines-e-castel-tirolo-asiago",
+  "title": "Waalweg di Caines e Castel Tirolo",
+  "section": "CAI Asiago",
+  "date": "2023-05-07",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2023-07-23-monte-ziolera-asiago",
+  "title": "Monte Ziolera",
+  "section": "CAI Asiago",
+  "date": "2023-07-23",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2023-10-22-baite-lanzola-asiago",
+  "title": "Baite Lanzola",
+  "section": "CAI Asiago",
+  "date": "2023-10-22",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-11-12-forra-del-lupo-asiago",
+  "title": "Forra del Lupo",
+  "section": "CAI Asiago",
+  "date": "2023-11-12",
+  "status": "auto_ok",
+  "canonical": "2023-11-12-forra-del-lupo-asiago"
+ },
+ {
+  "id": "2024-01-20-notturna-montagna-nuova-asiago",
+  "title": "Notturna Montagna Nuova",
+  "section": "CAI Asiago",
+  "date": "2024-01-20",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-10-06-giro-ad-anello-del-gronlait-e-fravort-asiago",
+  "title": "Giro ad anello del Gronlait e Fravort",
+  "section": "CAI Asiago",
+  "date": "2024-10-06",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-03-29-a-luserna-dalla-valdastico-asiago",
+  "title": "A Luserna dalla Valdastico",
+  "section": "CAI Asiago",
+  "date": "2025-03-29",
+  "status": "auto_ok",
+  "canonical": "2026-03-21-a-luserna-dalla-valdastico-asiago"
+ },
+ {
+  "id": "2025-05-04-cima-marzola-asiago",
+  "title": "Cima Marzola",
+  "section": "CAI Asiago",
+  "date": "2025-05-04",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-06-22-giro-ad-anello-della-torosella-asiago",
+  "title": "Giro Ad Anello della Torosella",
+  "section": "CAI Asiago",
+  "date": "2025-06-22",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-09-14-giro-delle-3-cime-del-monte-bondone-asiago",
+  "title": "Giro delle 3 Cime del Monte Bondone",
+  "section": "CAI Asiago",
+  "date": "2025-09-14",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-21-a-luserna-dalla-valdastico-asiago",
+  "title": "A Luserna dalla Valdastico",
+  "section": "CAI Asiago",
+  "date": "2026-03-21",
+  "status": "auto_ok",
+  "canonical": "2026-03-21-a-luserna-dalla-valdastico-asiago"
+ },
+ {
+  "id": "2026-06-17-biancoia-col-dastiago-asiago",
+  "title": "​BIANCOIA - Col d’Astiago​",
+  "section": "CAI Asiago",
+  "date": "2026-06-17",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-28-becco-di-filadonna-asiago",
+  "title": "​BECCO di Filadonna​",
+  "section": "CAI Asiago",
+  "date": "2026-06-28",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-19-val-renzola-porta-kempel-asiago",
+  "title": "​VAL Renzola - Porta Kempel​",
+  "section": "CAI Asiago",
+  "date": "2026-07-19",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-30-monte-cornetto-gruppo-sengio-alto-asiago",
+  "title": "​MONTE Cornetto (Gruppo Sengio Alto)​",
+  "section": "CAI Asiago",
+  "date": "2026-08-30",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-13-anello-cima-caldiera-e-monte-ortigara-asiago",
+  "title": "​ANELLO Cima Caldiera e Monte Ortigara​",
+  "section": "CAI Asiago",
+  "date": "2026-09-13",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-15-domenica-15-marzo-2026-asiago",
+  "title": "Domenica 15 Marzo 2026",
+  "section": "CAI Asiago",
+  "date": "2026-03-15",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-21-sabato-21-marzo-2026-asiago",
+  "title": "Sabato 21 Marzo 2026",
+  "section": "CAI Asiago",
+  "date": "2026-03-21",
+  "status": "auto_ok",
+  "canonical": "2026-03-21-a-luserna-dalla-valdastico-asiago"
+ },
+ {
+  "id": "2026-06-28-domenica-28-giugno-2026-asiago",
+  "title": "Domenica 28 Giugno 2026",
+  "section": "CAI Asiago",
+  "date": "2026-06-28",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2019-08-04-col-de-bousc-da-albergo-villetta-maria-belluno",
+  "title": "Col De Bousc da Albergo Villetta Maria",
+  "section": "CAI Belluno",
+  "date": "2019-08-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-10-23-malga-bosc-brusa-da-valt-belluno",
+  "title": "Malga Bosc Brusa' da Valt",
+  "section": "CAI Belluno",
+  "date": "2022-10-23",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-09-02-giro-ad-anello-sassopiatto-sassolungo-belluno",
+  "title": "Giro ad anello SASSOPIATTO SASSOLUNGO",
+  "section": "CAI Belluno",
+  "date": "2023-09-02",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-01-18-malga-prendera-belluno",
+  "title": "Malga Prendera",
+  "section": "CAI Belluno",
+  "date": "2026-01-18",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-02-22-domenica-22-febbraio-2026-belluno",
+  "title": "Domenica 22 Febbraio 2026",
+  "section": "CAI Belluno",
+  "date": "2026-02-22",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-24-sabato-24-ottobre-2026-belluno",
+  "title": "Sabato 24 Ottobre 2026",
+  "section": "CAI Belluno",
+  "date": "2026-10-24",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2024-10-06-rifugio-baita-dei-cacciatori-da-rifugio-lagazzon-belluno",
+  "title": "Rifugio Baita dei Cacciatori da Rifugio Lagazzon",
+  "section": "CAI Belluno",
+  "date": "2024-10-06",
+  "status": "da_rivedere",
+  "canonical": "2026-08-09-rifugio-baita-dei-cacciatori-da-rifugio-lagazzon-belluno"
+ },
+ {
+  "id": "2025-04-26-zimon-de-terne-belluno",
+  "title": "Zimon De Terne",
+  "section": "CAI Belluno",
+  "date": "2025-04-26",
+  "status": "da_rivedere",
+  "canonical": "2025-04-26-cima-monte-terne-belluno"
+ },
+ {
+  "id": "senza-data-escursione-ad-anello-dei-3-bivacchi-11-04-2026-belluno",
+  "title": "Escursione ad anello dei 3 bivacchi 11/04/2026",
+  "section": "CAI Belluno",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-cima-bocche-24-05-2026-belluno",
+  "title": "Cima Bocche 24/05/2026",
+  "section": "CAI Belluno",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-02-piz-boe-da-jouf-de-pordoi-passo-pordoi-pordoijoch-belluno",
+  "title": "Piz Boè da Jouf de Pordoi - Passo Pordoi - Pordoijoch",
+  "section": "CAI Belluno",
+  "date": "2026-07-02",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-09-rifugio-baita-dei-cacciatori-da-rifugio-lagazzon-belluno",
+  "title": "Rifugio Baita dei Cacciatori da Rifugio Lagazzon",
+  "section": "CAI Belluno",
+  "date": "2026-08-09",
+  "status": "auto_ok",
+  "canonical": "2026-08-09-rifugio-baita-dei-cacciatori-da-rifugio-lagazzon-belluno"
+ },
+ {
+  "id": "2025-07-20-cima-cavallazza-belluno",
+  "title": "Cima Cavallazza",
+  "section": "CAI Belluno",
+  "date": "2025-07-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-09-07-sentiero-attrezzato-dei-kaiserjager-e-ferrata-galleria-del-l-belluno",
+  "title": "Sentiero Attrezzato dei Kaiserjäger e Ferrata Galleria del Lagazuoi",
+  "section": "CAI Belluno",
+  "date": "2025-09-07",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2024-10-19-rifugio-achille-papa-da-rifugio-bocchetta-di-campiglia-belluno",
+  "title": "Rifugio Achille Papa da Rifugio Bocchetta di Campiglia",
+  "section": "CAI Belluno",
+  "date": "2024-10-19",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-04-26-cima-monte-terne-belluno",
+  "title": "Cima Monte Terne",
+  "section": "CAI Belluno",
+  "date": "2025-04-26",
+  "status": "da_rivedere",
+  "canonical": "2025-04-26-cima-monte-terne-belluno"
+ },
+ {
+  "id": "2026-01-11-pietralba-e-le-sue-malghe-bolzano",
+  "title": "Pietralba e le sue malghe",
+  "section": "CAI Bolzano",
+  "date": "2026-01-11",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-01-18-merano-2000-bolzano",
+  "title": "Merano 2000",
+  "section": "CAI Bolzano",
+  "date": "2026-01-18",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-05-31-malghe-di-proves-bolzano",
+  "title": "Malghe di Proves",
+  "section": "CAI Bolzano",
+  "date": "2026-05-31",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-04-19-mori-trincee-nagia-grom-bolzano",
+  "title": "Mori – Trincee Nagiá-Grom",
+  "section": "CAI Bolzano",
+  "date": "2026-04-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-04-monte-pic-val-gardena-bolzano",
+  "title": "Monte Pic – Val Gardena",
+  "section": "CAI Bolzano",
+  "date": "2026-10-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-02-malga-e-lago-bocche-bolzano",
+  "title": "Malga e Lago Bocche",
+  "section": "CAI Bolzano",
+  "date": "2026-08-02",
+  "status": "auto_ok",
+  "canonical": "2026-08-09-paneveggio-bolzano"
+ },
+ {
+  "id": "2026-02-22-febbraio-2026-bolzano",
+  "title": "Febbraio 2026",
+  "section": "CAI Bolzano",
+  "date": "2026-02-22",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-05-31-passo-castrin-hofmahdjoch-bolzano",
+  "title": "Passo Castrin - Hofmahdjoch",
+  "section": "CAI Bolzano",
+  "date": "2026-05-31",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-19-martellerhutte-rifugio-martello-da-alpengasthof-schonblick-a-bolzano",
+  "title": "Martellerhütte - Rifugio Martello da Alpengasthof Schönblick - Albergo Alpino Schönblick",
+  "section": "CAI Bolzano",
+  "date": "2026-07-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-08-09-paneveggio-bolzano",
+  "title": "Paneveggio",
+  "section": "CAI Bolzano",
+  "date": "2026-08-09",
+  "status": "auto_ok",
+  "canonical": "2026-08-09-paneveggio-bolzano"
+ },
+ {
+  "id": "2026-08-30-kalfanwand-croda-della-calva-bolzano",
+  "title": "Kalfanwand - Croda della Calva",
+  "section": "CAI Bolzano",
+  "date": "2026-08-30",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-27-settembre-2026-bolzano",
+  "title": "Settembre 2026",
+  "section": "CAI Bolzano",
+  "date": "2026-09-27",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-04-pic-monte-pic-pitschberg-da-col-raiser-p3-bolzano",
+  "title": "Pic - Monte Pic - Pitschberg da Col Raiser P3",
+  "section": "CAI Bolzano",
+  "date": "2026-10-04",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-01-10-ciaspolata-in-val-venegia-bressanone",
+  "title": "Ciaspolata in Val Venegia",
+  "section": "CAI Bressanone",
+  "date": "2026-01-10",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-05-09-monte-seceda-da-santa-cristina-bressanone",
+  "title": "Monte SECEDA da Santa Cristina",
+  "section": "CAI Bressanone",
+  "date": "2026-05-09",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-09-25-gruppo-del-lagorai-bivacco-coldose-e-bivacco-paolo-e-nicola--camposampiero",
+  "title": "Gruppo del Lagorai, Bivacco Coldosè e Bivacco Paolo e Nicola Data",
+  "section": "CAI Camposampiero",
+  "date": "2022-09-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-monte-rite-rif-dolomites-camposampiero",
+  "title": "Monte Rite Rif Dolomites",
+  "section": "CAI Camposampiero",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-rifugio-boz-camposampiero",
+  "title": "Rifugio BOZ",
+  "section": "CAI Camposampiero",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-06-becco-di-filadonna-da-passo-del-sommo-cittadella",
+  "title": "Becco di Filadonna da Passo del Sommo",
+  "section": "CAI Cittadella",
+  "date": "2026-09-06",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2012-09-05-nuvolau-gruppo-del-nuvolau-cittadella",
+  "title": "NUVOLAU Gruppo del Nuvolau",
+  "section": "CAI Cittadella",
+  "date": "2012-09-05",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2013-05-29-cima-castellaz-gruppo-pale-di-san-martino-cittadella",
+  "title": "CIMA CASTELLAZ Gruppo Pale di San Martino",
+  "section": "CAI Cittadella",
+  "date": "2013-05-29",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2013-06-26-passo-duran-rif-pramperet-gruppo-tamer-san-sebastiano-cittadella",
+  "title": "PASSO DURAN - RIF. PRAMPERET Gruppo Tamer - San Sebastiano",
+  "section": "CAI Cittadella",
+  "date": "2013-06-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2013-09-18-rifugio-dibona-gruppo-delle-tofane-cittadella",
+  "title": "RIFUGIO DIBONA Gruppo delle Tofane",
+  "section": "CAI Cittadella",
+  "date": "2013-09-18",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-07-monte-cernera-cima-nord-da-passo-giau-iou-cittadella",
+  "title": "Monte Cernera Cima Nord da Passo Giau - Iou",
+  "section": "CAI Cittadella",
+  "date": "2026-06-07",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-02-07-ciaspolata-sotto-le-pale-di-san-martino-val-venegia-dolo",
+  "title": "Ciaspolata sotto le Pale di San Martino VAL VENEGIA",
+  "section": "CAI Dolo",
+  "date": "2026-02-07",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2019-05-12-monte-foral-dolo",
+  "title": "Monte Foral",
+  "section": "CAI Dolo",
+  "date": "2019-05-12",
+  "status": "auto_ok",
+  "canonical": "2019-05-12-monte-foral-dolo"
+ },
+ {
+  "id": "2019-07-20-monte-cernera-monte-verdal-dolo",
+  "title": "Monte Cernera Monte Verdal",
+  "section": "CAI Dolo",
+  "date": "2019-07-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-19-escursione-alla-cima-fertazza-dolo",
+  "title": "Escursione alla Cima Fertazza",
+  "section": "CAI Dolo",
+  "date": "2026-09-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-01-25-monte-piana-dolo",
+  "title": "Monte Piana",
+  "section": "CAI Dolo",
+  "date": "2026-01-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-02-16-dove-ce-neve-dolo",
+  "title": "Dove C’e’ Neve….",
+  "section": "CAI Dolo",
+  "date": "2025-02-16",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-07-02-da-baita-paradiso-al-rifugio-fuciade-dolo",
+  "title": "Da Baita Paradiso al rifugio Fuciade",
+  "section": "CAI Dolo",
+  "date": "2023-07-02",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2015-09-13-monte-ortigara-dolo",
+  "title": "Monte Ortigara",
+  "section": "CAI Dolo",
+  "date": "2015-09-13",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2015-05-10-prealpi-vicentine-monte-priafora-dolo",
+  "title": "Prealpi Vicentine Monte Priafora",
+  "section": "CAI Dolo",
+  "date": "2015-05-10",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2019-09-29-escursione-al-bivacco-voltolina-dolo",
+  "title": "Escursione al bivacco Voltolina",
+  "section": "CAI Dolo",
+  "date": "2019-09-29",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-28-alla-scoperta-delluomo-di-mondeval-dolo",
+  "title": "Alla Scoperta Dell’Uomo di Mondeval",
+  "section": "CAI Dolo",
+  "date": "2026-06-28",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-i-borghi-abbandonati-di-palcoda-e-tamar-prealpi-friulane-val-dolo",
+  "title": "I BORGHI ABBANDONATI DI PALCODA E TAMAR Prealpi Friulane-Val Tramontina-Tramonti di Sotto",
+  "section": "CAI Dolo",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2021-09-19-san-romedio-dolo",
+  "title": "San Romedio",
+  "section": "CAI Dolo",
+  "date": "2021-09-19",
+  "status": "auto_ok",
+  "canonical": "2021-10-23-anello-di-sanzeno-e-santuario-di-san-romedio-dolo"
+ },
+ {
+  "id": "2021-10-23-anello-di-sanzeno-e-santuario-di-san-romedio-dolo",
+  "title": "Anello di Sanzeno e Santuario di San Romedio",
+  "section": "CAI Dolo",
+  "date": "2021-10-23",
+  "status": "auto_ok",
+  "canonical": "2021-10-23-anello-di-sanzeno-e-santuario-di-san-romedio-dolo"
+ },
+ {
+  "id": "2021-05-23-san-romedio-dolo",
+  "title": "San Romedio",
+  "section": "CAI Dolo",
+  "date": "2021-05-23",
+  "status": "auto_ok",
+  "canonical": "2021-10-23-anello-di-sanzeno-e-santuario-di-san-romedio-dolo"
+ },
+ {
+  "id": "2014-06-22-gruppo-del-sengio-alto-piccole-dolomiti-dolo",
+  "title": "Gruppo del Sengio Alto – Piccole Dolomiti",
+  "section": "CAI Dolo",
+  "date": "2014-06-22",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2019-05-26-monte-caina-1002-m-dolo",
+  "title": "Monte Caina 1002 m",
+  "section": "CAI Dolo",
+  "date": "2019-05-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-i-segni-della-memoria-sentiero-della-pace-dolo",
+  "title": "I Segni della Memoria Sentiero della Pace",
+  "section": "CAI Dolo",
+  "date": null,
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-sentiero-kaiserjager-dolo-dolo",
+  "title": "Sentiero Kaiserjäger Dolo",
+  "section": "CAI Dolo",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": "senza-data-sentiero-kaiserjager-dolo-dolo"
+ },
+ {
+  "id": "senza-data-organizza-posti-disponibili-45-dolo",
+  "title": "Organizza: Posti disponibili: 45",
+  "section": "CAI Dolo",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-08-04-traversata-latemar-feltre",
+  "title": "Traversata Latemar",
+  "section": "CAI Feltre",
+  "date": "2024-08-04",
+  "status": "auto_ok",
+  "canonical": "2024-08-04-traversata-latemar-feltre"
+ },
+ {
+  "id": "2026-02-08-alla-lupa-del-lagorai-e-cima-panarotta-feltre",
+  "title": "Alla Lupa del Lagorai e Cima Panarotta",
+  "section": "CAI Feltre",
+  "date": "2026-02-08",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-08-giro-dei-tre-monti-feltre",
+  "title": "Giro dei Tre Monti",
+  "section": "CAI Feltre",
+  "date": "2026-03-08",
+  "status": "da_rivedere",
+  "canonical": "2026-03-08-giro-dei-tre-monti-feltre"
+ },
+ {
+  "id": "2026-02-08-giro-dei-tre-monti-altopiano-di-asiago-feltre",
+  "title": "Giro dei Tre Monti Altopiano di Asiago",
+  "section": "CAI Feltre",
+  "date": "2026-02-08",
+  "status": "da_rivedere",
+  "canonical": "2026-03-08-giro-dei-tre-monti-feltre"
+ },
+ {
+  "id": "2026-03-08-alla-lupa-del-lagorai-e-cima-panarotta-feltre",
+  "title": "Alla Lupa del Lagorai e Cima Panarotta",
+  "section": "CAI Feltre",
+  "date": "2026-03-08",
+  "status": "auto_ok",
+  "canonical": "2026-03-08-alla-lupa-del-lagorai-e-cima-panarotta-feltre"
+ },
+ {
+  "id": "2026-03-08-alla-lupa-e-cima-panarotta-feltre",
+  "title": "Alla Lupa e Cima Panarotta",
+  "section": "CAI Feltre",
+  "date": "2026-03-08",
+  "status": "auto_ok",
+  "canonical": "2026-03-08-alla-lupa-del-lagorai-e-cima-panarotta-feltre"
+ },
+ {
+  "id": "2023-10-22-monte-grappa-feltre",
+  "title": "Monte Grappa",
+  "section": "CAI Feltre",
+  "date": "2023-10-22",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-02-25-da-pescul-al-monte-fertazza-feltre",
+  "title": "Da Pescul al Monte Fertazza",
+  "section": "CAI Feltre",
+  "date": "2024-02-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-08-27-traversata-latemar-feltre",
+  "title": "Traversata Latemar",
+  "section": "CAI Feltre",
+  "date": "2023-08-27",
+  "status": "auto_ok",
+  "canonical": "2024-08-04-traversata-latemar-feltre"
+ },
+ {
+  "id": "2025-07-09-croda-rossa-feltre",
+  "title": "Croda Rossa",
+  "section": "CAI Feltre",
+  "date": "2025-07-09",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-03-08-rifugio-citta-di-carpi-feltre",
+  "title": "Rifugio Città di Carpi",
+  "section": "CAI Feltre",
+  "date": "2025-03-08",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-06-21-ziolera-da-passo-manghen-feltre",
+  "title": "Ziolera da Passo Manghen",
+  "section": "CAI Feltre",
+  "date": "2023-06-21",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-03-15-vanoi-primiero-tn-mestre",
+  "title": "Vanoi Primiero (TN)",
+  "section": "CAI Mestre",
+  "date": "2025-03-15",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2022-03-13-escursione-invernale-mestre",
+  "title": "Escursione Invernale",
+  "section": "CAI Mestre",
+  "date": "2022-03-13",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2023-06-25-escursione-estiva-mestre",
+  "title": "Escursione Estiva",
+  "section": "CAI Mestre",
+  "date": "2023-06-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-21-col-becher-da-malga-bosc-brusa-mestre",
+  "title": "Col Becher da Malga Bosc Brusa'",
+  "section": "CAI Mestre",
+  "date": "2026-06-21",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-07-04-baita-colmont-da-feder-mestre",
+  "title": "Baita Colmont da Feder",
+  "section": "CAI Mestre",
+  "date": "2026-07-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-09-27-monte-cornetto-1899-m-mestre",
+  "title": "Monte Cornetto (1899 m.)",
+  "section": "CAI Mestre",
+  "date": "2026-09-27",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-06-19-cortina-dampezzo-tra-olimpiadi-e-sostenibilita-mestre",
+  "title": "Cortina d’Ampezzo, tra Olimpiadi e sostenibilità",
+  "section": "CAI Mestre",
+  "date": "2022-06-19",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-cordellon-bivacco-beta-val-mola-mestre",
+  "title": "Cordellòn Bivacco Beta Val Mola",
+  "section": "CAI Mestre",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": "2019-05-12-monte-foral-dolo"
+ },
+ {
+  "id": "2021-03-07-escursione-invernale-mestre",
+  "title": "Escursione Invernale",
+  "section": "CAI Mestre",
+  "date": "2021-03-07",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "senza-data-sentiero-kaiserjager-mestre-mestre",
+  "title": "Sentiero Kaiserjäger Mestre",
+  "section": "CAI Mestre",
+  "date": null,
+  "status": "auto_ok",
+  "canonical": "senza-data-sentiero-kaiserjager-dolo-dolo"
+ },
+ {
+  "id": "2021-09-19-valtrigona-mirano",
+  "title": "Valtrigona",
+  "section": "CAI Mirano",
+  "date": "2021-09-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-11-05-ottobrata-2023-valle-schievenin-mirano",
+  "title": "Ottobrata 2023 Valle Schievenin",
+  "section": "CAI Mirano",
+  "date": "2023-11-05",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-05-25-forc-pezzei-da-podenzoi-mirano",
+  "title": "Forc. Pezzei da Podenzoi",
+  "section": "CAI Mirano",
+  "date": "2024-05-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-01-09-alberto-azzolini-aps-scuola-di-escursionismo-i-scioxi-mirano",
+  "title": "Alberto Azzolini» APS Scuola di Escursionismo «I Scioxi",
+  "section": "CAI Mirano",
+  "date": "2025-01-09",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-05-10-alberto-azzolini-aps-scuola-di-escursionismo-i-scioxi-mirano",
+  "title": "Alberto Azzolini» APS Scuola di Escursionismo «I Scioxi",
+  "section": "CAI Mirano",
+  "date": "2025-05-10",
+  "status": "auto_ok",
+  "canonical": "2025-05-10-alberto-azzolini-aps-scuola-di-escursionismo-i-scioxi-mirano"
+ },
+ {
+  "id": "2025-05-08-monte-rite-mirano",
+  "title": "Monte Rite",
+  "section": "CAI Mirano",
+  "date": "2025-05-08",
+  "status": "auto_ok",
+  "canonical": "2025-05-10-alberto-azzolini-aps-scuola-di-escursionismo-i-scioxi-mirano"
+ },
+ {
+  "id": "2026-10-11-alberto-azzolini-aps-scuola-di-escursionismo-i-scioxi-mirano",
+  "title": "Alberto Azzolini» APS Scuola di Escursionismo «I Scioxi",
+  "section": "CAI Mirano",
+  "date": "2026-10-11",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-07-07-lagorai-bivacchi-tadina-argentino-mirano",
+  "title": "Lagorai bivacchi Tadina Argentino",
+  "section": "CAI Mirano",
+  "date": "2024-07-07",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-01-25-ora-di-partenza-montecchio-maggiore",
+  "title": "Ora di partenza",
+  "section": "CAI Montecchio Maggiore",
+  "date": "2026-01-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2026-03-25-campolongo-sul-brenta-montecchio-maggiore",
+  "title": "Campolongo sul Brenta.",
+  "section": "CAI Montecchio Maggiore",
+  "date": "2026-03-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-06-13-escursione-ad-anello-del-sass-putia-montecchio-maggiore",
+  "title": "Escursione Ad Anello del Sass Putia",
+  "section": "CAI Montecchio Maggiore",
+  "date": "2026-06-13",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-07-20-escursione-anello-vallon-popera-montecchio-maggiore",
+  "title": "Escursione Anello Vallon Popera",
+  "section": "CAI Montecchio Maggiore",
+  "date": "2025-07-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2021-02-28-laghetto-giarine-da-albergo-ristorante-miralago-rovigo",
+  "title": "Laghetto Giarine da Albergo Ristorante Miralago",
+  "section": "CAI Rovigo",
+  "date": "2021-02-28",
+  "status": "da_rivedere",
+  "canonical": "2025-02-02-val-grugola-f-lla-folga-treviso"
+ },
+ {
+  "id": "2021-12-19-laghetto-giarine-da-albergo-ristorante-miralago-rovigo",
+  "title": "Laghetto Giarine da Albergo Ristorante Miralago",
+  "section": "CAI Rovigo",
+  "date": "2021-12-19",
+  "status": "da_rivedere",
+  "canonical": "2025-02-02-val-grugola-f-lla-folga-treviso"
+ },
+ {
+  "id": "2025-07-20-nel-cuore-delladamello-dalla-val-di-genova-al-rifugio-mandro-rovigo",
+  "title": "Nel Cuore Dell’Adamello dalla Val di Genova al Rifugio Mandron",
+  "section": "CAI Rovigo",
+  "date": "2025-07-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-02-16-monte-orsere-da-pianezze-di-valdobbiadene-rovigo",
+  "title": "Monte Orsere da Pianezze di Valdobbiadene",
+  "section": "CAI Rovigo",
+  "date": "2025-02-16",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-01-25-rifugio-campogrosso-1464-m-rovigo",
+  "title": "Rifugio Campogrosso (1464 m)",
+  "section": "CAI Rovigo",
+  "date": "2020-01-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2012-12-30-rifugio-fonda-savio-da-lago-d-antorno-san-vito-di-cadore",
+  "title": "Rifugio Fonda Savio da Lago d'Antorno",
+  "section": "CAI San Vito di Cadore",
+  "date": "2012-12-30",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2023-01-15-giro-delle-malghe-della-lessinia-sat-societa-degli-alpinisti-tridentini-sezione",
+  "title": "Giro delle Malghe della Lessinia",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2023-01-15",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-10-25-lago-di-erdemolo-2036-m-e-rifugio-sette-selle-1978-m-sat-societa-degli-alpinist",
+  "title": "Lago di Erdemolo (2036 m) e Rifugio Sette Selle (1978 m)",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-10-25",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2020-10-25-lago-di-erdemolo-2036m-e-rifugio-sette-selle-1978m-sat-societa-degli-alpinisti",
+  "title": "Lago di Erdemolo (2036M) e Rifugio Sette Selle (1978M)",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-10-25",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-08-09-passo-del-maroccaro-da-lago-scuro-sat-societa-degli-alpinisti-tridentini-sezion",
+  "title": "Passo del Maroccaro da Lago Scuro",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-08-09",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-10-11-monte-brugnol-2221-m-sat-societa-degli-alpinisti-tridentini-sezione-del-trentin",
+  "title": "Monte Brugnol (2221 m)",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-10-11",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-07-12-monte-corno-1732-m-sat-societa-degli-alpinisti-tridentini-sezione-del-trentino",
+  "title": "Monte Corno (1732 m)",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-07-12",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2020-08-23-monte-toac-2319m-e-piccola-forcella-latemar-2526m-sat-societa-degli-alpinisti-t",
+  "title": "Monte Toac, 2319m, e Piccola Forcella Latemar, 2526m",
+  "section": "SAT – Società degli Alpinisti Tridentini (sezione CAI del Trentino)",
+  "date": "2020-08-23",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2013-01-27-col-margherita-treviso",
+  "title": "Col Margherita",
+  "section": "CAI Treviso",
+  "date": "2013-01-27",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2014-01-12-gallio-monte-ongara-treviso",
+  "title": "Gallio-Monte Ongara",
+  "section": "CAI Treviso",
+  "date": "2014-01-12",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2018-07-27-giro-croda-da-lago-forcella-ambrizzola-rif-palmieri-treviso",
+  "title": "Giro Croda da Lago - forcella Ambrizzola- Rif Palmieri",
+  "section": "CAI Treviso",
+  "date": "2018-07-27",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-12-04-gruppo-sci-e-ciaspole-i-neveganti-treviso",
+  "title": "Gruppo Sci e Ciaspole I Neveganti",
+  "section": "CAI Treviso",
+  "date": "2022-12-04",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-02-02-val-grugola-f-lla-folga-treviso",
+  "title": "Val Grugola, F.lla Folga",
+  "section": "CAI Treviso",
+  "date": "2025-02-02",
+  "status": "auto_ok",
+  "canonical": "2025-02-02-val-grugola-f-lla-folga-treviso"
+ },
+ {
+  "id": "2025-01-26-val-grugola-f-lla-folga-treviso",
+  "title": "Val Grugola, F.lla Folga",
+  "section": "CAI Treviso",
+  "date": "2025-01-26",
+  "status": "auto_ok",
+  "canonical": "2025-02-02-val-grugola-f-lla-folga-treviso"
+ },
+ {
+  "id": "2021-11-21-anello-canaie-palantina-treviso",
+  "title": "Anello Canaie - Palantina",
+  "section": "CAI Treviso",
+  "date": "2021-11-21",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2016-03-13-cima-juribrutto-treviso",
+  "title": "Cima Juribrutto",
+  "section": "CAI Treviso",
+  "date": "2016-03-13",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2014-09-14-colesei-treviso",
+  "title": "Colesei",
+  "section": "CAI Treviso",
+  "date": "2014-09-14",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2015-12-13-f-lla-ciavazole-val-zoldana-treviso",
+  "title": "F.lla Ciavazole – Val Zoldana",
+  "section": "CAI Treviso",
+  "date": "2015-12-13",
+  "status": "auto_ok",
+  "canonical": "2016-12-18-f-lla-ciavazole-val-zoldana-treviso"
+ },
+ {
+  "id": "2016-12-18-f-lla-ciavazole-val-zoldana-treviso",
+  "title": "F.lla Ciavazole – Val Zoldana",
+  "section": "CAI Treviso",
+  "date": "2016-12-18",
+  "status": "auto_ok",
+  "canonical": "2016-12-18-f-lla-ciavazole-val-zoldana-treviso"
+ },
+ {
+  "id": "2017-03-26-f-lla-della-neve-cadini-di-misurina-treviso",
+  "title": "F.lla della Neve – Cadini di Misurina",
+  "section": "CAI Treviso",
+  "date": "2017-03-26",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2014-05-18-monte-grappa-ferrata-guzzella-e-strada-del-boccaor-treviso",
+  "title": "Monte Grappa: Ferrata Guzzella e Strada del Boccaor",
+  "section": "CAI Treviso",
+  "date": "2014-05-18",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2021-02-14-malga-stia-e-prati-della-stia-treviso",
+  "title": "Malga Stia e Prati della Stia",
+  "section": "CAI Treviso",
+  "date": "2021-02-14",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2013-10-13-ortigara-treviso",
+  "title": "Ortigara",
+  "section": "CAI Treviso",
+  "date": "2013-10-13",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2016-11-20-montegal-valmorel-treviso",
+  "title": "Montegal - Valmorel",
+  "section": "CAI Treviso",
+  "date": "2016-11-20",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2016-01-10-rifugio-antelao-treviso",
+  "title": "Rifugio Antelao",
+  "section": "CAI Treviso",
+  "date": "2016-01-10",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2014-10-12-prealpi-feltrine-facen-santa-susanna-treviso",
+  "title": "Prealpi Feltrine: Facen – Santa Susanna",
+  "section": "CAI Treviso",
+  "date": "2014-10-12",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2013-01-13-gruppo-sci-e-ciaspe-i-neveganti-treviso",
+  "title": "Gruppo Sci e Ciaspe I Neveganti",
+  "section": "CAI Treviso",
+  "date": "2013-01-13",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2014-01-26-gruppo-sci-e-ciaspe-i-neveganti-treviso",
+  "title": "Gruppo Sci e Ciaspe I Neveganti",
+  "section": "CAI Treviso",
+  "date": "2014-01-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2019-05-17-monte-cengio-treviso",
+  "title": "Monte Cengio",
+  "section": "CAI Treviso",
+  "date": "2019-05-17",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2019-02-24-passo-sief-gruppo-col-di-lana-settsass-treviso",
+  "title": "Passo Sief (gruppo Col di Lana – Settsass)",
+  "section": "CAI Treviso",
+  "date": "2019-02-24",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2017-12-17-rifugio-auronzo-treviso",
+  "title": "Rifugio Auronzo",
+  "section": "CAI Treviso",
+  "date": "2017-12-17",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-06-23-monte-zervoi-venezia",
+  "title": "Monte Zervoi",
+  "section": "CAI Venezia",
+  "date": "2024-06-23",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2024-09-08-rifugio-fraccaroli-venezia",
+  "title": "Rifugio Fraccaroli",
+  "section": "CAI Venezia",
+  "date": "2024-09-08",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2022-02-06-weisshorn-corno-bianco-da-passo-di-lavaze-verona",
+  "title": "Weißhorn - Corno Bianco da Passo di Lavazè",
+  "section": "CAI Verona",
+  "date": "2022-02-06",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2024-06-30-dolomiti-gruppo-del-sassolungo-verona",
+  "title": "Dolomiti – Gruppo del Sassolungo",
+  "section": "CAI Verona",
+  "date": "2024-06-30",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2024-08-11-gruppo-del-latemar-verona",
+  "title": "Gruppo del Latemar",
+  "section": "CAI Verona",
+  "date": "2024-08-11",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-03-16-creste-di-pregasina-alpi-di-ledro-verona",
+  "title": "Creste di Pregasina – Alpi di Ledro",
+  "section": "CAI Verona",
+  "date": "2025-03-16",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-07-20-lagazuoi-dolomiti-dampezzo-verona",
+  "title": "Lagazuoi - Dolomiti d’Ampezzo",
+  "section": "CAI Verona",
+  "date": "2025-07-20",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2025-07-28-cima-libera-rifugio-biasi-al-bicchiere-verona",
+  "title": "Cima Libera Rifugio Biasi AL Bicchiere",
+  "section": "CAI Verona",
+  "date": "2025-07-28",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-01-26-ciaspole-fondo-lavarone-millegrobbe-verona",
+  "title": "Ciaspole fondo Lavarone Millegrobbe",
+  "section": "CAI Verona",
+  "date": "2025-01-26",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-06-29-sez-di-verona-commissione-escursionismo-verona",
+  "title": "Sez. di Verona COMMISSIONE ESCURSIONISMO",
+  "section": "CAI Verona",
+  "date": "2025-06-29",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-07-12-rifugio-calciati-verona",
+  "title": "Rifugio Calciati",
+  "section": "CAI Verona",
+  "date": "2025-07-12",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-07-19-sez-di-verona-commissione-escursionismo-verona",
+  "title": "Sez. di Verona COMMISSIONE ESCURSIONISMO",
+  "section": "CAI Verona",
+  "date": "2025-07-19",
+  "status": "auto_ok",
+  "canonical": null
+ },
+ {
+  "id": "2025-10-05-sez-di-verona-commissione-escursionismo-verona",
+  "title": "Sez. di Verona COMMISSIONE ESCURSIONISMO",
+  "section": "CAI Verona",
+  "date": "2025-10-05",
+  "status": "da_rivedere",
+  "canonical": null
+ },
+ {
+  "id": "2026-10-11-rifugio-papa-verona",
+  "title": "Rifugio Papa",
+  "section": "CAI Verona",
+  "date": "2026-10-11",
+  "status": "auto_ok",
+  "canonical": null
+ }
+]
