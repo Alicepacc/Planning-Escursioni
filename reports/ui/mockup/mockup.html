@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+:root{--T:#2E7D32;--E:#1F6FB2;--EE:#C62828;--EEA:#1E1E1E;--EAI:#6A4FB3}
+/* A «Rifugio»: carta calda, verde bosco, titoli con grazie */
+[data-theme=a]{--bg:#F4EFE5;--surface:#FFFDF8;--ink:#1E2622;--muted:#6E6B60;--line:#E4DCCB;--brand:#1F5C46;--brand-soft:#E3EDE6;--accent:#B8532A;--display:'Fraunces',Georgia,serif;--dw:600;--chip:#EDE6D8;--map:'liberty';--ok:#1F7A4D}
+/* B «Quota»: bianco ghiaccio, blu alpino, titoli geometrici */
+[data-theme=b]{--bg:#F2F5F8;--surface:#FFFFFF;--ink:#0F1E2B;--muted:#5B6B79;--line:#E0E6EC;--brand:#0F4C81;--brand-soft:#E3EDF7;--accent:#E0622D;--display:'Manrope',system-ui,sans-serif;--dw:800;--chip:#E7EDF3;--map:'positron';--ok:#14804A}
+[data-theme=bd]{--bg:#0C131A;--surface:#15202B;--ink:#E7EEF4;--muted:#94A4B2;--line:#253443;--brand:#6CB4F5;--brand-soft:#1B3047;--accent:#F08A5D;--display:'Manrope',system-ui,sans-serif;--dw:800;--chip:#1E2B38;--map:'positron';--ok:#4CC38A}
+*{box-sizing:border-box}
+html,body{margin:0;width:393px;height:852px;overflow:hidden;background:var(--bg);color:var(--ink);font:15px/1.4 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.phone{position:relative;width:393px;height:852px;overflow:hidden;background:var(--bg)}
+.status{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:center;padding:14px 30px 0 44px;font:600 17px Inter;z-index:30;color:var(--ink)}
+.status.light{color:#fff}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:125px;height:37px;border-radius:20px;background:#000;z-index:31}
+.status svg{height:12px}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:139px;height:5px;border-radius:3px;background:var(--ink);opacity:.85;z-index:40}
+.scroll{position:absolute;top:54px;left:0;right:0;bottom:83px;overflow:hidden;padding:0 20px}
+h1,h2,h3{font-family:var(--display);font-weight:var(--dw);margin:0;letter-spacing:-.01em}
+.top{display:flex;align-items:center;justify-content:space-between;height:44px;margin-top:4px}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:var(--dw);font-size:21px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font:700 14px Inter}
+.hello{margin:14px 0 4px;color:var(--muted);font-size:15px}
+.big{font-size:31px;line-height:1.1}
+.search{display:flex;align-items:center;gap:10px;height:50px;border-radius:16px;background:var(--surface);border:1px solid var(--line);padding:0 14px;color:var(--muted);margin:16px 0 12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.chips{display:flex;gap:8px;overflow:hidden;white-space:nowrap;margin:0 -20px;padding:0 20px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;background:var(--chip);font:500 14px Inter;color:var(--ink);flex:none}
+.chip.on{background:var(--brand);color:#fff}
+.sec{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
+.sec h2{font-size:20px}
+.sec a{color:var(--brand);font:600 14px Inter;text-decoration:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.carousel{display:flex;gap:12px;margin:0 -20px;padding:0 20px}
+.ccard{width:252px;flex:none}
+.ccard .art{height:118px;position:relative;background:var(--brand-soft)}
+.ccard .body{padding:11px 13px 13px}
+.datebadge{position:absolute;top:10px;left:10px;background:var(--surface);border-radius:10px;padding:4px 8px;text-align:center;font:700 12px/1.1 Inter;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.datebadge b{display:block;font:800 18px/1 var(--display)}
+.title{font:600 16px/1.25 Inter;margin:0 0 3px;color:var(--ink)}
+.meta{color:var(--muted);font-size:13px}
+.stats{display:flex;gap:10px;margin-top:7px;font:500 13px Inter;color:var(--ink);align-items:center;flex-wrap:wrap}
+.stats span{display:inline-flex;align-items:center;gap:3px}
+.stats svg{width:14px;height:14px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:22px;padding:0 7px;border-radius:7px;font:700 12px Inter;color:#fff}
+.rel{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 7px;border-radius:7px;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);font:600 12px Inter}
+.rel svg{width:13px;height:13px}
+.onb{display:flex;gap:12px;padding:14px;margin-top:16px;background:var(--brand-soft);border:0;border-radius:18px}
+.onb p{margin:2px 0 8px;font-size:13.5px;color:var(--ink);opacity:.85}
+.onb .btns{display:flex;gap:14px;font:600 14px Inter;color:var(--brand)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:83px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding-top:8px;z-index:20}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font:500 11px Inter;color:var(--muted);width:76px}
+.tab svg{width:25px;height:25px}
+.tab.on{color:var(--brand)}
+.row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);align-items:center}
+.thumb{width:74px;height:74px;border-radius:14px;flex:none;background:var(--brand-soft);overflow:hidden}
+/* Esplora */
+#map{position:absolute;inset:0}
+.floating{position:absolute;left:16px;right:16px;top:58px;z-index:10}
+.floating .search{margin:0;box-shadow:0 4px 18px rgba(0,0,0,.12);border:0}
+.floating .chips{margin:10px -16px 0;padding:0 16px}
+.floating .chip{background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.floating .chip.on{background:var(--brand);color:#fff}
+.scrim{position:absolute;top:0;left:0;right:0;height:130px;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 92%,transparent),transparent);z-index:5;pointer-events:none}
+.attr{position:absolute;left:10px;font:500 9.5px Inter;color:#333;background:rgba(255,255,255,.75);padding:1px 5px;border-radius:4px;z-index:6}
+.sheet{position:absolute;left:0;right:0;bottom:0;top:388px;background:var(--surface);border-radius:22px 22px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.14);z-index:12;padding:8px 18px 0}
+.handle{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.sheethead{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.sheethead h3{font-size:19px}
+.sort{font:500 13px Inter;color:var(--muted);display:flex;align-items:center;gap:4px}
+.badgefilter{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:9px;font:700 11px/18px Inter;min-width:18px;text-align:center}
+/* Scheda */
+.hero{position:absolute;top:0;left:0;right:0;height:330px}
+.hero #map{position:absolute;inset:0}
+.herobtn{position:absolute;top:58px;z-index:10;width:40px;height:40px;border-radius:50%;background:var(--surface);display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.18);color:var(--ink)}
+.herobtn svg{width:21px;height:21px}
+.detail{position:absolute;top:304px;left:0;right:0;bottom:0;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 20px 120px;z-index:12;overflow:hidden}
+.kicker{font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+.dtitle{font-size:27px;line-height:1.12;margin:4px 0 2px}
+.dsub{color:var(--muted);font-size:14px}
+.tags{display:flex;gap:6px;margin:11px 0 14px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:8px;background:var(--chip);font:600 12.5px Inter}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 4px}
+.grid div{text-align:center;border-right:1px solid var(--line)}
+.grid div:last-child{border:0}
+.grid b{display:block;font:var(--dw) 18px/1.1 var(--display);margin-bottom:2px}
+.grid small{color:var(--muted);font-size:11.5px}
+.prof{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px 6px}
+.prof .ph{display:flex;justify-content:space-between;font:600 13px Inter;margin-bottom:2px}
+.prof .ph span{color:var(--muted);font-weight:500}
+.timeline{margin-top:14px}
+.timeline h3{font-size:18px;margin-bottom:6px}
+.stop{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:start;padding:5px 0}
+.dot{width:12px;height:12px;border-radius:50%;border:3px solid var(--brand);background:var(--surface);margin-top:4px;position:relative}
+.stop .n{font:600 14.5px Inter}
+.stop .e{color:var(--muted);font-size:12.5px}
+.stop .t{font:600 13px Inter;color:var(--muted);text-align:right}
+.actionbar{position:absolute;left:0;right:0;bottom:0;height:100px;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:grid;grid-template-columns:50px 1fr;align-items:start;gap:10px;padding:12px 18px 0;z-index:25}
+.btn{height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px Inter}
+.btn.pri{flex:1;background:var(--brand);color:#fff}
+.btn.alt{width:50px;flex:none;background:var(--chip);color:var(--ink)}
+.btn svg{width:22px;height:22px;display:block}
+.actionbar{align-items:flex-start}
+.relcard{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px;border-radius:14px;background:color-mix(in srgb,var(--ok) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--ok) 25%,transparent)}
+.relcard b{color:var(--ok)}
+.relcard p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.maplibregl-ctrl-attrib{font-size:9px!important}
+</style>
+</head>
+<body>
+<div class="phone" id="phone"></div>
+<script>
+const q=new URLSearchParams(location.search);const theme=q.get('theme')||'a';const screen=q.get('screen')||'home';
+document.documentElement.dataset.theme=theme;
+const I={
+ search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>',
+ sliders:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+ discover:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 19 9.5 8l3.5 5.5 2-3L21 19Z"/><circle cx="17" cy="5.5" r="1.6"/></svg>',
+ map:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>',
+ route:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h7a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7"/></svg>',
+ people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A4.6 4.6 0 0 1 21 18.5"/></svg>',
+ dist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12h16M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>',
+ up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18 9 9l4 5 3-4 5 8"/></svg>',
+ time:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.3 3.1 8 7.5 9.5 4.4-1.5 7.5-5.2 7.5-9.5V6L12 3Z"/><path d="m8.6 12.2 2.4 2.4 4.6-4.8"/></svg>',
+ back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>',
+ share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M6 11H5v9h14v-9h-1"/></svg>',
+ save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"><path d="M6 3.5h12v17l-6-4-6 4Z"/></svg>',
+ bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15Z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
+ pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>',
+ doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg>',
+ peaks:'<svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="8" fill="var(--brand)"/><path d="M5 24 13 9l8 15Z" fill="#fff"/><path d="M17.5 24 21 16.5 27 24Z" fill="#fff" opacity=".7"/></svg>'
+};
+const status=(light)=>`<div class="island"></div><div class="status ${light?'light':''}"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0Z M3.2 6.6a6.8 6.8 0 0 1 9.6 0l-1.4 1.4a4.8 4.8 0 0 0-6.8 0Z M.8 4.2a10.2 10.2 0 0 1 14.4 0L13.8 5.6a8.2 8.2 0 0 0-11.6 0Z" fill="currentColor"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><rect x="24.5" y="4" width="1.8" height="4" rx="1" fill="currentColor" opacity=".45"/></svg></span></div>`;
+const tabbar=(on)=>`<nav class="tabbar">${[['scopri','Scopri',I.discover],['esplora','Mappa',I.map],['pianifica','Pianifica',I.route],['uscite','Uscite',I.people]].map(([k,l,i])=>`<div class="tab ${k===on?'on':''}">${i}<span>${l}</span></div>`).join('')}</nav><div class="homebar"></div>`;
+const DIFF={T:'Turistico',E:'Escursionistico',EE:'Esperti',EEA:'Esperti attrezzati',EAI:'Ciaspole'};
+const pill=d=>d?`<span class="pill" style="background:var(--${d})">${d}</span>`:'';
+const fmtKm=k=>k.toFixed(1).replace('.',',');
+const fmtM=m=>m.toLocaleString('it-IT');
+const fmtH=min=>{const h=Math.floor(min/60),m=Math.round((min%60)/5)*5;return m?`${h} h ${String(m).padStart(2,'0')}`:`${h} h`};
+// affidabilità di esempio nei mockup (il punteggio vero arriva dal calcolo)
+const REL=[96,94,92,91,89,93,88,90,95];
+const silhouette=(line,w,h,pad=10,stroke=3)=>{const xs=line.map(p=>p[0]),ys=line.map(p=>p[1]);const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);const k=Math.min((w-2*pad)/((mxx-mnx)*0.69||1),(h-2*pad)/((mxy-mny)||1));const ox=(w-(mxx-mnx)*0.69*k)/2,oy=(h-(mxy-mny)*k)/2;const pts=line.map(p=>`${(ox+(p[0]-mnx)*0.69*k).toFixed(1)},${(h-oy-(p[1]-mny)*k).toFixed(1)}`);const s=pts[0].split(','),e=pts[pts.length-1].split(',');
+ const contours=[...Array(7)].map((_,i)=>`<path d="M-10 ${18+i*16} C ${w*0.3} ${8+i*16}, ${w*0.6} ${34+i*15}, ${w+10} ${14+i*17}" fill="none" stroke="var(--brand)" stroke-opacity=".10" stroke-width="1.2"/>`).join('');
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">${contours}<polyline points="${pts.join(' ')}" fill="none" stroke="var(--brand)" stroke-width="${stroke}" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${s[0]}" cy="${s[1]}" r="${stroke+1.5}" fill="var(--surface)" stroke="var(--brand)" stroke-width="2.4"/><circle cx="${e[0]}" cy="${e[1]}" r="${stroke+0.5}" fill="var(--brand)"/></svg>`};
+const profileSvg=(prof,w,h)=>{const d=prof.map(p=>p[0]),e=prof.map(p=>p[1]);const md=Math.max(...d),mn=Math.min(...e),mx=Math.max(...e);const X=v=>(v/md*w).toFixed(1),Y=v=>(h-8-(v-mn)/(mx-mn)*(h-22)).toFixed(1);const path=prof.map((p,i)=>`${i?'L':'M'}${X(p[0])} ${Y(p[1])}`).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--brand)" stop-opacity=".35"/><stop offset="1" stop-color="var(--brand)" stop-opacity=".02"/></linearGradient></defs><path d="${path} L${w} ${h} L0 ${h} Z" fill="url(#g)"/><path d="${path}" fill="none" stroke="var(--brand)" stroke-width="2.2"/><text x="2" y="12" font-size="10.5" fill="var(--muted)" font-family="Inter">${fmtM(mx)} m</text><text x="2" y="${h-12}" font-size="10.5" fill="var(--muted)" font-family="Inter">${fmtM(mn)} m</text></svg>`};
+const when=iso=>{const d=new Date(iso+'T12:00:00');return {dow:d.toLocaleDateString('it-IT',{weekday:'short'}),day:d.getDate(),mon:d.toLocaleDateString('it-IT',{month:'short'})}};
+const org=h=>(h.activity&&h.activity.organizers||[])[0]||'CAI';
+
+fetch('data.json').then(r=>r.json()).then(H=>{
+ const P=document.getElementById('phone');
+ const mapStyle=`https://tiles.openfreemap.org/styles/${getComputedStyle(document.documentElement).getPropertyValue('--map').trim().replace(/'/g,'')}`;
+ if(screen==='home'){
+  const up=[H[2],H[4],H[0]].map((h,i)=>{const dates=['2026-11-28','2026-11-29','2026-12-06'];const w=when(dates[i]);return `<div class="card ccard"><div class="art">${silhouette(h.line,252,118,16,3)}<div class="datebadge">${w.dow}<b>${w.day}</b>${w.mon}</div></div><div class="body"><p class="title">${h.title.split(' – ')[0].split(' (')[0]}</p><div class="meta">${org(h)} · ${h.group}</div><div class="stats">${pill(h.diff)}<span>${I.dist}${fmtKm(h.km)} km</span><span>${I.up}${fmtM(h.up)} m</span></div></div></div>`}).join('');
+  const list=[H[1],H[3],H[8]].map((h,i)=>`<div class="row"><div class="thumb">${silhouette(h.line,74,74,10,2.4)}</div><div style="min-width:0"><p class="title">${h.title.split(' – ')[0]}</p><div class="meta">${h.group}</div><div class="stats">${pill(h.diff||'E')}<span>${fmtKm(h.km)} km · ↑ ${fmtM(h.up)} m</span><span class="rel">${I.check}${REL[i+3]}%</span></div></div></div>`).join('');
+  P.innerHTML=status()+`<div class="scroll"><div class="top"><div class="logo">${I.peaks}Cordata</div><div style="display:flex;gap:14px;align-items:center;color:var(--ink)"><span style="width:24px;height:24px">${I.bell}</span><div class="avatar">AP</div></div></div>
+   <p class="hello">Buongiorno, Alice</p><h1 class="big">Dove andiamo<br>questo fine settimana?</h1>
+   <div class="search"><span style="width:20px;height:20px">${I.search}</span>Cima, rifugio, valle o «facile con lago»</div>
+   <div class="chips"><span class="chip on">${'Vicino a me'}</span><span class="chip">Facili T–E</span><span class="chip">Con rifugio</span><span class="chip">Laghi</span><span class="chip">Ciaspole</span></div>
+   <div class="onb"><div style="flex:none;width:38px;height:38px;color:var(--brand)">${I.check}</div><div><b style="font-size:14.5px">Solo escursioni affidabili</b><p>Le gite vengono dalle locandine delle sezioni CAI. Pubblichiamo solo quelle con traccia verificata almeno all'80%.</p><div class="btns"><span>Come funziona</span><span style="color:var(--muted)">Ho capito</span></div></div></div>
+   <div class="sec"><h2>In programma con il CAI</h2><a>Vedi tutte</a></div><div class="carousel">${up}</div>
+   <div class="sec"><h2>Itinerari nelle Dolomiti</h2><a>Mappa</a></div>${list}</div>`+tabbar('scopri');
+  ready();
+ } else if(screen==='esplora'){
+  const cards=[H[0],H[1],H[5],H[3]].map((h,i)=>`<div class="row"><div class="thumb">${silhouette(h.line,74,74,10,2.4)}</div><div style="min-width:0;flex:1"><p class="title">${h.title.split(' – ')[0]}</p><div class="meta">${h.group} · ${({andata_ritorno:'andata e ritorno',traversata:'traversata',anello:'anello'})[h.type]||'anello'}</div><div class="stats">${pill(h.diff||'E')}<span>${I.dist}${fmtKm(h.km)} km</span><span>${I.up}${fmtM(h.up)} m</span><span>${I.time}${fmtH(h.min_cai)}</span></div><div class="stats" style="margin-top:6px"><span class="rel">${I.check}Traccia ${REL[i]}%</span>${i===0?'':`<span class="meta">${org(h)}</span>`}</div></div></div>`).join('');
+  P.innerHTML=status()+`<div id="map"></div><div class="scrim"></div><div class="attr" style="top:366px">© OpenStreetMap · OpenFreeMap</div><div class="floating"><div class="search"><span style="width:20px;height:20px">${I.search}</span><span style="flex:1">Pale di San Martino</span><span style="position:relative;width:24px;height:24px;color:var(--ink)">${I.sliders}<span class="badgefilter">2</span></span></div>
+   <div class="chips"><span class="chip on">EE</span><span class="chip">Fino a 6 h</span><span class="chip">Dislivello</span><span class="chip">Stagione</span><span class="chip">Data</span></div></div>
+   <div class="sheet"><div class="handle"></div><div class="sheethead"><h3>128 escursioni</h3><span class="sort">Più vicine ▾</span></div>${cards}</div>`+tabbar('esplora');
+  const map=new maplibregl.Map({container:'map',style:mapStyle,bounds:[[11.35,45.98],[12.25,46.62]],attributionControl:false,interactive:false,preserveDrawingBuffer:true});
+  map.on('load',async()=>{const pts=await (await fetch('punti.geojson')).json();
+   map.addSource('r',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:H[0].line}}});
+   map.addLayer({id:'rc',type:'line',source:'r',paint:{'line-color':'#fff','line-width':7}});
+   map.addLayer({id:'rl',type:'line',source:'r',paint:{'line-color':getComputedStyle(document.documentElement).getPropertyValue('--brand').trim(),'line-width':4}});
+   map.addSource('p',{type:'geojson',data:pts});
+   map.addLayer({id:'pc',type:'circle',source:'p',paint:{'circle-radius':8,'circle-color':getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),'circle-stroke-color':'#fff','circle-stroke-width':2.5}});
+   map.once('idle',ready)});
+ } else {
+  const h=H[0];
+  const stops=h.stages.filter((s,i)=>[0,1,3,5,7,9].includes(i)).map(s=>`<div class="stop"><div class="dot"></div><div><div class="n">${s.name}</div><div class="e">${fmtM(s.ele_m)} m · km ${fmtKm(s.dist_km)}</div></div><div class="t">${s.cai_min?fmtH(s.cai_min):'partenza'}</div></div>`).join('');
+  P.innerHTML=`<div class="hero"><div id="map"></div><div class="scrim"></div><div class="attr" style="top:282px">© OpenStreetMap · OpenFreeMap</div></div>`+status()+`<div class="herobtn" style="left:16px">${I.back}</div><div class="herobtn" style="right:66px">${I.share}</div><div class="herobtn" style="right:16px">${I.save}</div>
+  <div class="detail"><div class="kicker">Pale di San Martino · traversata</div><h1 class="dtitle">Monte Mulaz</h1><div class="dsub">Da Passo Valles a Passo Rolle, per il Rifugio Volpi</div>
+   <div class="tags">${pill('EE')}<span class="tag">Escursionisti esperti</span><span class="rel" style="height:26px">${I.check}Traccia verificata 96%</span></div>
+   <div class="grid"><div><b>${fmtKm(h.km)}</b><small>km</small></div><div><b>${fmtM(h.up)}</b><small>m salita</small></div><div><b>${fmtH(h.min_cai).replace(' ','')}</b><small>senza soste</small></div><div><b>${fmtM(h.max)}</b><small>m quota max</small></div></div>
+   <div class="prof"><div class="ph">Profilo altimetrico <span>tocca per vedere sulla mappa</span></div>${profileSvg(h.profile,331,92)}</div>
+   <div class="relcard"><span style="width:22px;height:22px;flex:none;color:var(--ok)">${I.check}</span><div><b>Perché ci fidiamo di questa traccia</b><p>Distanza, dislivello e quota massima coincidono con la locandina di SAT Pergine (6 settembre 2026); tutti i punti trovati sulla carta.</p></div></div>
+   <div class="timeline"><h3>Il percorso</h3>${stops}</div></div>
+  <div class="actionbar"><div class="btn alt">${I.doc}</div><div class="btn pri">${I.people}Organizza un'uscita</div></div><div class="homebar"></div>`;
+  const map=new maplibregl.Map({container:'map',style:mapStyle,bounds:[[11.775,46.255],[11.86,46.345]],fitBoundsOptions:{padding:{top:70,bottom:40,left:30,right:30}},attributionControl:false,interactive:false,preserveDrawingBuffer:true});
+  map.on('load',()=>{map.addSource('r',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:h.line}}});
+   map.addLayer({id:'rc',type:'line',source:'r',paint:{'line-color':'#fff','line-width':8}});
+   map.addLayer({id:'rl',type:'line',source:'r',paint:{'line-color':getComputedStyle(document.documentElement).getPropertyValue('--brand').trim(),'line-width':4.5}});
+   map.addSource('s',{type:'geojson',data:{type:'FeatureCollection',features:[h.line[0],h.line[h.line.length-1]].map(c=>({type:'Feature',properties:{},geometry:{type:'Point',coordinates:c}}))}});
+   map.addLayer({id:'sc',type:'circle',source:'s',paint:{'circle-radius':7,'circle-color':getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),'circle-stroke-color':'#fff','circle-stroke-width':3}});
+   map.once('idle',ready)});
+ }
+});
+function ready(){document.fonts.ready.then(()=>setTimeout(()=>document.body.dataset.ready='1',300))}
+</script>
+</body>
+</html>
