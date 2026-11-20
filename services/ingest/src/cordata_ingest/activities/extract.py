@@ -398,6 +398,9 @@ def _redact_rosters(text: str, table: bool) -> tuple[str, int]:
     return "\n".join(lines), removed
 
 
+MORE_PLACE_WORDS = "pale|altopiano|plan|dolomiti|gruppo|sentiero|anello|giro|traversata|ferrata"
+
+
 def sanitize(text: str, table: bool = False) -> tuple[str, int]:
     """Rimuove email, telefoni e nomi dopo le etichette di ruolo. Restituisce (testo, n).
 
@@ -458,7 +461,16 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
             redact_list = False
         if redact_next and stripped:
             # righe successive a un'etichetta di ruolo: nomi propri (o resti di contatti)
-            if PERSON_LINE.match(stripped) or "rimoss" in stripped:
+            # anche «Nome Cognome, Nome Cognome.» su una riga (locandine CAI Asiago); una riga
+            # che comincia con «Rifugio», «Pale», «Lago»… è un luogo, non una persona
+            place = re.match(rf"(?i:{PLACE_WORDS}|{MORE_PLACE_WORDS})\b", stripped)
+            if "rimoss" in stripped or (
+                not place
+                and (
+                    PERSON_LINE.match(stripped)
+                    or (NAME_LIST.match(stripped.rstrip(". ")) and len(stripped.split()) >= 2)
+                )
+            ):
                 out.append("[nome rimosso]")
                 removed += 1
                 redact_next -= 1
@@ -487,6 +499,21 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
                 redact_next = 3  # etichetta da sola: i nomi sono nelle righe seguenti
         out.append(line)
     return "\n".join(out), removed
+
+
+def sanitize_block(text: str, page_clean: str, table: bool = False) -> str:
+    """Testo di un blocco di impaginazione, pulito con il contesto della pagina.
+
+    Da solo un blocco con «Nome Cognome, Nome Cognome» non dice che sono accompagnatori:
+    lo dice la pagina. Ogni riga del blocco che non compare tale e quale nel testo pulito della
+    pagina è stata cambiata dalla pulizia della pagina, quindi si toglie.
+    """
+    kept = {line.strip() for line in page_clean.splitlines()}
+    out = []
+    for line in sanitize(text, table)[0].splitlines():
+        s = line.strip()
+        out.append(line if not s or s in kept else "[nome rimosso]")
+    return "\n".join(out)
 
 
 # ---------------------------------------------------------------- estrazione
@@ -554,7 +581,7 @@ def extract_pdf(path: Path) -> dict[str, Any]:
                 "columns": _columns(blocks, page.rect.width) if blocks else 1,
                 "text": clean,
                 "blocks": [
-                    [*(round(v, 1) for v in b[:4]), sanitize(str(b[4]), table)[0]]
+                    [*(round(v, 1) for v in b[:4]), sanitize_block(str(b[4]), clean, table)]
                     for b in blocks
                     if b[6] == 0 and str(b[4]).strip()
                 ],

@@ -1,7 +1,7 @@
 """Pipeline attività: pulizia dei dati personali, classificazione e normalizzazione dei nomi."""
 
 from cordata_ingest.activities.classify import classify_name, classify_text
-from cordata_ingest.activities.extract import sanitize
+from cordata_ingest.activities.extract import sanitize, sanitize_block
 from cordata_ingest.activities.gazetteer import kind_of, normalize
 
 
@@ -20,6 +20,26 @@ def test_sanitize_nomi_dopo_le_etichette_di_ruolo():
     assert sanitize("Capogita: Mario Rossi")[0] == "Capogita: [nome rimosso]"
     text, _ = sanitize("Accompagnatori:\nMario Rossi\nAnna Bianchi\nSentieri 15, 7")
     assert "Rossi" not in text and "Bianchi" not in text and "Sentieri 15, 7" in text
+
+
+def test_sanitize_elenco_di_nomi_sotto_l_etichetta():
+    # locandine CAI Asiago: l'intestazione da sola, i nomi separati da virgole a capo
+    text = (
+        "Note: pranzo al sacco.\nACCOMPAGNATORI\n"
+        "Rossi Mario, Bianchi Anna, Verdi Luca.\nISCRIZIONI\nEntro giovedì 20 aprile"
+    )
+    clean, n = sanitize(text)
+    assert "Rossi" not in clean and "Verdi" not in clean and n >= 1
+    assert "ISCRIZIONI" in clean and "Entro giovedì 20 aprile" in clean
+    # un luogo sotto l'etichetta resta
+    assert "Pale di San Martino" in sanitize("Accompagnatori:\nPale di San Martino")[0]
+
+
+def test_blocco_pulito_con_il_contesto_della_pagina():
+    page = "ACCOMPAGNATORI\nSilvia Rossi, Luca Bianchi\nISCRIZIONI\nLago di Calaita"
+    clean, _ = sanitize(page)
+    assert sanitize_block("Silvia Rossi, Luca Bianchi ", clean) == "[nome rimosso]"
+    assert sanitize_block("Lago di Calaita ", clean) == "Lago di Calaita "
 
 
 def test_sanitize_direttivo_e_crediti_fotografici():
