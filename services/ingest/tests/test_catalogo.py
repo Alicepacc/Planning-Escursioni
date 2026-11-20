@@ -172,6 +172,8 @@ def test_frasi_e_nomi_di_gruppo_non_sono_titoli():
         "Questo è il terzo ed ultimo appuntamento del ciclo",
         "Gruppo Escursionismo",
         "Ai tratti erbosi che con-ducono al rifugio",
+        "Commissione Escursionismo Scuola Nazionale Sci di Fondo",
+        "Gruppo Escursionismo «G. Rossi» Uscita intersezionale",
     ):
         assert choose_title(prose, None, track) == "Lago Bocche da Paneveggio"
     assert choose_title("Le malghe e i laghi del Lagorai", None, track) == (

@@ -131,6 +131,13 @@ GENERIC_TITLE = re.compile(
 )
 
 
+# il nome di una commissione o di un gruppo della sezione, anche seguito da altro
+GROUP_TITLE = re.compile(
+    r"(?i)^(?:commissione|sezione|gruppo\s+(?:escursionism\w*|senior\w*|giovani|alpinismo\w*|"
+    r"famiglie))\b"
+)
+
+
 def _not_a_title(t: str) -> bool:
     """Una frase della descrizione («Riamo fino a Paneveggio; facendo così…») o il nome di un
     gruppo («Gruppo Escursionismo») presi per titolo."""
@@ -143,6 +150,7 @@ def _not_a_title(t: str) -> bool:
         or (len(words) >= 5 and bool(PROSE_WORDS.search(t)))
         or (len(words) >= 4 and t.rstrip().endswith("."))
         or (len(words) <= 3 and bool(GENERIC_TITLE.match(t)))
+        or bool(GROUP_TITLE.match(t))
     )
 
 
