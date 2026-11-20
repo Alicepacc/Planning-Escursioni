@@ -275,6 +275,76 @@ def search_radius_km(activity: dict[str, Any]) -> float:
 MUNICIPALITY_RADIUS_KM = 15.0
 
 
+# nomi troppo generici per essere un punto del percorso da soli
+GENERIC_NAMES = {
+    "parcheggio",
+    "locanda",
+    "pian",
+    "piano",
+    "pic nic",
+    "pic-nic",
+    "rifugio",
+    "malga",
+    "lago",
+    "passo",
+    "forcella",
+    "cima",
+    "monte",
+    "chiesa",
+    "chiesetta",
+    "ponte",
+    "bivacco",
+    "baita",
+    "albergo",
+    "hotel",
+    "ristorante",
+    "bar",
+    "funivia",
+    "seggiovia",
+    "cabinovia",
+    "stazione",
+}
+CLUSTER_KM = 12.0
+
+
+def cluster_anchor(conn: Any, names: list[str]) -> tuple[tuple[float, float] | None, list[str]]:
+    """Dove sta il percorso (ADR 0015): ogni nome si cerca in tutta l'area e si sceglie la zona
+    in cui cade il maggior numero di nomi diversi (entro 12 km). Restituisce il centro di quella
+    zona e i nomi che ci cadono; gli altri (parole comuni, omonimi lontani) si lasciano."""
+    cands: dict[str, list[tuple[float, float]]] = {}
+    for name in names:
+        if normalize(name) in GENERIC_NAMES or name in cands:
+            continue
+        found: list[tuple[float, float]] = []
+        for q in query_variants(name)[:3]:
+            for place in search(conn, q, limit=12, min_similarity=0.55):
+                if core_matches(name, place.variant or place.name) and place.kind not in AREA_KINDS:
+                    found.append((place.lon, place.lat))
+        if found:
+            cands[name] = found
+    if len(cands) < 2:
+        return None, list(cands)
+
+    def km(a: tuple[float, float], b: tuple[float, float]) -> float:
+        return haversine_m(a, b) / 1000
+
+    best: tuple[int, float, tuple[float, float]] | None = None
+    for pts in cands.values():
+        for c in pts:
+            near = [min(km(c, p) for p in other) for other in cands.values()]
+            support = sum(d <= CLUSTER_KM for d in near)
+            spread = sum(d for d in near if d <= CLUSTER_KM)
+            if best is None or (support, -spread) > (best[0], -best[1]):
+                best = (support, spread, c)
+    if not best or best[0] < 2:
+        return None, list(cands)
+    center = best[2]
+    kept = [n for n, pts in cands.items() if min(km(center, p) for p in pts) <= CLUSTER_KM]
+    closest = [min(cands[n], key=lambda p: km(center, p)) for n in kept]
+    anchor = (sum(p[0] for p in closest) / len(closest), sum(p[1] for p in closest) / len(closest))
+    return anchor, kept
+
+
 def municipality_anchor(conn: Any, comune: str | None) -> tuple[float, float] | None:
     """Il comune della partenza («Laces», «Scurelle (TN)») come àncora per i nomi comuni."""
     if not comune:
@@ -631,9 +701,16 @@ def reconstruct(conn: Any, dem: Any, activity_id: str, activity: dict[str, Any])
         "durata": activity.get("durata"),
     }
     anchor_hint = municipality_anchor(conn, (activity.get("partenza") or {}).get("comune"))
-    points = geocode(
-        conn, dem, _points_from(activity), refs, search_radius_km(activity), anchor_hint
-    )
+    raw_points = _points_from(activity)
+    # campi non rivisti (parser o testo): prima si trova la zona del percorso, poi si tengono
+    # solo i nomi che ci cadono, nell'ordine della locandina
+    if "punti_dal_testo" in activity and not anchor_hint:
+        zone, kept = cluster_anchor(conn, [p.query for p in raw_points])
+        if zone and len(kept) >= 2:
+            anchor_hint = zone
+            raw_points = [p for p in raw_points if p.query in kept]
+            res.reasons.append(f"nota: zona del percorso da {len(kept)} nomi della locandina")
+    points = geocode(conn, dem, raw_points, refs, search_radius_km(activity), anchor_hint)
     # punti presi dal testo (ADR 0015): se il primo non è un luogo noto, la partenza diventa
     # il primo che lo è; i punti rivisti a mano invece devono esserci tutti
     if activity.get("punti_dal_testo"):

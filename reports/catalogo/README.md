@@ -9,9 +9,8 @@ Rapporto intermedio: lo scarico e l'estrazione del testo sono ancora in corso.
   (almeno metà dentro), non dalla sede della sezione. Mappa: `area-del-catalogo.jpg`.
 - **Affidabilità da 80 su 100**: vale per tutte le escursioni, anche per quelle rivedute a mano
   nelle fasi precedenti. Le escursioni senza traccia non si pubblicano.
-- Per questo l'app è passata da 89 a **58 escursioni**: sono uscite quelle fuori area e quelle
-  con la traccia meno sicura; entrano le prime 15 del catalogo a lotti (alcune coincidono con
-  itinerari già presenti e si fondono con la deduplica).
+- Per questo l'app era scesa da 89 a 58 escursioni (fuori quelle fuori area e quelle con la
+  traccia meno sicura); con il catalogo a lotti è risalita a **82** (aggiornamento più sotto).
 
 ## Il punteggio
 
@@ -70,6 +69,34 @@ pubblica solo quello che torna, quindi cresce meno di quanto si scarica.
 chiaramente giuste (Ciaspolata in Val Venegia, Monte Brugnol, Seceda da Santa Cristina, Monte
 Pic, Malga e Lago Bocche); una, «Malghe di Proves» (80 esatto), è plausibile ma irregolare,
 con andate e ritorni per toccare le malghe. In linea con il 90% della taratura.
+
+## Secondo passo (20/11/2026, pomeriggio)
+
+Dove si perdevano le escursioni: in 94 delle 121 ricostruzioni fallite i punti della locandina
+non si trovavano sulla carta. Il primo punto estratto era spesso una parola generica
+(«Parcheggio», «Locanda», «Pian») che il gazetteer trova ovunque; tutti i punti successivi,
+cercati vicino a quello, sparivano.
+
+- **Zona del percorso**: ogni nome si cerca in tutta l'area e si sceglie la zona (12 km) dove
+  cade il maggior numero di nomi diversi; si tengono solo quei nomi, nell'ordine della
+  locandina, e la partenza si cerca lì. Sulle 90 di taratura le fallite scendono da 50 a 44 con
+  la stessa precisione (90% alla soglia 80); sul catalogo le pubblicabili passano da 15 a 22 a
+  parità di documenti.
+- **Titoli**: quando la locandina dà come titolo una riga del regolamento («Per i non tesserati
+  CAI, l'iscrizione…», «Quota di partecipazione:») o un campo («Dislivello positivo: 850 m»), il
+  titolo viene dal nome del documento sul sito della sezione ripulito («Ferrata Strobel»), o
+  dalla meta più alta e dalla partenza della traccia («Rifugio Nuvolau da Passo Giau»); i titoli
+  tutti maiuscoli si normalizzano.
+- **Ritrovo in paese**: il primo punto che porta il nome della sezione («Puos d'Alpago» per il
+  CAI Alpago) è il ritrovo, non la partenza.
+
+| Documenti elaborati | Pubblicabili | Sotto soglia | Esclusi | Fuori area |
+|---|---|---|---|---|
+| 740 | 46 (6,2%) | 461 | 212 | 21 |
+
+Controllo a campione (`campione-lotto-2.png`, 12 a caso tra le 46): tracce tutte plausibili;
+una sola resta dubbia («Escursione notturna: Rifugio Bristot al Nevegal», la traccia passa per
+il versante dell'Alpago). Nell'app: **82 escursioni** da 80 in su (5 doppioni fusi).
 
 ## Aperti
 

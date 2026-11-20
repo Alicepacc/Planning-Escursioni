@@ -16,6 +16,7 @@ con l'esito e, se ricostruita, la traccia. La build legge solo le schede pubblic
 
 from __future__ import annotations
 
+import html
 import json
 import re
 import time
@@ -45,6 +46,108 @@ DATE_LIKE = re.compile(
     r"ottobre|novembre|dicembre)\b"
 )
 HIKE_GRADES = {"T", "E", "EE", "EEA", "EAI"}
+
+# titoli che sono in realtà righe del regolamento o dell'intestazione
+BAD_TITLE = re.compile(
+    r"(?i)(iscrizion|tesserat|quota di partecipazione|assicurativ|modulo|versamento|"
+    r"nome rimosso|foglio informativo|club alpino italiano|capo ?gita|responsabil|partecipant|"
+    r"regolamento|informativa|^\W*$|:\s*$|dislivell|difficolt|durata|lunghezza|ritrovo|"
+    r"tempo di percorrenza|quota massima|\bore\s+\d|\.(?:docx?|pdf|odt)\b|scheda tecnica|"
+    r"scarica|\bkb\b|\[)"
+)
+SMALL_WORDS = {
+    "de",
+    "di",
+    "da",
+    "del",
+    "della",
+    "dei",
+    "delle",
+    "e",
+    "al",
+    "alla",
+    "ai",
+    "in",
+    "per",
+    "con",
+    "sul",
+    "sulla",
+    "a",
+    "il",
+    "la",
+    "lo",
+    "le",
+    "dal",
+    "dalla",
+    "d",
+    "mt",
+    "m",
+}
+KEEP_UPPER = {"CAI", "SAT", "EE", "EEA", "EAI", "AVS", "II", "III", "IV"}
+
+
+def _smart_case(title: str) -> str:
+    """Titoli tutti maiuscoli («RIFUGIO ANTERMOIA») in maiuscole solo dove servono."""
+    letters = [c for c in title if c.isalpha()]
+    if not letters or sum(c.isupper() for c in letters) / len(letters) < 0.8:
+        return title
+    out = []
+    for i, w in enumerate(re.split(r"(\s+|[–—\-/(),:“”\"'’])", title)):
+        if w.upper() in KEEP_UPPER or not w.strip() or not w[0].isalpha():
+            out.append(w)
+        elif i and w.lower() in SMALL_WORDS:
+            out.append(w.lower())
+        else:
+            out.append(w[:1].upper() + w[1:].lower())
+    return "".join(out)
+
+
+def _site_title(raw: str | None) -> str | None:
+    """Il nome del documento sul sito della sezione, senza date, «locandina» e simili."""
+    if not raw:
+        return None
+    t = html.unescape(raw)
+    t = re.sub(r"[_]+", " ", t)
+    t = re.sub(r"\b\d{1,4}[-./ ]\d{1,2}[-./ ]\d{2,4}\b|\b\d{8}\b|\b\d{2}_?\d{8}\b|\(\d+\)", " ", t)
+    t = re.sub(
+        r"(?i)\b(locandina|locandine|manifesti?|programma|def(?:initivo)?|copia|pdf|cai|sat|"
+        r"sezione|gita|escursione|uscita|volantino|scheda)\b",
+        " ",
+        t,
+    )
+    t = re.sub(r"\s*[–—-]\s*$|^\s*[–—-]\s*", "", re.sub(r"\s+", " ", t)).strip(" .-–")
+    return t if len(re.findall(r"[A-Za-zÀ-ÿ]{3,}", t)) >= 1 and len(t) >= 4 else None
+
+
+def choose_title(parsed: str | None, site: str | None, track: dict[str, Any] | None) -> str:
+    """Titolo della scheda: quello della locandina se è un titolo vero, altrimenti il nome del
+    documento sul sito, altrimenti la meta più alta e la partenza della traccia."""
+    t = (parsed or "").strip().strip('“”"')
+    t = re.sub(r"(?i)^escursione\s*:\s*", "", t)
+    # etichette di sezione rimaste attaccate al titolo
+    t = re.sub(r"(?i)\s+(breve\s+)?descrizione(\s+del\s+percorso)?\s*$", "", t)
+    t = t.strip("“”\"'’ ").replace("“", "«").replace("”", "»")
+    if t.count("«") != t.count("»"):
+        t = t.replace("«", "").replace("»", "")
+
+    def cap(x: str) -> str:
+        return x[:1].upper() + x[1:]
+
+    # un titolo vero ha almeno una parola di quattro lettere
+    if t and len(t) <= 90 and not BAD_TITLE.search(t) and re.search(r"[A-Za-zÀ-ÿ]{4}", t):
+        return cap(_smart_case(t))
+    st = _site_title(site)
+    if st and st.islower():
+        st = _smart_case(st.upper())  # «col margherita» → «Col Margherita»
+    if st and not BAD_TITLE.search(st) and re.search(r"[A-Za-zÀ-ÿ]{4}", st):
+        return cap(_smart_case(st))
+    pts = [p for p in (track or {}).get("points") or [] if p.get("lon") is not None]
+    if pts:
+        top = max(pts, key=lambda p: p.get("quota_osm") or p.get("quota_dem") or 0)
+        start = pts[0]
+        a, b = top.get("trovato") or top["nome"], start.get("trovato") or start["nome"]
+        return a if a == b else f"{a} da {b}"
+    return _smart_case(t[:90]) if t else "Escursione"
 
 
 def catalog_dir() -> Path:
@@ -89,6 +192,10 @@ def activity_from(values: dict[str, Any], text: str, home: str | None) -> dict[s
     ]
     if values.get("partenza_nome"):
         points.insert(0, {"nome": values["partenza_nome"], "quota_m": values["partenza_quota_m"]})
+    if home and len(home) >= 4:
+        h = home.lower()
+        while len(points) > 2 and h in points[0]["nome"].lower():
+            points.pop(0)  # «Puos d'Alpago» per il CAI Alpago: il ritrovo, non la partenza
     loop = values.get("tipo_percorso") == "anello"
     from_text = False
     if len({x["nome"] for x in points}) < 3:
@@ -154,6 +261,7 @@ def process(
     track = result_dict(reconstruct(conn, dem, doc_id, activity))
     track["seconds"] = round(time.perf_counter() - t0, 1)
     record["ricostruzione"] = {k: track[k] for k in ("status", "reasons", "checks")}
+    activity["titolo"] = choose_title(values.get("titolo"), entry.get("titolo_sito"), track)
     inside = bool(track.get("coords")) and in_area(track["coords"])
     record["area"] = inside
     s = score(track, fields)
@@ -186,6 +294,12 @@ def run(limit: int | None = None, only_new: bool = True) -> dict[str, int]:
     reviewed = set(load_reviewed()) | set(load_reviewed(blocks_dir()))
     texts = data_dir() / "activities" / "text"
     names = section_names()
+    index = data_dir() / "activities" / "index.json"
+    site_titles = (
+        {d["url"]: d.get("title") for d in json.loads(index.read_text("utf-8"))["documents"]}
+        if index.exists()
+        else {}
+    )
     counts: dict[str, int] = {}
     done = 0
     with PoliteClient(timeout=60) as client, connect() as conn:
@@ -199,6 +313,7 @@ def run(limit: int | None = None, only_new: bool = True) -> dict[str, int]:
             if only_new and target.exists():
                 continue
             try:
+                entry = {**entry, "titolo_sito": site_titles.get(entry["url"])}
                 record = process(conn, dem, doc_id, entry, names)
             except Exception as exc:  # un documento storto non ferma il lotto
                 conn.rollback()
