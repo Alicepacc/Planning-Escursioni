@@ -42,12 +42,21 @@ sessioni e link d'invito.
 
 ## Pubblicazione (account Cloudflare dell'utente)
 
-1. `wrangler d1 create cordata-uscite` e l'id ottenuto in `wrangler.jsonc` (`database_id`).
+Pubblicato il 20/11/2026 su `https://cordata-uscite.cordata.workers.dev` (D1 in Europa
+occidentale). Da una sessione cloud il token di Cloudflare è un segreto di rete aggiunto dal
+proxy: i comandi `wrangler` si lanciano con `CLOUDFLARE_API_TOKEN=proxy-injected` e
+`CLOUDFLARE_ACCOUNT_ID` dell'account. I passi, per una nuova installazione:
+
+1. `wrangler d1 create cordata-uscite --location weur` e l'id ottenuto in `wrangler.jsonc`
+   (`database_id`). Se l'account non ha ancora un sottodominio `workers.dev`, va creato una
+   volta (dashboard di Workers, o l'API `PUT /accounts/:id/workers/subdomain`).
 2. `wrangler d1 migrations apply cordata-uscite --remote`.
 3. `node scripts/vapid-key.mjs | pnpm exec wrangler secret put VAPID_PRIVATE_JWK`: la chiave
    privata delle notifiche va direttamente nei segreti di Cloudflare, senza passare da un file.
 4. `wrangler deploy`. Il token di pubblicazione e la chiave VAPID stanno solo nei segreti di
    Cloudflare e dell'ambiente, **mai nel repository**.
+5. `scripts/deploy-gh-pages.sh` ricompila la demo con l'indirizzo del servizio
+   (`USCITE_API=` vuoto per pubblicarla senza).
 
 In locale le notifiche si provano con una chiave usa e getta passata a `wrangler dev` con
 `--var "VAPID_PRIVATE_JWK:…"` (i file `.dev.vars` sono esclusi da git); la prova end-to-end è

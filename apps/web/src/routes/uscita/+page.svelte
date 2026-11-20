@@ -144,9 +144,10 @@
 		<dl class="dati">
 			<dt>Ritrovo</dt>
 			<dd>
-				{formatWhen(u.ritrovo_quando)} · {u.ritrovo_luogo}{#if u.ritrovo_lon != null && u.ritrovo_lat != null}
-					·
-					<a
+				{formatWhen(u.ritrovo_quando)} · {u.ritrovo_luogo +
+					(u.ritrovo_lon != null && u.ritrovo_lat != null
+						? ' · '
+						: '')}{#if u.ritrovo_lon != null && u.ritrovo_lat != null}<a
 						href={`https://www.openstreetmap.org/?mlat=${u.ritrovo_lat}&mlon=${u.ritrovo_lon}#map=16/${u.ritrovo_lat}/${u.ritrovo_lon}`}
 						target="_blank"
 						rel="noopener noreferrer">punto sulla mappa</a

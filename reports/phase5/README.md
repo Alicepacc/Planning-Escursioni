@@ -85,14 +85,29 @@ Data: 19/11/2026. Decisioni: [ADR 0014](../../docs/decisions/0014-backend-uscite
 | `screenshots/6-punto-di-ritrovo-telefono.jpg` | Il punto di ritrovo sulla mappa nel modulo, proposto dalla partenza dell'itinerario |
 | `screenshots/7-uscite-pubbliche-telefono.jpg` | Le uscite pubbliche vicine, filtrate per il fine settimana |
 
-## Per pubblicare il servizio (serve l'account Cloudflare dell'utente)
+## Pubblicazione (20/11/2026)
 
-Passi in [`services/outings/README.md`](../../services/outings/README.md): creare il database D1,
-applicare le migrazioni, pubblicare il Worker, poi compilare l'app con `VITE_USCITE_API`. Finché
-non è pubblicato, la demo mostra le pagine delle uscite con l'avviso «servizio non ancora
-attivo».
+- **Servizio**: `https://cordata-uscite.cordata.workers.dev` sull'account Cloudflare
+  dell'utente (piano gratuito). Database D1 `cordata-uscite` in Europa occidentale, migrazioni
+  applicate, promemoria ogni giorno alle 16:00 UTC.
+- **Segreti**: il token di Cloudflare è un segreto di rete dell'ambiente di sviluppo (il proxy lo
+  aggiunge solo alle richieste verso `api.cloudflare.com`); la chiave privata VAPID è stata
+  generata e passata direttamente a `wrangler secret put`, senza file. Nel repository ci sono
+  solo l'id del database e gli indirizzi pubblici.
+- **Demo**: `scripts/deploy-gh-pages.sh` compila l'app con l'indirizzo del servizio.
+- **Prove sulla demo pubblicata** (le quattro prove end-to-end con
+  `CORDATA_URL=https://alicepacc.github.io/Planning-Escursioni`): uscita con lista d'attesa e
+  bacheca, QR e anteprima del link, visibilità e feed, notifica push arrivata al browser. Nei log
+  del servizio nessun errore. I dati di prova sono stati poi cancellati: il database è vuoto.
+- **Corretto durante le prove**: un timer della mappa (chiusura delle attribuzioni dopo 6
+  secondi) dava un errore se si lasciava la pagina prima; ora si annulla, e la mappa non si
+  crea più se la pagina è già cambiata.
+- Le notifiche arrivano attraverso i server push dei browser (Google, Apple, Mozilla): la
+  consegna a un browser appena installato può richiedere qualche decina di secondi.
 
-## Prossimi passi della fase
+## Aperti
 
-1. Pubblicazione del servizio, con le chiavi nei segreti di Cloudflare (serve l'account
-   Cloudflare dell'utente).
+- Il token di Cloudflare ha accesso agli script Workers e a D1 dell'account: se non serve più
+  pubblicare da qui, si può revocare dalla dashboard (My Profile → API Tokens) e togliere il
+  segreto di rete dall'ambiente.
+- Nessun recupero dell'account se si perdono tutte le passkey (scelta «niente email», ADR 0014).

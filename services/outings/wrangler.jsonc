@@ -9,8 +9,8 @@
 		{
 			"binding": "DB",
 			"database_name": "cordata-uscite",
-			// da sostituire con l'id reale dopo `wrangler d1 create cordata-uscite`
-			"database_id": "00000000-0000-0000-0000-000000000000",
+			// creato il 20/11/2026 in Europa occidentale; l'id non è un segreto (serve il token)
+			"database_id": "b2f0be71-e854-4d2a-82b9-97d1f9337ab7",
 			"migrations_dir": "migrations"
 		}
 	],

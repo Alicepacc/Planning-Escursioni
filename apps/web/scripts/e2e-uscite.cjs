@@ -6,8 +6,11 @@
 //   cd apps/web && VITE_USCITE_API=http://localhost:8787 pnpm run build && pnpm exec vite preview --port 4173
 // poi: node apps/web/scripts/e2e-uscite.cjs
 const { chromium, devices } = require('playwright');
-const BASE = 'http://localhost:4173';
-const SHOTS = require('path').join(__dirname, '../../../reports/phase5/screenshots/');
+// CORDATA_URL per provare la demo pubblicata (es. https://alicepacc.github.io/Planning-Escursioni)
+const BASE = process.env.CORDATA_URL ?? 'http://localhost:4173';
+const SHOTS =
+	(process.env.CORDATA_SHOTS ??
+		require('path').join(__dirname, '../../../reports/phase5/screenshots')) + '/';
 async function personContext(browser) {
 	const ctx = await browser.newContext({ ...devices['Pixel 7'] });
 	const page = await ctx.newPage();

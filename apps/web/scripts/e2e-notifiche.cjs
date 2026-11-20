@@ -9,7 +9,8 @@
 //   cd apps/web && VITE_USCITE_API=http://localhost:8787 pnpm run build && pnpm exec vite preview --port 4173
 // poi: node apps/web/scripts/e2e-notifiche.cjs
 const { chromium, devices } = require('playwright');
-const BASE = 'http://localhost:4173';
+// CORDATA_URL per provare la demo pubblicata (es. https://alicepacc.github.io/Planning-Escursioni)
+const BASE = process.env.CORDATA_URL ?? 'http://localhost:4173';
 async function person(ctx) {
 	await ctx.grantPermissions(['notifications'], { origin: BASE });
 	const page = ctx.pages()[0] ?? (await ctx.newPage());
@@ -69,10 +70,10 @@ async function signup(page, nome) {
 	}
 	console.log('notifiche arrivate a Carla:', shown);
 	await carla.screenshot({
-		path: require('path').join(
-			__dirname,
-			'../../../reports/phase5/screenshots/4-notifica-telefono.jpg'
-		),
+		path:
+			(process.env.CORDATA_SHOTS ??
+				require('path').join(__dirname, '../../../reports/phase5/screenshots')) +
+			'/4-notifica-telefono.jpg',
 		quality: 80
 	});
 	await b.close();

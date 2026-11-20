@@ -4,8 +4,11 @@
 // contatti; Bruno, senza account, trova la prima nell'elenco pubblico vicino a lui, partecipa e
 // poi vede la seconda tra le proposte dei contatti. Prima: servizio e app come in e2e-uscite.cjs.
 const { chromium, devices } = require('playwright');
-const BASE = 'http://localhost:4173';
-const SHOTS = require('path').join(__dirname, '../../../reports/phase5/screenshots/');
+// CORDATA_URL per provare la demo pubblicata (es. https://alicepacc.github.io/Planning-Escursioni)
+const BASE = process.env.CORDATA_URL ?? 'http://localhost:4173';
+const SHOTS =
+	(process.env.CORDATA_SHOTS ??
+		require('path').join(__dirname, '../../../reports/phase5/screenshots')) + '/';
 
 // prossimo sabato in ora italiana (per il filtro «questo fine settimana») e uno più avanti
 function isoDay(offset) {

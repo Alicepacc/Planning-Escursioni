@@ -4,9 +4,12 @@ Progressive Web App mobile-first per programmare escursioni in montagna con soli
 proposte in stile «gita sociale CAI», planner agganciato ai sentieri, uscite di gruppo, meteo
 in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC.md).
 
-**Stato: Fase 4 (planner e generatore di proposte) completata.** Pilota della Fase 2
-approvato il 16/11/2026. In corso i blocchi di ingestion delle locandine (89 escursioni in app).
-Rapporti: [`reports/ingestion/README.md`](reports/ingestion/README.md) ·
+**Stato: Fase 5 (uscite di gruppo) completata e pubblicata il 20/11/2026.** Pilota della
+Fase 2 approvato il 16/11/2026. In corso i blocchi di ingestion delle locandine (89 escursioni
+in app). Demo: <https://alicepacc.github.io/Planning-Escursioni/>; servizio delle uscite:
+`https://cordata-uscite.cordata.workers.dev`.
+Rapporti: [`reports/phase5/README.md`](reports/phase5/README.md) ·
+[`reports/ingestion/README.md`](reports/ingestion/README.md) ·
 [`reports/phase4/README.md`](reports/phase4/README.md) ·
 [`reports/phase3/README.md`](reports/phase3/README.md) ·
 [`reports/pilot-2026-11-16/README.md`](reports/pilot-2026-11-16/README.md) ·
@@ -17,7 +20,8 @@ Rapporti: [`reports/ingestion/README.md`](reports/ingestion/README.md) ·
 
 | Cartella | Contenuto |
 |---|---|
-| `apps/web` | PWA SvelteKit: Esplora (escursioni delle sezioni CAI dalle locandine), schede con profilo altimetrico, mappa dei sentieri del catasto con legenda, planner con routing nel browser e «Componi un giro», pagina Fonti e licenze |
+| `apps/web` | PWA SvelteKit installabile: Esplora (escursioni delle sezioni CAI dalle locandine), schede con profilo altimetrico, mappa dei sentieri del catasto con legenda, planner con routing nel browser e «Componi un giro», uscite di gruppo con notifiche, pagina Fonti e licenze |
+| `services/outings` | Servizio delle uscite di gruppo: Cloudflare Worker + D1, passkey, notifiche Web Push, anteprima dei link d'invito ([README](services/outings/README.md)) |
 | `services/ingest` | Python: verifiche delle fonti, sincronizzazione OSM2CAI, import OSM in PostGIS, quote e tempi, tile e schede per la PWA ([README](services/ingest/README.md)) |
 | `services/routing` | GraphHopper: configurazione, Dockerfile, spike sulla fixture |
 | `infra` | Docker Compose per lo sviluppo locale |

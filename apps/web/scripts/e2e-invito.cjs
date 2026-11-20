@@ -7,12 +7,13 @@
 //   cd apps/web && VITE_USCITE_API=http://localhost:8787 pnpm run build && pnpm exec vite preview --port 4173
 // poi: node apps/web/scripts/e2e-invito.cjs
 const { chromium, devices } = require('playwright');
-const BASE = 'http://localhost:4173';
+// CORDATA_URL per provare la demo pubblicata (es. https://alicepacc.github.io/Planning-Escursioni)
+const BASE = process.env.CORDATA_URL ?? 'http://localhost:4173';
 const JSQR = require.resolve('jsqr/dist/jsQR.js');
-const SHOT = require('path').join(
-	__dirname,
-	'../../../reports/phase5/screenshots/5-qr-invito-telefono.jpg'
-);
+const SHOT =
+	(process.env.CORDATA_SHOTS ??
+		require('path').join(__dirname, '../../../reports/phase5/screenshots')) +
+	'/5-qr-invito-telefono.jpg';
 (async () => {
 	// headless completo: la versione ridotta di Chromium nega sempre i permessi delle notifiche
 	const browser = await chromium.launch({ channel: 'chromium' });
@@ -99,7 +100,9 @@ const SHOT = require('path').join(
 		await browser.newContext({ ...devices['Pixel 7'], timezoneId: 'Europe/Rome' })
 	).newPage();
 	await other.goto(shared);
-	await other.waitForURL(/localhost:4173\/uscita\?id=/, { timeout: 10000 }).catch(() => {});
+	await other
+		.waitForURL((u) => u.href.startsWith(BASE + '/uscita?id='), { timeout: 10000 })
+		.catch(() => {});
 	console.log('il link porta a:', other.url().replace(/t=[^&]+/, 't=…'));
 	console.log('titolo mostrato:', await other.getByRole('heading', { level: 1 }).textContent());
 	console.log('errori pagina:', errors.length ? errors : 'nessuno');

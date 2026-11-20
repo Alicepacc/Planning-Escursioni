@@ -11,13 +11,16 @@ set -euo pipefail
 ROOT=$(git rev-parse --show-toplevel)
 WEB="$ROOT/apps/web"
 BASE_PATH=/Planning-Escursioni
+# servizio delle uscite di gruppo (services/outings, pubblicato su Cloudflare il 20/11/2026):
+# indirizzo pubblico, non un segreto. Con USCITE_API= vuoto la demo lo dà per non attivo.
+USCITE_API=${USCITE_API-https://cordata-uscite.cordata.workers.dev}
 
 if [ ! -f "$WEB/static/data/sentieri/index.json" ] || [ ! -f "$WEB/static/tiles/pilota.pmtiles" ]; then
 	echo "Mancano dati o tile in apps/web/static: esegui prima la pipeline di services/ingest." >&2
 	exit 1
 fi
 
-(cd "$WEB" && BASE_PATH=$BASE_PATH pnpm run build)
+(cd "$WEB" && BASE_PATH=$BASE_PATH VITE_USCITE_API=$USCITE_API pnpm run build)
 
 WORK=$(mktemp -d)
 trap 'git -C "$ROOT" worktree remove --force "$WORK" 2>/dev/null || true; git -C "$ROOT" branch -D gh-pages-pubblicazione 2>/dev/null || true' EXIT

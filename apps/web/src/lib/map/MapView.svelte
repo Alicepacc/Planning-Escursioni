@@ -74,6 +74,9 @@
 	let stageMarkers: MlMarker[] = [];
 	let resizeObserver: ResizeObserver | undefined;
 	let lib: typeof import('maplibre-gl') | undefined;
+	// la pagina può cambiare mentre la mappa si sta ancora caricando
+	let destroyed = false;
+	let collapseTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const PILOT_BOUNDS: [number, number, number, number] = [10.38, 45.67, 12.75, 47.1];
 
@@ -129,6 +132,7 @@
 				if (!r.ok) throw new Error(`mappa di base: HTTP ${r.status}`);
 				return r.json();
 			});
+			if (destroyed) return;
 			const trailsUrl = new URL(generatedAsset('tiles/pilota.pmtiles'), window.location.href).href;
 			const style = withCordataLayers(base, { trailsUrl, contourTilesUrl });
 			const bounds = bbox ?? PILOT_BOUNDS;
@@ -209,10 +213,10 @@
 				// al primo tocco o dopo qualche secondo, per non coprire la mappa sui telefoni
 				const collapse = () =>
 					container
-						.querySelector('.maplibregl-compact.maplibregl-compact-show')
+						?.querySelector('.maplibregl-compact.maplibregl-compact-show')
 						?.classList.remove('maplibregl-compact-show');
 				map.once('click', collapse);
-				setTimeout(collapse, 6000);
+				collapseTimer = setTimeout(collapse, 6000);
 				if (onReady && lib) onReady(map, lib);
 			});
 			map.on('moveend', (e) => {
@@ -247,6 +251,8 @@
 	});
 
 	onDestroy(() => {
+		destroyed = true;
+		clearTimeout(collapseTimer);
 		resizeObserver?.disconnect();
 		map?.remove();
 	});
