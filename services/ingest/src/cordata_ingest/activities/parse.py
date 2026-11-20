@@ -872,6 +872,39 @@ FIELD_LINE = re.compile(
 )
 
 
+def programme_dates(pages: list[tuple[int, str]], year: int) -> list[str]:
+    """Le date delle voci di un programma o libretto (AAAA-MM-GG), con gli stessi inizi di voce
+    di `calendar_entry`: «12/04/2026», «12 domenica» sotto il mese, «Domenica 12 aprile 2026».
+    Gli elenchi di sole date uno sotto l'altro non sono voci."""
+    found: list[str] = []
+    for _, text in pages:
+        lines = text.splitlines()
+        header = _fold(text[:200])
+        months = [MONTHS[k] for k in MONTHS if re.search(rf"^{k}\b", header, re.M)]
+        starts: list[tuple[int, tuple[int, int, int]]] = []
+        for i, line in enumerate(lines):
+            s = line.strip()
+            m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})", s)
+            if m:
+                starts.append((i, (int(m.group(3)), int(m.group(2)), int(m.group(1)))))
+                continue
+            m = re.match(rf"^(\d{{1,2}})\s+{WEEKDAYS}\b", _fold(s))
+            if m and months:
+                starts.append((i, (year, months[0], int(m.group(1)))))
+                continue
+            m = WRITTEN_DATE.fullmatch(_fold(s))
+            if m:
+                starts.append((i, (int(m.group(3)), MONTHS[m.group(2)], int(m.group(1)))))
+        if sum(1 for a, b in itertools.pairwise(starts) if b[0] - a[0] == 1) >= 2:
+            continue
+        for _, (y, mo, d) in starts:
+            if 1 <= mo <= 12 and 1 <= d <= 31:
+                iso = f"{y:04d}-{mo:02d}-{d:02d}"
+                if iso not in found:
+                    found.append(iso)
+    return found
+
+
 def calendar_entry(pages: list[tuple[int, str]], date: str) -> list[tuple[int, str]]:
     """Ritaglia la voce di un calendario o libretto per la data indicata (AAAA-MM-GG)."""
     year, month, day = (int(x) for x in date.split("-"))

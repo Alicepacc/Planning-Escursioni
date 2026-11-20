@@ -84,3 +84,19 @@ def test_tipo_di_attivita():
     assert activity_kind({"difficolta": "MC/BC"}, "Cicloescursionismo")[0] == "bici"
     assert activity_kind({"difficolta": "PD"}, "")[0] == "alpinismo"
     assert activity_kind({"difficolta": "EE", "salita_m": 900}, "Escursione")[0] == "escursione"
+
+
+def test_date_di_un_programma():
+    from cordata_ingest.activities.parse import programme_dates
+
+    pages = [
+        (
+            1,
+            "Gita al Lago di Calaita\nDomenica 12 aprile 2026\nDifficoltà: E\n\n"
+            "Anello del Monte Grappa\nSabato 9 maggio 2026\nDifficoltà: EE\n",
+        ),
+    ]
+    assert programme_dates(pages, 2026) == ["2026-04-12", "2026-05-09"]
+    # un elenco di sole date uno sotto l'altro non sono voci
+    lista = [(1, "12/01/2026\n18/01/2026\n25/01/2026\n")]
+    assert programme_dates(lista, 2026) == []

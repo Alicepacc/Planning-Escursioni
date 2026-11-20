@@ -28,7 +28,7 @@ import yaml
 from ..config import data_dir, repo_root
 from ..geo.area import in_area
 from .itinerary import extract_points
-from .parse import parse
+from .parse import calendar_entry, parse, programme_dates
 from .reliability import THRESHOLD, score
 
 # scale di difficoltà della mountain bike (cicloescursionismo CAI) e dell'alpinismo
@@ -230,8 +230,6 @@ def activity_from(values: dict[str, Any], text: str, home: str | None) -> dict[s
 def process(
     conn: Any, dem: Any, doc_id: str, entry: dict[str, Any], names: dict[str, str]
 ) -> dict[str, Any]:
-    from .reconstruct import reconstruct, result_dict
-
     text_doc = json.loads(
         (data_dir() / "activities" / "text" / f"{doc_id}.json").read_text(encoding="utf-8")
     )
@@ -250,9 +248,81 @@ def process(
     }
     kind, why = activity_kind(values, text)
     record["tipo"] = kind
+    if kind == "programma":
+        # programmi e libretti: ogni voce di calendario come una locandina a sé
+        record["voci"] = process_programme(conn, dem, doc_id, entry, section, pages, text)
+        n_ok = sum(1 for v in record["voci"].values() if v == "pubblicabile")
+        record["esito"] = f"programma: {len(record['voci'])} voci, {n_ok} pubblicabili"
+        return record
     if kind != "escursione":
         record["esito"] = f"escluso: {why}"
         return record
+    return _reconstruct_and_score(conn, dem, doc_id, entry, record, fields, values, text)
+
+
+def _year_of(text: str, url: str) -> int:
+    years = re.findall(r"\b(20[12]\d)\b", text)
+    if years:
+        return int(max(set(years), key=years.count))
+    m = re.search(r"/(20[12]\d)/", url)
+    return int(m.group(1)) if m else 2026
+
+
+def process_programme(
+    conn: Any,
+    dem: Any,
+    doc_id: str,
+    entry: dict[str, Any],
+    section: str,
+    pages: list[tuple[int, str]],
+    text: str,
+) -> dict[str, str]:
+    """Voci di un programma: per ogni data la voce ritagliata, i campi, la ricostruzione e il
+    punteggio, ciascuna con il suo record (`<documento>--<data>`). Restituisce gli esiti."""
+    out: dict[str, str] = {}
+    for iso in programme_dates(pages, _year_of(text, entry["url"]))[:120]:
+        part = calendar_entry(pages, iso)
+        if not part:
+            continue
+        fields = parse(part, entry_date=iso)
+        values = {k: v["value"] for k, v in fields.items()}
+        part_text = "\n".join(t for _, t in part)
+        rid = f"{doc_id}--{iso}"
+        record: dict[str, Any] = {
+            "id": rid,
+            "documento": doc_id,
+            "sezione": section,
+            "url": entry["url"],
+            "pubblicato": entry.get("published"),
+            "campi": fields,
+        }
+        kind, why = activity_kind(values, part_text)
+        record["tipo"] = "voce di programma" if kind in ("escursione", "programma") else kind
+        if kind not in ("escursione", "programma"):
+            record["esito"] = f"escluso: {why}"
+        else:
+            # la voce non ha il nome del sito: il titolo viene dalla voce o dalla traccia
+            sub = {**entry, "titolo_sito": None}
+            record = _reconstruct_and_score(conn, dem, rid, sub, record, fields, values, part_text)
+        target = catalog_dir() / "record" / f"{rid}.json"
+        target.write_text(json.dumps(record, ensure_ascii=False, indent=1), "utf-8")
+        out[iso] = record["esito"].split(":")[0].split(" (")[0]
+    return out
+
+
+def _reconstruct_and_score(
+    conn: Any,
+    dem: Any,
+    doc_id: str,
+    entry: dict[str, Any],
+    record: dict[str, Any],
+    fields: dict[str, Any],
+    values: dict[str, Any],
+    text: str,
+) -> dict[str, Any]:
+    from .reconstruct import reconstruct, result_dict
+
+    section = record["sezione"]
     home = re.sub(r"^(CAI|SAT)\s+", "", section).split(" - ")[0].strip() or None
     activity = activity_from(values, text, home)
     activity["sezione"] = section
