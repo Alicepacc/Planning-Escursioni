@@ -491,6 +491,9 @@ def sanitize(text: str, table: bool = False) -> tuple[str, int]:
 # ---------------------------------------------------------------- estrazione
 
 
+OCR_TIMEOUT_S = 120
+
+
 def _ocr(page: pymupdf.Page) -> str:
     if not shutil.which("tesseract"):
         return ""
@@ -498,12 +501,16 @@ def _ocr(page: pymupdf.Page) -> str:
     with tempfile.TemporaryDirectory() as tmp:
         img = Path(tmp) / "pagina.png"
         pix.save(img)
-        res = subprocess.run(
-            ["tesseract", str(img), "stdout", "-l", OCR_LANGS, "--psm", "3"],
-            capture_output=True,
-            text=True,
-            timeout=300,
-        )
+        try:
+            res = subprocess.run(
+                ["tesseract", str(img), "stdout", "-l", OCR_LANGS, "--psm", "3"],
+                capture_output=True,
+                text=True,
+                timeout=OCR_TIMEOUT_S,
+            )
+        except subprocess.TimeoutExpired:
+            # pagine enormi o illeggibili: si salta la pagina, non il documento né il lotto
+            return ""
     return res.stdout
 
 
@@ -636,7 +643,10 @@ def extract_all(
             continue
         data = {"id": doc_id, "section": entry["section"], "url": entry["url"]}
         path = base / entry["path"]
-        data.update(extract_html(path) if path.suffix == ".html" else extract_pdf(path))
+        try:
+            data.update(extract_html(path) if path.suffix == ".html" else extract_pdf(path))
+        except Exception as exc:  # PDF rovinato o protetto: si registra e si va avanti
+            data.update({"pages": [], "n_pages": 0, "chars": 0, "errore": f"{type(exc).__name__}"})
         (out / f"{doc_id}.json").write_text(
             json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8"
         )
