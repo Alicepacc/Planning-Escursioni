@@ -127,6 +127,11 @@ def test_elenco_delle_tappe_dopo_itinerario():
         ("Forcella Nuvolau", 2400),
         ("Monte Conca", None),
     ]
+    # spazi invisibili e campi sulla stessa riga (locandine CAI Asiago 2026)
+    assert names(
+        "Itinerario:\u200b\u200bBiancoia - Val Biancoia\u200b\u200b- M.ga Pozzette - Biancoia"
+        "\u200b \u200bRitrovo:\u200b\u200bore 9.00 presso il Piazzale"
+    ) == ["Biancoia", "Val Biancoia", "Malga Pozzette", "Biancoia"]
     # indicazioni stradali e prosa non sono elenchi di tappe
     assert names("Percorso: Autostrada A27 fino a Pian di Vedoia, direzione Longarone") == []
     assert names("Itinerario: si sale per il bosco fitto fino alla forcella e poi si scende.") == []

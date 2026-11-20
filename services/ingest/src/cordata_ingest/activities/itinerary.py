@@ -366,11 +366,14 @@ ROAD = re.compile(
     r"(?i:\b(?:autostrad\w*|uscit\w*|casello|statale|tangenziale|superstrada|km|direzione|"
     r"pullman|auto)\b)|\b(?:S[SRP][ \t]?\d+|A\d{1,2})\b"
 )
-FIELD_STOP = re.compile(
-    r"(?im)^[ \t]*(?:ritrovo|partenza|attrezzatura|materiali|note|accompagnator\w*|"
-    r"iscrizion\w*|difficolt\w*|grado|dislivell\w*|tempo|durata|lunghezza|quota|"
-    r"equipaggiamento|pranzo|rientro|mezzi|costo)\b"
+_FIELDS = (
+    r"ritrovo|partenza|attrezzatura|materiali|note|accompagnator\w*|iscrizion\w*|difficolt\w*|"
+    r"grado|dislivell\w*|tempo|durata|lunghezza|quota|equipaggiamento|pranzo|rientro|mezzi|costo"
 )
+# il campo successivo: a inizio riga, o anche in mezzo alla riga se seguito dai due punti
+FIELD_STOP = re.compile(rf"(?im)^[ \t]*(?:{_FIELDS})\b|\b(?:{_FIELDS})[ \t]*:")
+# spazi invisibili delle locandine impaginate (U+200B…): diventano spazi
+INVISIBLE = re.compile(r"[\u200b\u200c\u200d\u2060\ufeff]")
 LIST_SPLIT = re.compile(r"\s*(?:[,;→>]|->|\s[-–—]+\s*|\s*[-–—]+\s|\s/\s)\s*|\s+e\s+(?=[A-ZÀ-Ý])")
 TRAIL_REF = re.compile(
     r"(?i)^(?:(?:sent(?:iero|\.)?|segnavia|sv\.?|n\.)\s*[\w.]+|[A-Z]?\d+[A-Za-z]?|E\d+)$"
@@ -394,6 +397,7 @@ CAP_PHRASE = re.compile(rf"{_WORD}(?:\s+(?:{_CONNECT}\s+)?{_WORD}){{0,3}}")
 
 def list_points(text: str) -> list[dict[str, Any]]:
     """Tappe dall'elenco dopo «Itinerario:» o «Percorso:», se è davvero un elenco di luoghi."""
+    text = INVISIBLE.sub(" ", text)
     for m in LIST_LABEL.finditer(text):
         rest = text[m.end() : m.end() + 400]
         stop = FIELD_STOP.search(rest)
@@ -429,6 +433,7 @@ def list_points(text: str) -> list[dict[str, Any]]:
             item = LIST_CUT.sub("", item)
             item = re.sub(r"(?i)^(?:loc\.?|località|fraz\.?|frazione)\s+", "", item)
             item = re.sub(r"^M\.\s*(?=[A-ZÀ-Ý])", "Monte ", item)
+            item = re.sub(r"^M\.ga\s+", "Malga ", item)
             if item.isupper():
                 item = item.title()
             names: list[str | None]
