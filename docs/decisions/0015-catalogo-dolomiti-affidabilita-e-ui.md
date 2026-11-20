@@ -47,6 +47,18 @@ non la sede della sezione.
    verifiche su iPhone si fanno anche nel simulatore di Xcode sul Mac dell'utente, collegato
    alla sessione quando serve.
 
+## Scelte sulla UI (dopo i mockup, 20/11/2026)
+
+Mockup in `reports/ui/mockup/`. L'utente ha scelto:
+
+- **direzione A «Rifugio»**: fondo carta calda, verde bosco, accento ruggine, titoli con grazie
+  (Fraunces) e testo in Inter, caratteri ospitati dall'app (niente servizi esterni);
+- **navigazione a quattro schede**: Scopri (pagina iniziale), Mappa (mappa ed elenco),
+  Pianifica, Uscite; profilo e impostazioni dall'avatar in alto;
+- **tema scuro automatico** come il telefono, con scelta manuale nel profilo (la direzione A va
+  disegnata anche al buio);
+- **difficoltà a colori come le piste**: T verde, E blu, EE rosso, EEA nero, EAI viola.
+
 ## Conseguenze
 
 - Il catalogo può crescere di molto, ma solo con escursioni affidabili: meglio meno schede
