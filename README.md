@@ -6,8 +6,9 @@ in quota e bollettino valanghe. Specifica completa in [`docs/SPEC.md`](docs/SPEC
 
 **Stato: Fase 5 (uscite di gruppo) completata e pubblicata il 20/11/2026; Fase 6 in pausa per
 il catalogo Dolomiti e Prealpi e il rifacimento della UI ([ADR 0015](docs/decisions/0015-catalogo-dolomiti-affidabilita-e-ui.md)).** Pilota della
-Fase 2 approvato il 16/11/2026. In corso i blocchi di ingestion delle locandine (89 escursioni
-in app). Demo: <https://alicepacc.github.io/Planning-Escursioni/>; servizio delle uscite:
+Fase 2 approvato il 16/11/2026. Catalogo elaborato su tutte le 3.513 locandine scaricate:
+228 escursioni in app con affidabilità da 80 su 100 ([rapporto](reports/catalogo/README.md));
+nuova UI «Rifugio» su tutte le schede. Demo: <https://alicepacc.github.io/Planning-Escursioni/>; servizio delle uscite:
 `https://cordata-uscite.cordata.workers.dev`.
 Rapporti: [`reports/phase5/README.md`](reports/phase5/README.md) ·
 [`reports/ingestion/README.md`](reports/ingestion/README.md) ·
