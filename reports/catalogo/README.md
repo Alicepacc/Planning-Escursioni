@@ -1,7 +1,7 @@
 # Catalogo Trentino-Alto Adige e Dolomiti: avanzamento
 
 Data: 20/11/2026. Decisioni: [ADR 0015](../../docs/decisions/0015-catalogo-dolomiti-affidabilita-e-ui.md).
-Rapporto intermedio: lo scarico e l'estrazione del testo sono ancora in corso.
+Scarico ed estrazione del testo conclusi; il catalogo si sta rielaborando per intero.
 
 ## Cosa si pubblica
 
@@ -98,9 +98,30 @@ Controllo a campione (`campione-lotto-2.png`, 12 a caso tra le 46): tracce tutte
 una sola resta dubbia («Escursione notturna: Rifugio Bristot al Nevegal», la traccia passa per
 il versante dell'Alpago). Nell'app: **82 escursioni** da 80 in su (5 doppioni fusi).
 
+## Terzo passo (20/11/2026, sera)
+
+- **Scarico finito**: 3.814 documenti cercati, 3.513 scaricati (301 non più disponibili, per lo
+  più 404, o esclusi dal robots.txt). **Testo** estratto per tutti: l'OCR ora gira con un
+  processo per core e un filo per processo, prima le locandine con una meta dell'area nel titolo.
+- **Dati personali**: sotto «ACCOMPAGNATORI» da solo su una riga, i nomi separati da virgole
+  («Nome Cognome, Nome Cognome.», locandine CAI Asiago e altre) restavano nel testo estratto,
+  e i blocchi di impaginazione, puliti uno per uno, non sapevano di essere sotto l'etichetta.
+  Ora si tolgono; i testi già estratti sono stati ripassati (334 cambiati) e il catalogo è stato
+  rifatto da capo sui testi puliti. Nessuno dei nomi tolti era nei file del repository o nei
+  dati pubblicati dell'app (controllo su tutti i file tracciati).
+- **Elenco delle tappe**: molte locandine danno il percorso come «Itinerario: Casotto,
+  Belfiore, Luserna, Longhi, Casotto.». Quando è davvero un elenco di luoghi (non indicazioni
+  stradali né prosa) dà i punti nell'ordine della locandina, senza i numeri dei sentieri, con la
+  quota tra parentesi; se torna alla partenza è un anello. Sulle 72 locandine con un elenco: 11
+  in più da 80 in su, una in meno (Monte Conca: con tutti gli otto punti la traccia viene il 40%
+  più lunga del dichiarato, e il punteggio la tiene fuori).
+- **Distanze** «km tot.: 11,1 Km», «Km totali: 13 km», «Km e dislivello: 11 km, +1300 m»
+  (schede CAI Belluno): senza distanza restava un solo confronto e il punteggio non arrivava a 80.
+
+_Esiti sul lotto completo: in aggiornamento, il catalogo si sta rielaborando sui testi puliti._
+
 ## Aperti
 
-- Scarico ed estrazione in corso; il catalogo si aggiorna a ogni passo.
 - Programmi e libretti annuali (molte gite per documento): da trattare con le voci di
   calendario del parser.
 - Partenza riconosciuta bene solo in metà dei casi: è la leva principale per pubblicare di più.
