@@ -310,7 +310,8 @@ def _first_name(tail: str, home: str | None) -> str | None:
         if name:
             candidates.append((wm.start(), name))
             break
-    for _, name in sorted(candidates):
+    # per posizione soltanto: due candidati nello stesso punto possono avere il nome vuoto
+    for _, name in sorted(candidates, key=lambda c: c[0]):
         if name and not (home and _norm(name) == _norm(home)):
             return name
     return None

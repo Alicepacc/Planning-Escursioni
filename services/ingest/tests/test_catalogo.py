@@ -149,3 +149,10 @@ def test_distanza_e_salita_nelle_schede_cai_belluno():
     doc = Doc([(1, "Km e dislivello: 11 km, +1300 m\nGalleria (disl. 120m - lunghezza 500m)")])
     assert parse_distance(doc).value == 11
     assert parse_elevation_gain(doc)[0].value == 1300
+
+
+def test_partenza_con_due_candidati_nello_stesso_punto():
+    from cordata_ingest.activities.itinerary import _first_name
+
+    # «Rifugio Ai» non dà un nome valido, la parola maiuscola sì: nessun errore di confronto
+    assert _first_name("Rifugio Ai", None) in (None, "Rifugio Ai", "Ai")
