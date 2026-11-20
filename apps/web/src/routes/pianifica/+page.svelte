@@ -10,6 +10,7 @@
 	import DifficultyBadge from '#lib/components/DifficultyBadge.svelte';
 	import SafetyNote from '#lib/components/SafetyNote.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
+	import { safeAreaTop } from '#lib/ui/safe-area.ts';
 	import { generatedAsset } from '#lib/data/paths.ts';
 	import { download, fileName, toGpx } from '#lib/export/gpx.ts';
 	import { formatDuration, formatKm, formatMeters } from '#lib/hiking/format.ts';
@@ -461,6 +462,7 @@
 	let dragTop = $state<number | null>(null);
 	let dragMoved = false;
 	let wide = $state(false);
+	let safeTop = $state(0);
 	let viewH = $state(800);
 
 	function cycleSheet() {
@@ -503,7 +505,7 @@
 		wide
 			? 40
 			: {
-					top: 150,
+					top: 150 + safeTop,
 					bottom: Math.round(viewH * (sheet === 'basso' ? 0.16 : sheet === 'alto' ? 0.6 : 0.45)),
 					left: 30,
 					right: 60
@@ -513,6 +515,7 @@
 	onMount(() => {
 		const mq = window.matchMedia('(min-width: 900px)');
 		wide = mq.matches;
+		safeTop = safeAreaTop();
 		viewH = window.innerHeight;
 		mq.addEventListener('change', (e) => (wide = e.matches));
 	});

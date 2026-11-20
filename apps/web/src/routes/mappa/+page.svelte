@@ -8,6 +8,7 @@
 	import MapView from '#lib/map/MapView.svelte';
 	import HikeRow from '#lib/ui/HikeRow.svelte';
 	import Icon from '#lib/ui/Icon.svelte';
+	import { safeAreaTop } from '#lib/ui/safe-area.ts';
 	import TrailInfo from '#lib/components/TrailInfo.svelte';
 	import FiltersPanel from '#lib/components/FiltersPanel.svelte';
 	import {
@@ -256,16 +257,18 @@
 
 	// sul telefono la mappa si inquadra sopra il foglio dell'elenco e sotto la ricerca
 	let wide = $state(false);
+	let safeTop = $state(0);
 	onMount(() => {
 		const mq = window.matchMedia('(min-width: 900px)');
 		wide = mq.matches;
+		safeTop = safeAreaTop();
 		mq.addEventListener('change', (e) => (wide = e.matches));
 	});
 	const padding = $derived(
 		wide
 			? 40
 			: {
-					top: 130,
+					top: 130 + safeTop,
 					bottom: Math.round((typeof window === 'undefined' ? 800 : window.innerHeight) * 0.42),
 					left: 24,
 					right: 60
