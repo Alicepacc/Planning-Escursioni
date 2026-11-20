@@ -27,8 +27,10 @@ import psycopg
 import yaml
 
 from ..activities.dedup import group
+from ..activities.reliability import THRESHOLD, score
 from ..config import data_dir, repo_root
 from ..difficulty import normalize_cai
+from ..geo.area import in_area
 from ..geo.profile import compute_profile
 from .documents import (
     DEFAULT_PARAMS,
@@ -298,6 +300,23 @@ def link_duplicates(docs: list[dict[str, Any]], coords: dict[str, list]) -> dict
     return {"gruppi": len(groups), "varianti": sum(r["relation"] == "variante" for r in relations)}
 
 
+def zone_for(conn: psycopg.Connection, coords: list[list[float]]) -> str:
+    """Zona di un'escursione del catalogo: la valle con nome più vicina al centro della traccia,
+    altrimenti il paese più vicino (per le schede rivedute la zona l'ha scritta una persona)."""
+    lon = sum(p[0] for p in coords) / len(coords)
+    lat = sum(p[1] for p in coords) / len(coords)
+    for kind, km in (("valle", 6), ("paese", 12)):
+        row = conn.execute(
+            """SELECT coalesce(name_it, name) FROM gazetteer
+               WHERE kind = %s AND ST_DWithin(geom::geography, ST_MakePoint(%s, %s)::geography, %s)
+               ORDER BY geom::geography <-> ST_MakePoint(%s, %s)::geography LIMIT 1""",
+            (kind, lon, lat, km * 1000, lon, lat),
+        ).fetchone()
+        if row and row[0]:
+            return row[0]
+    return ""
+
+
 def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
     reviewed_dirs = [
@@ -307,6 +326,7 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
     tracks = data_dir() / "activities" / "tracks"
     manifest = json.loads((data_dir() / "activities" / "raw" / "manifest.json").read_text("utf-8"))
     docs: list[dict[str, Any]] = []
+    skipped = {"revisionate": 0, "catalogo": 0}
     coords: dict[str, list] = {}
     statuses: dict[str, str] = {}
     for path in sorted(p for d in reviewed_dirs if d.exists() for p in d.glob("*.yaml")):
@@ -317,11 +337,41 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
             continue
         track = json.loads(track_path.read_text(encoding="utf-8"))
         url = manifest.get(act.get("documento", activity_id), {}).get("url")
+        # ADR 0015: solo le escursioni affidabili (da 80 su 100) e nell'area del catalogo
+        reliability = score(track)
+        if reliability["punteggio"] < THRESHOLD or not in_area(track.get("coords")):
+            skipped["revisionate"] += 1
+            continue
         doc = activity_document(activity_id, act, track, url, conn, dem)
+        doc["reliability"] = reliability["punteggio"]
         doc["_section"] = act.get("sezione")
         docs.append(doc)
         coords[doc["id"]] = track["coords"]
         statuses[doc["id"]] = track["status"]
+    # catalogo a lotti (ADR 0015): le schede pubblicabili ricostruite dal solo parser
+    catalog = data_dir() / "activities" / "catalogo"
+    seen = {d["id"] for d in docs}
+    for rec_path in sorted((catalog / "record").glob("*.json")) if catalog.exists() else []:
+        rec = json.loads(rec_path.read_text(encoding="utf-8"))
+        if rec.get("esito") != "pubblicabile" or not rec.get("area"):
+            continue
+        track_path = catalog / "tracce" / f"{rec['id']}.json"
+        if not track_path.exists():
+            continue
+        track = json.loads(track_path.read_text(encoding="utf-8"))
+        act = {k: v for k, v in rec["attivita"].items() if k != "punti_dal_testo"}
+        act["sezione"] = rec["sezione"]
+        act["zona"] = zone_for(conn, track["coords"])
+        doc = activity_document(rec["id"], act, track, rec["url"], conn, dem)
+        if doc["id"] in seen:
+            continue
+        seen.add(doc["id"])
+        doc["reliability"] = rec["affidabilita"]["punteggio"]
+        doc["_section"] = rec["sezione"]
+        docs.append(doc)
+        coords[doc["id"]] = track["coords"]
+        statuses[doc["id"]] = track["status"]
+        skipped["catalogo"] += 1
     # la deduplica confronta le tracce: le attività senza linea restano a sé
     dedup = link_duplicates([d for d in docs if d["line"]], coords)
     index = []
@@ -348,4 +398,10 @@ def build_activities(conn: psycopg.Connection, dem, out_dir: Path) -> dict[str, 
     stale = [p for p in out_dir.glob("*.json") if p.name not in keep]
     for p in stale:
         p.unlink()
-    return {"attivita": len(index), "rimosse": len(stale), **dedup}
+    return {
+        "attivita": len(index),
+        "dal_catalogo": skipped["catalogo"],
+        "revisionate_escluse": skipped["revisionate"],
+        "rimosse": len(stale),
+        **dedup,
+    }

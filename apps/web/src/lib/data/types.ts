@@ -94,6 +94,8 @@ export interface TrailOnRoute {
 }
 
 export interface ItineraryDoc {
+	/** affidabilità della traccia 0-100 (ADR 0015) */
+	reliability?: number;
 	schema: number;
 	/** itinerario (fixture) o attività CAI dell'archivio (build/activities.py) */
 	kind: 'itinerario' | 'attivita';

@@ -13,11 +13,17 @@
 
 {#if noTrack}
 	<span class="trust muted">Senza traccia</span>
-{:else if ok || (score != null && score >= 80)}
+{:else if score != null && score >= 80}
+	<span class="trust ok" title="Affidabilità della traccia: {score} su 100"
+		><Icon name="affidabile" size={14} stroke={2.4} />{long
+			? `Traccia affidabile al ${score}%`
+			: `Traccia ${score}%`}</span
+	>
+{:else if ok}
 	<span class="trust ok"
 		><Icon name="affidabile" size={14} stroke={2.4} />{long
 			? 'Traccia verificata'
-			: 'Verificata'}{score != null ? ` ${score}%` : ''}</span
+			: 'Verificata'}</span
 	>
 {:else}
 	<span class="trust muted">Da verificare</span>

@@ -57,6 +57,22 @@ def activities(include_blocks: bool = False) -> dict[str, dict[str, Any]]:
     return out
 
 
+def text_points(
+    activity_id: str, reviewed: dict[str, Any], title: str | None
+) -> dict[str, Any] | None:
+    """Punti del percorso dal testo estratto della locandina (activities.itinerary)."""
+    from .itinerary import extract_points
+
+    path = data_dir() / "activities" / "text" / f"{activity_id}.json"
+    if not path.exists():
+        return None
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    text = "\n".join(page.get("text", "") for page in doc.get("pages", []))
+    section = reviewed.get("sezione") or ""
+    home = re.sub(r"^(CAI|SAT)\s+", "", section).strip() or None
+    return extract_points(text, home=home, title=title)
+
+
 def parsed_activity(activity_id: str, reviewed: dict[str, Any]) -> dict[str, Any]:
     """Gli stessi campi presi dal solo parser, senza revisione (per misurarne il valore)."""
     from .evaluate import parse_activity
@@ -65,7 +81,16 @@ def parsed_activity(activity_id: str, reviewed: dict[str, Any]) -> dict[str, Any
     points = [{"nome": x["nome"], "quota_m": x.get("quota_m")} for x in p["punti_chiave"] or []]
     if p["partenza_nome"]:
         points.insert(0, {"nome": p["partenza_nome"], "quota_m": p["partenza_quota_m"]})
-    if p["tipo_percorso"] == "anello" and points:
+    # punti dal testo con il gazetteer (ADR 0015) quando il parser ne trova meno di tre
+    loop = p["tipo_percorso"] == "anello"
+    from_text = False
+    if len({x["nome"] for x in points}) < 3:
+        extra = text_points(activity_id, reviewed, p.get("titolo"))
+        if extra and len(extra["punti"]) >= 2:
+            points = extra["punti"]
+            from_text = True
+            loop = loop or (extra["anello"] and p["tipo_percorso"] is None)
+    if loop and points:
         points.append(dict(points[0]))
     elif p["arrivo_nome"] and p["tipo_percorso"] == "traversata":
         points.append({"nome": p["arrivo_nome"]})
@@ -79,6 +104,7 @@ def parsed_activity(activity_id: str, reviewed: dict[str, Any]) -> dict[str, Any
         "partenza": {"nome": p["partenza_nome"], "quota_m": p["partenza_quota_m"]},
         "sentieri": p["sentieri"] or [],
         "punti_chiave": points,
+        "punti_dal_testo": from_text,
     }
 
 

@@ -38,6 +38,8 @@ export interface ExploreItem {
 	ok?: boolean;
 	/** senza traccia: percorso non ricostruito (ADR 0013) */
 	nt?: boolean;
+	/** affidabilità della traccia 0-100 (ADR 0015) */
+	r?: number;
 	/** forma semplificata della traccia per le miniature (lon, lat) */
 	ln?: number[][];
 	/** deduplica (§7.5): altre proposte dello stesso itinerario; membro non canonico */

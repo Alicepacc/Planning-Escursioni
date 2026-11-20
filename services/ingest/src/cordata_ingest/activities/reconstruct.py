@@ -634,6 +634,11 @@ def reconstruct(conn: Any, dem: Any, activity_id: str, activity: dict[str, Any])
     points = geocode(
         conn, dem, _points_from(activity), refs, search_radius_km(activity), anchor_hint
     )
+    # punti presi dal testo (ADR 0015): se il primo non è un luogo noto, la partenza diventa
+    # il primo che lo è; i punti rivisti a mano invece devono esserci tutti
+    if activity.get("punti_dal_testo"):
+        while len(points) > 2 and points[0].place is None:
+            points = geocode(conn, dem, points[1:], refs, search_radius_km(activity), anchor_hint)
     res.points = [
         {
             "nome": p.query,

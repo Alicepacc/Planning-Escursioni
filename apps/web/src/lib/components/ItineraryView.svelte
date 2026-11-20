@@ -44,7 +44,10 @@
 	}
 
 	const isActivity = $derived(doc.kind === 'attivita');
-	const verified = $derived(!doc.verification || doc.verification.status === 'auto_ok');
+	// verificata: confronti tutti dentro le tolleranze, o affidabilità da 80 in su (ADR 0015)
+	const verified = $derived(
+		!doc.verification || doc.verification.status === 'auto_ok' || (doc.reliability ?? 0) >= 80
+	);
 	// percorso non ricostruito (ADR 0013): solo i dati della locandina e i punti trovati
 	const hasLine = $derived(doc.line.length >= 2);
 	const d = $derived(doc.declared);
@@ -308,7 +311,7 @@
 	<h1>{doc.title}</h1>
 	<div class="tags">
 		<DiffPill code={doc.difficulty.cai ?? doc.difficulty.raw} label />
-		<Trust ok={hasLine && verified} noTrack={!hasLine} long />
+		<Trust ok={hasLine && verified} noTrack={!hasLine} score={doc.reliability ?? null} long />
 	</div>
 	{#if doc.summary}<p class="sintesi">{doc.summary}</p>{/if}
 	{#if hasLine && verified}

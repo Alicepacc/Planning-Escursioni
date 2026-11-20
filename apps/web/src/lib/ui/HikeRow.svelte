@@ -51,7 +51,9 @@
 	onfocus={() => onfocusitem?.(item.id)}
 >
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->
-	<span class="thumb"><RouteShape line={item.ln ?? []} dashed={!item.ok} /></span>
+	<span class="thumb"
+		><RouteShape line={item.ln ?? []} dashed={!item.ok && (item.r ?? 0) < 80} /></span
+	>
 	<span class="body">
 		<span class="title">{item.t}</span>
 		<span class="meta"
@@ -66,7 +68,7 @@
 			{#if item.min}<span><Icon name="tempo" size={14} />{formatDuration(item.min)}</span>{/if}
 		</span>
 		<span class="stats foot">
-			<Trust ok={item.ok} noTrack={item.nt} />
+			<Trust ok={item.ok} noTrack={item.nt} score={item.r ?? null} />
 			<span class="src">{source}{when ? ` · ${when}` : ''}</span>
 		</span>
 	</span>

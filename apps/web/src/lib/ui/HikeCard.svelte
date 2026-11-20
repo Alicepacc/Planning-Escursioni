@@ -15,7 +15,13 @@
 <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 <a class="card" {href}>
 	<span class="art">
-		<RouteShape line={item.ln ?? []} width={252} height={118} stroke={3} dashed={!item.ok} />
+		<RouteShape
+			line={item.ln ?? []}
+			width={252}
+			height={118}
+			stroke={3}
+			dashed={!item.ok && (item.r ?? 0) < 80}
+		/>
 		{#if day}
 			<span class="date">
 				{day.toLocaleDateString('it-IT', { weekday: 'short' })}

@@ -5,6 +5,7 @@ python -m cordata_ingest.activities archive    # scarica i candidati del pilota
 python -m cordata_ingest.activities extract    # testo (OCR se serve), dati personali rimossi
 python -m cordata_ingest.activities gazetteer  # luoghi OSM con nome per la geocodifica
 python -m cordata_ingest.activities prefiltro  # dal titolo, i documenti da scaricare (ADR 0015)
+python -m cordata_ingest.activities catalogo   # escursioni, tracce, affidabilità (ADR 0015)
 """
 
 from __future__ import annotations
@@ -38,6 +39,11 @@ def main(argv: list[str] | None = None) -> int:
     pre.add_argument("--out", type=Path, help="file YAML dei candidati (default: in data/)")
     sub.add_parser("sat-siti", help="cerca i siti delle sezioni SAT (solo la home di ciascuno)")
     sub.add_parser("cai-veneto-siti", help="cerca i siti delle sezioni CAI del Veneto (solo home)")
+    cat = sub.add_parser(
+        "catalogo", help="elabora le locandine archiviate: escursioni, tracce, affidabilità"
+    )
+    cat.add_argument("--limite", type=int, help="al massimo N documenti nuovi")
+    cat.add_argument("--tutti", action="store_true", help="rielabora anche quelli già fatti")
     rec = sub.add_parser("reconstruct", help="ricostruisce le tracce delle attività del pilota")
     rec.add_argument("ids", nargs="*", help="solo queste attività (default: tutte)")
     rec.add_argument("--solo-parser", action="store_true", help="campi del parser, senza revisione")
@@ -119,6 +125,10 @@ def main(argv: list[str] | None = None) -> int:
             for r in results:
                 print(f"{slug:32} wp={r.get('wordpress')} pdf={r.get('pdf_pubblici')} {r['url']}")
         print(f"indirizzi provati: {payload['indirizzi_provati']}")
+    elif args.cmd == "catalogo":
+        from .catalog import run
+
+        print(run(limit=args.limite, only_new=not args.tutti))
     elif args.cmd == "reconstruct":
         from .pilot import run_reconstruction
 

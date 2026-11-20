@@ -210,6 +210,7 @@ def _itinerary_items(folder: Path, kind: str) -> list[dict[str, Any]]:
                 "p": mini_profile(doc["profile"]["points"]) if verified else [],
                 "ln": silhouette(doc["line"]) if doc["line"] else [],
                 "ok": verified,
+                **({"r": doc["reliability"]} if doc.get("reliability") is not None else {}),
                 **({} if doc["line"] else {"nt": True}),
                 # deduplica (§7.5): altre proposte dello stesso itinerario, membri nascosti
                 **({"alt": len(doc["proposals"]) - 1} if doc.get("proposals") else {}),
@@ -272,6 +273,7 @@ def build_explore(conn: psycopg.Connection, static_dir: Path) -> dict[str, Any]:
             "mo": "mesi consigliati, indicativi (dalla quota massima)",
             "p": f"mini-profilo: {PROFILE_SAMPLES} quote equidistanti",
             "ln": "forma della traccia per le miniature (al massimo 40 punti, lon/lat)",
+            "r": "affidabilità della traccia, 0-100 (ADR 0015): nell'app solo da 80 in su",
             "tag": "luoghi OSM vicini alla traccia",
         },
         "items": items,

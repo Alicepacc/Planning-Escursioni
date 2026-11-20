@@ -516,6 +516,9 @@ def _columns(blocks: list[tuple[float, ...]], width: float) -> int:
     return 2 if side_by_side >= 3 else 1
 
 
+MAX_OCR_PAGES = 12
+
+
 def extract_pdf(path: Path) -> dict[str, Any]:
     doc = pymupdf.open(path)
     pages: list[dict[str, Any]] = []
@@ -526,7 +529,8 @@ def extract_pdf(path: Path) -> dict[str, Any]:
         blocks = page.get_text("blocks")
         images = len(page.get_images(full=True))
         ocr = False
-        if len(text.strip()) < OCR_MIN_CHARS and images:
+        # OCR solo sulle prime pagine: i documenti più lunghi sono libretti e programmi
+        if len(text.strip()) < OCR_MIN_CHARS and images and page.number < MAX_OCR_PAGES:
             text = _ocr(page)
             ocr = True
             blocks = []
