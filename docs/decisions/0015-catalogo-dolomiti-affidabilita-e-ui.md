@@ -1,4 +1,4 @@
-# 0015 – Catalogo Dolomiti e Prealpi, soglia di affidabilità, rifacimento della UI
+# 0015 – Catalogo Trentino-Alto Adige e Dolomiti, soglia di affidabilità, rifacimento della UI
 
 Data: 20/11/2026 · Stato: accettata (scelte dell'utente con domande a risposta multipla)
 
@@ -14,16 +14,19 @@ non la sede della sezione.
 ## Decisioni
 
 1. **Pausa della Fase 6** (meteo e valanghe): prima si migliora quello che c'è.
-2. **Area del catalogo: Dolomiti e Prealpi**, decisa dalla **meta** dell'escursione (partenza,
-   punti chiave e sentieri citati), non dalla sede della sezione:
-   - i gruppi dolomitici con le loro valli (Fassa, Gardena, Badia, Ampezzo, Cadore,
-     Agordino, Zoldo, Primiero, Fiemme e Lagorai, Comelico, Sesto) e le Dolomiti di Brenta;
-   - le Prealpi venete e trentine: Piccole Dolomiti, Pasubio, Carega, Lessinia, altopiani di
-     Asiago, Folgaria e Lavarone, Grappa, Vette Feltrine, Prealpi Bellunesi e Alpago;
-   - esclusi: Dolomiti Friulane e Prealpi Carniche (servirebbero fonti del Friuli),
-     Ortles-Adamello, Val di Non e Val di Sole, Monte Baldo, Alpi Aurine e Venoste.
-   Il confine è un poligono in `config/areas/dolomiti-prealpi.geojson`, disegnato a mano lungo
-   valli e confini regionali e documentato con una mappa.
+2. **Area del catalogo: tutto il Trentino-Alto Adige più Dolomiti e Prealpi venete**, decisa
+   dalla **meta** dell'escursione (traccia, o partenza e punti chiave), non dalla sede della
+   sezione. Prima proposta: solo Dolomiti e Prealpi; corretta dall'utente lo stesso giorno
+   («Val di Non non va esclusa»):
+   - Trentino-Alto Adige intero, con il confine OSM della regione (Val di Non e di Sole,
+     Ortles, Adamello trentino, Venosta, Aurina, Ledro e Alto Garda compresi);
+   - in Veneto: provincia di Belluno fino al confine friulano, Prealpi vicentine e trevigiane
+     (Piccole Dolomiti, Pasubio, Carega, Lessinia, Asiago, Grappa), Alpago e Cansiglio;
+   - esclusi: Friuli (Dolomiti Friulane, Alpi e Prealpi Carniche, anche le cime carniche del
+     Comelico), Lombardia, Austria, Monte Baldo veronese e pianura.
+   Il confine è in `config/areas/catalogo.geojson` (regione OSM unita al poligono veneto,
+   semplificato a circa 150 m); mappa di controllo in `reports/catalogo/area-del-catalogo.jpg`.
+   Del catalogo attuale restano dentro 84 escursioni su 90.
 3. **Punteggio di affidabilità 0–100%** per ogni escursione; **si pubblica solo da 80%** in su.
    Il punteggio unisce la lettura della locandina (campi chiave presenti e coerenti, punti
    localizzati senza ambiguità) e la corrispondenza della traccia ricostruita con la locandina
@@ -48,6 +51,6 @@ non la sede della sezione.
 
 - Il catalogo può crescere di molto, ma solo con escursioni affidabili: meglio meno schede
   giuste che tante sbagliate.
-- Le escursioni del catalogo attuale fuori area (Ledro, Baldo, Val di Non, Ortles…) escono
-  dall'app; restano nell'archivio.
+- Le 6 escursioni del catalogo attuale fuori area (Campione del Garda, Zillertal, Monte
+  Palombino e tre senza coordinate) escono dall'app; restano nell'archivio.
 - La Fase 6 riparte dopo questo lavoro, sulla nuova area.
