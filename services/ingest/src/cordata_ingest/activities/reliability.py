@@ -5,7 +5,8 @@ Si pubblica solo da 80 in su. Il punteggio unisce tre parti:
 - **traccia** (65%): quanto la traccia ricostruita coincide con la locandina: distanza, salita,
   quota massima e, se la locandina cita sentieri, quanta traccia ci passa. Ogni confronto vale
   pieno dentro la tolleranza della verifica e scende fino a zero più in là. Con un solo numero
-  da confrontare la parte non supera 0,7; con due 0,9: un confronto solo può coincidere per caso.
+  da confrontare la parte non supera 0,6 (resta sotto soglia); con due 0,9: un confronto solo
+  può coincidere per caso.
 - **punti** (20%): quanti punti della locandina sono stati trovati sulla carta e, dove la
   locandina dà la quota, se quella del luogo trovato torna.
 - **lettura** (15%): la sicurezza del parser sui campi che servono (titolo, difficoltà, numeri).
@@ -50,7 +51,7 @@ def track_part(track: dict[str, Any]) -> tuple[float, list[str]]:
         notes.append("nessun numero della locandina da confrontare")
         return 0.0, notes
     value = sum(v * w for v, w in parts) / sum(w for _, w in parts)
-    cap = {1: 0.7, 2: 0.9}.get(numeric, 1.0)
+    cap = {1: 0.6, 2: 0.9}.get(numeric, 1.0)
     if value > cap:
         notes.append(f"{numeric} confronto/i soltanto: parte traccia al massimo {cap}")
     return min(value, cap), notes
